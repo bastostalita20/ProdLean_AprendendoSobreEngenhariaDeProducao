@@ -174,6 +174,7 @@ p { margin: 0 0 .6rem; }
 .bloco { border-left: 6px solid var(--muted); background: var(--surface); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow); }
 .bloco .tag { font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
 .bloco h3 { margin-bottom: 6px; }
+.tabela { overflow-x: auto; margin: 6px 0; } .tabela table { border-collapse: collapse; font-size: .85rem; min-width: 100%; } .tabela th, .tabela td { border: 1px solid var(--line, rgba(128,128,128,.35)); padding: 4px 6px; text-align: left; vertical-align: top; } .tabela th { background: rgba(128,128,128,.12); }
 .bloco.conceito { border-color: var(--c-conceito); } .bloco.conceito .tag { color: var(--c-conceito); }
 .bloco.atencao { border-color: var(--c-atencao); } .bloco.atencao .tag { color: var(--c-atencao); }
 .bloco.dica { border-color: var(--c-dica); } .bloco.dica .tag { color: var(--c-dica); }
@@ -422,7 +423,19 @@ function embaralhar(lista) {
 // Protege contra HTML malicioso/quebrado e aplica **negrito**, *itálico* e quebras de linha
 function esc(t) { return String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 function fmt(t) {
-  return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>").replace(/\n/g, "<br>");
+  const inl = x => esc(x).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
+  // Tabelas simples em Markdown (linhas começando com "|"); o resto vira texto com quebras de linha
+  const linhas = String(t ?? "").split("\n"), out = [];
+  for (let i = 0; i < linhas.length; i++) {
+    if (!/^\s*\|/.test(linhas[i])) { out.push(inl(linhas[i]) + (i < linhas.length - 1 && !/^\s*\|/.test(linhas[i + 1] || "") ? "<br>" : "")); continue; }
+    const tab = [];
+    while (i < linhas.length && /^\s*\|/.test(linhas[i])) tab.push(linhas[i++]);
+    i--;
+    const cel = l => l.trim().replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+    const corpo = tab.filter(l => !/^\s*\|[\s:|-]+\|\s*$/.test(l));
+    out.push('<div class="tabela"><table>' + corpo.map((l, k) => "<tr>" + cel(l).map(c => k === 0 ? `<th>${inl(c)}</th>` : `<td>${inl(c)}</td>`).join("") + "</tr>").join("") + "</table></div>");
+  }
+  return out.join("");
 }
 function numeroBR(n) { return Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 2 }); }
 
@@ -1137,7 +1150,7 @@ function htmlBloco(b) {
       <p class="small muted">Pense na sua resposta antes de revelar (recuperação ativa).</p>
       <button class="btn small sec" data-revelar>👀 Revelar</button><div class="reveal hidden">${fmt(b.resposta)}</div></div>`;
   }
-  let corpo = b.tipo === "mapa" ? `<pre>${esc(b.texto)}</pre>` : fmt(b.texto);
+  let corpo = b.tipo === "mapa" ? `<pre${b.largo ? ' style="white-space: pre"' : ""}>${esc(b.texto)}</pre>` : fmt(b.texto);  // largo: rola na horizontal em vez de quebrar (ex.: Gantt)
   // Fórmulas com legenda das variáveis
   if (b.legenda) corpo += `<table class="legenda">${b.legenda.map(([sim, desc]) => `<tr><td>${esc(sim)}</td><td>${fmt(desc)}</td></tr>`).join("")}</table>`;
   // não repete o título quando ele é igual ao rótulo do bloco (ex.: "Por que isso importa")

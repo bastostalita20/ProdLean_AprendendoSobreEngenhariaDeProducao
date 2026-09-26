@@ -53,7 +53,7 @@ O app fica direto no link (não precisa de `/app/` no final).
 1. Pegue o texto do módulo convertido (arquivo `modulo-XX.js`).
 2. No GitHub, abra a pasta `app/conteudo/` → **Add file → Create new file** → nome `modulo-13.js` → cole → **Commit changes**.
 3. Abra `app/conteudo/indice.js` → ✏️ (editar) → acrescente `"modulo-13.js"` na lista → **Commit changes**.
-4. **Netlify:** baixe a pasta `app` atualizada e arraste de novo em **Deploys** (no GitHub Pages, a atualização é automática em 1–2 min).
+4. **Netlify:** o site prodlean está ligado ao repositório **ProdLean_AprendendoSobreEngenhariaDeProducao** (branch `main`): cada commit publica sozinho em segundos (o `netlify.toml` na raiz manda publicar a pasta `app`). Se usar o Netlify Drop, arraste a pasta `app` de novo em **Deploys**.
 5. Abra o app, feche e abra de novo. Confira em ⚙️ → **Verificador de conteúdo** se está tudo ✓.
 
 🟢 Mais fácil ainda: me peça *"adicione o módulo X no app"* e eu faço os passos 1 a 3 e testo tudo; você só repete o passo 4.

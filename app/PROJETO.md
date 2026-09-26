@@ -126,11 +126,11 @@ Ordem da trilha (campo `ordem`), seguindo o cronograma: M1=1, M13=2, M2=3, M4=4,
 | `bobo` | 😂 Exemplo do dia a dia | `titulo`, `texto` |
 | `serio` | 🏭 Na empresa | `titulo`, `texto` |
 | `mnemonico` | 🔊 Para memorizar | `titulo`, `texto` |
-| `mapa` | 🧠 Mapa mental (texto monoespaçado) | `titulo`, `texto` |
+| `mapa` | 🧠 Mapa mental (texto monoespaçado; quebra linhas longas) | `titulo`, `texto`, `largo: true` (opcional: rola na horizontal em vez de quebrar, para Gantt e desenhos em escala) |
 | `texto` | 📖 neutro | `titulo`, `texto` |
 | `recall` | 🤔 Antes de ler… (com botão Revelar) | `pergunta`, `resposta` |
 
-No `texto`: `**negrito**`, `*itálico*` e `\n` para quebrar linha.
+No `texto`: `**negrito**`, `*itálico*` e `\n` para quebrar linha. Linhas seguidas começando com `|` viram **tabela** (a 1ª linha é o cabeçalho; a linha `|---|` é ignorada); a tabela rola na horizontal no celular.
 
 ### 5.3 Questões (todas têm `id` único, `tipo`, `pergunta`, `explicacao`)
 
