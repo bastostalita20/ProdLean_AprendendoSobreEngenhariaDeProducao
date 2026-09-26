@@ -14,6 +14,7 @@ self.ARQUIVOS_MODULOS = [ // "self" funciona no app e no modo offline (service w
   "modulo-02.js",
   "modulo-04.js",
   "modulo-03.js",
+  "modulo-06.js",
   "modulo-14.js",
   "banco-questoes.js"   // questões extras e com números sorteados (sempre por último)
 ];

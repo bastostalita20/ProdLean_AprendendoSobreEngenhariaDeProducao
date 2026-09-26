@@ -12,6 +12,7 @@ Curso completo de Engenharia de Produção, com 31 dias de estudo, 14 módulos e
 | [`03-modulo-02-projetos.md`](curso/03-modulo-02-projetos.md) | **Módulo 2 — Gestão de Projetos** em 3 níveis (Dias 4 a 6) — apostila gerada do app |
 | [`04-modulo-04-metodos.md`](curso/04-modulo-04-metodos.md) | **Módulo 4 — Engenharia de Métodos** em 3 níveis (Dias 8 e 9) — apostila gerada do app |
 | [`05-modulo-03-pcp.md`](curso/05-modulo-03-pcp.md) | **Módulo 3 — Planejamento e Controle da Produção** em 3 níveis (Dias 10 a 12) — apostila gerada do app |
+| [`06-modulo-06-lean.md`](curso/06-modulo-06-lean.md) | **Módulo 6 — Lean Manufacturing** em 3 níveis (Dias 13 e 15) — apostila gerada do app |
 | [`14-modulo-14-dados-analytics.md`](curso/14-modulo-14-dados-analytics.md) | **Módulo 14 — Dados e Analytics** em 3 níveis (Dia 29 ou em paralelo após o M13) — apostila gerada do app |
 
 📋 **Auditoria acadêmica e plano de aprofundamento:** [`docs/AUDITORIA-E-PLANO.md`](docs/AUDITORIA-E-PLANO.md)

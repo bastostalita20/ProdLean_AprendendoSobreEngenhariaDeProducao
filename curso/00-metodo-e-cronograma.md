@@ -240,5 +240,6 @@ Depois disso: **1 Quiz Relâmpago por dia** + revisão automática do app já ma
 | ✅ Parte 4 | `04-modulo-04-metodos.md` — Módulo 4 em 3 níveis |
 | ✅ Parte 5 | `14-modulo-14-dados-analytics.md` — Módulo 14 (novo) em 3 níveis |
 | ✅ Parte 6 | `05-modulo-03-pcp.md` — Módulo 3 (PCP) em 3 níveis |
-| ⏭️ Próximas | Um módulo por vez, na ordem de estudo acima (próximo: **M6 Lean**), sempre seguido de "converta este módulo para o formato de dados do app". |
+| ✅ Parte 7 | `06-modulo-06-lean.md` — Módulo 6 (Lean) em 3 níveis |
+| ⏭️ Próximas | Um módulo por vez, na ordem de estudo acima (próximo: **M5 Qualidade**), sempre seguido de "converta este módulo para o formato de dados do app". |
 | 🏁 Final | Prova final simulada + estudo de caso integrador |

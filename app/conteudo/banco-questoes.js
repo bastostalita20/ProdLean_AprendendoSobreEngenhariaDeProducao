@@ -604,6 +604,80 @@
       explicacao: "Reduzir o WIP com a mesma taxa reduz o lead time." }
   ]);
 
+  /* ================= MÓDULO 6 — LEAN ================= */
+  add("m06-l4", [
+    { id: "m06-t01", nivel: "medio", tipo: "calculo",
+      variaveis: { dem: { min: 100, max: 600, passo: 20 }, lt: { valores: [0.25, 0.5, 1, 1.5, 2] }, mg: { valores: [0, 0.1, 0.15, 0.2] }, cx: { valores: [10, 20, 25, 40, 50] } },
+      resposta: "ceil(dem*lt*(1+mg)/cx)", tolerancia: 0, unidade: "kanbans",
+      pergunta: "Demanda = {dem} peças/h; lead time de reposição = {lt} h; margem = {=mg*100}%; {cx} peças por contêiner. Quantos kanbans?",
+      resolucao: "N = {dem} × {lt} × {=1+mg} ÷ {cx} = {=dem*lt*(1+mg)/cx:2} → {=ceil(dem*lt*(1+mg)/cx)} kanbans",
+      explicacao: "Arredonde para cima; depois reduza aos poucos para expor problemas." },
+    { id: "m06-t02", nivel: "dificil", tipo: "calculo",
+      variaveis: { wip: { min: 60, max: 600, passo: 20 }, taxa: { valores: [20, 30, 40, 60, 80] } },
+      resposta: "wip/taxa", tolerancia: 0.01, unidade: "h",
+      pergunta: "Os kanbans limitam o estoque em processo a {wip} peças e a linha produz {taxa} peças/h. Qual o lead time médio (h)? (2 casas)",
+      resolucao: "Lei de Little: {wip} ÷ {taxa} = {=wip/taxa:2} h",
+      explicacao: "Menos kanbans (WIP) com a mesma taxa = lead time menor." }
+  ]);
+  add("m06-l5", [
+    { id: "m06-t03", nivel: "facil", tipo: "calculo",
+      variaveis: { dd: { valores: [200, 300, 400, 500, 600, 800] }, dias: { valores: [0.5, 1, 1.5, 2, 2.5, 3, 4] } },
+      calc: { est: "dd*dias" },
+      resposta: "est/dd", tolerancia: 0.01, unidade: "dias",
+      pergunta: "Há {est} caixas em estoque e o cliente consome {dd} por dia. Quantos dias de estoque?",
+      resolucao: "{est} ÷ {dd} = {=est/dd:2} dias",
+      explicacao: "No VSM, o estoque vira tempo de espera." },
+    { id: "m06-t04", nivel: "medio", tipo: "calculo",
+      variaveis: { e: { lista: 4, min: 0.5, max: 5, passo: 0.5 } },
+      resposta: "soma(e)", tolerancia: 0.01, unidade: "dias",
+      pergunta: "Estoques ao longo do VSM (em dias): {e}. Desprezando os tempos de processo, qual o lead time (dias)?",
+      resolucao: "Lead time ≈ {=soma(e):2} dias",
+      explicacao: "Os estoques dominam o lead time." },
+    { id: "m06-t05", nivel: "medio", tipo: "calculo",
+      variaveis: { tav: { min: 60, max: 600, passo: 10 }, dias: { valores: [1, 2, 3, 5, 8, 10] }, hd: { valores: [7.5, 8, 16] } },
+      resposta: "tav/(dias*hd*3600)*100", tolerancia: 0.001, unidade: "%",
+      pergunta: "Tempo de agregação de valor = {tav} s; lead time = {dias} dia(s), com {hd} h de trabalho por dia. Qual a PCE (%)? (3 casas)",
+      resolucao: "Lead time = {dias} × {hd} × 3.600 = {=dias*hd*3600} s\nPCE = {tav} ÷ {=dias*hd*3600} × 100 = {=tav/(dias*hd*3600)*100:3}%",
+      explicacao: "Declare a convenção de dia usada (útil ou calendário)." }
+  ]);
+  add("m06-l6", [
+    { id: "m06-t06", nivel: "medio", tipo: "calculo",
+      variaveis: { s1: { min: 30, max: 120, passo: 5 }, s2: { min: 5, max: 25 }, tr: { min: 2, max: 8 } },
+      resposta: "tr*(s1-s2)", tolerancia: 0, unidade: "min",
+      pergunta: "O setup caiu de {s1} para {s2} min e há {tr} trocas por dia. Quantos minutos por dia foram liberados?",
+      resolucao: "{tr} × ({s1} − {s2}) = {tr} × {=s1-s2} = {=tr*(s1-s2)} min",
+      explicacao: "Use o ganho para trocar mais vezes (lotes menores) ou como capacidade." },
+    { id: "m06-t07", nivel: "dificil", tipo: "calculo",
+      variaveis: { disp: { valores: [60, 90, 120, 180] }, st: { valores: [10, 15, 20, 30, 45] }, np: { min: 4, max: 12 } },
+      condicao: "disp >= st",
+      calc: { spd: "floor(disp/st)" },
+      resposta: "np/spd", tolerancia: 0.01, unidade: "dias",
+      pergunta: "Há {disp} min por dia para setups, {np} produtos e setup de {st} min. Qual o EPEI (dias)? (2 casas)",
+      resolucao: "Setups por dia = ⌊{disp} ÷ {st}⌋ = {spd}\nEPEI = {np} ÷ {spd} = {=np/spd:2} dias",
+      explicacao: "Setup menor → mais trocas → EPEI menor → menos estoque de cada item." },
+    { id: "m06-t08", nivel: "dificil", tipo: "calculo",
+      variaveis: { tk: { valores: [30, 36, 40, 45, 60, 72] }, emb: { valores: [10, 12, 20, 24, 30, 50] } },
+      resposta: "tk*emb/60", tolerancia: 0.01, unidade: "min",
+      pergunta: "Takt = {tk} s; embalagem de expedição com {emb} unidades. Qual o pitch (min)? (2 casas)",
+      resolucao: "Pitch = {tk} × {emb} = {=tk*emb} s = {=tk*emb/60:2} min",
+      explicacao: "Intervalo de liberação de trabalho na caixa heijunka." }
+  ]);
+  add("m06-l7", [
+    { id: "m06-t09", nivel: "facil", tipo: "calculo",
+      variaveis: { d: { min: 70, max: 98 }, p: { min: 60, max: 98 }, q: { min: 85, max: 99.5, passo: 0.5 } },
+      resposta: "d*p*q/10000", tolerancia: 0.05, unidade: "%",
+      pergunta: "Disponibilidade = {d}%, performance = {p}%, qualidade = {q}%. Qual o OEE (%)? (1 casa)",
+      resolucao: "OEE = {=d/100} × {=p/100} × {=q/100} = {=d*p*q/10000:1}%",
+      explicacao: "A menor parcela indica onde está a maior perda." },
+    { id: "m06-t10", nivel: "medio", tipo: "calculo",
+      variaveis: { tp: { valores: [420, 450, 480] }, par: { min: 20, max: 90, passo: 5 }, ci: { valores: [0.4, 0.5, 0.6, 0.75, 1] }, pf: { valores: [0.75, 0.8, 0.85, 0.9, 0.95] }, rf: { valores: [0.01, 0.02, 0.03, 0.05, 0.08] } },
+      calc: { prod: "floor((tp-par)*pf/ci)", boas: "prod-round(prod*rf)" },
+      resposta: "boas*ci/tp*100", tolerancia: 0.1, unidade: "%",
+      pergunta: "Tempo planejado = {tp} min; paradas não planejadas = {par} min; ciclo ideal = {ci} min; produção = {prod}; peças boas = {boas}. Qual o OEE (%)? (1 casa)",
+      resolucao: "D = {=tp-par} ÷ {tp} = {=(tp-par)/tp*100:1}%\nP = {prod} × {ci} ÷ {=tp-par} = {=prod*ci/(tp-par)*100:1}%\nQ = {boas} ÷ {prod} = {=boas/prod*100:1}%\nOEE = {boas} × {ci} ÷ {tp} = {=boas*ci/tp*100:1}%",
+      explicacao: "Atalho: peças boas × ciclo ideal ÷ tempo planejado." }
+  ]);
+
   /* ================= MÓDULO 14 — DADOS ================= */
   add("m14-l1", [
     { id: "m14-t01", nivel: "medio", tipo: "calculo",
