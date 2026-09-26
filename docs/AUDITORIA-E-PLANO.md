@@ -110,7 +110,7 @@ Construído já no padrão novo (ver Etapa 4).
 | 1 | ✅ **M4 Métodos** e ✅ **M3 PCP** em 3 níveis (seguindo o cronograma) | Continuidade do curso |
 | 2 | **Aprofundar M13** (Difícil: Bayes, IC t e proporção, testes de 2 amostras e proporção, ANOVA introdutória, resíduos) | 🔴 Base quantitativa |
 | 3 | **Aprofundar M1** (matriz produto-processo, trade-offs, produtividade multifatorial) | 🟡 |
-| 4 | ✅ M6, M5, M7, M8, M9, M10, M11, M12 em 3 níveis, com as inclusões da tabela de cobertura | Cronograma |
+| 4 | M6 ✅, M5, M7, M8, M9, M10, M11, M12 em 3 níveis, com as inclusões da tabela de cobertura | Cronograma |
 | 5 | (Se aprovado) M14 Dados e Analytics | Lacuna curricular |
 
 ---
