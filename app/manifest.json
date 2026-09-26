@@ -1,0 +1,17 @@
+{
+  "name": "EngProd Play — Curso de Engenharia de Produção",
+  "short_name": "EngProd Play",
+  "description": "Trilha gamificada, quiz relâmpago, revisão espaçada e flashcards de Engenharia de Produção.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6f3",
+  "theme_color": "#1f8a4c",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icone.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

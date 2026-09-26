@@ -1,2 +1,28 @@
 # ProdLean_AprendendoSobreEngenhariaDeProducao
 ProdLean: ferramenta criada para estudantes e profissionais apaixonados por Engenharia de Produção, com o objetivo de revisar conceitos e relembrar as principais ferramentas da área de maneira descontraída.
+
+
+Curso completo de Engenharia de Produção, com 31 dias de estudo, 14 módulos e sessões curtas pensadas para quem tem TDAH e rotina apertada. Vem junto com um **app de estudo gamificado** que mistura Duolingo e Kahoot e funciona offline no celular.
+
+## 📚 Curso (`curso/`)
+| Arquivo | Conteúdo |
+|---|---|
+| [`00-metodo-e-cronograma.md`](curso/00-metodo-e-cronograma.md) | Código de cores, técnicas de estudo, Pomodoro para TDAH, gamificação e **cronograma dia a dia de 31 dias** |
+| [`01-modulo-fundamentos.md`](curso/01-modulo-fundamentos.md) | **Módulo 1 — Fundamentos** (Dia 1) |
+| [`02-modulo-13-estatistica.md`](curso/02-modulo-13-estatistica.md) | **Módulo 13 — Estatística aplicada** (Dias 2 e 3) |
+| [`03-modulo-02-projetos.md`](curso/03-modulo-02-projetos.md) | **Módulo 2 — Gestão de Projetos** em 3 níveis (Dias 4 a 6) — apostila gerada do app |
+| [`04-modulo-04-metodos.md`](curso/04-modulo-04-metodos.md) | **Módulo 4 — Engenharia de Métodos** em 3 níveis (Dias 8 e 9) — apostila gerada do app |
+| [`14-modulo-14-dados-analytics.md`](curso/14-modulo-14-dados-analytics.md) | **Módulo 14 — Dados e Analytics** em 3 níveis (Dia 29 ou em paralelo após o M13) — apostila gerada do app |
+
+📋 **Auditoria acadêmica e plano de aprofundamento:** [`docs/AUDITORIA-E-PLANO.md`](docs/AUDITORIA-E-PLANO.md)
+
+## 📱 App (`app/`)
+
+🌐 **Publicado em: https://prodlean.netlify.app** (para atualizar, arraste a pasta `app` de novo no painel do Netlify → Deploys).
+
+| Arquivo | Conteúdo |
+|---|---|
+| [`app/index.html`](app/index.html) | O app (abra no navegador) |
+| [`app/conteudo/`](app/conteudo/) | Conteúdo dos módulos, em formato de dados |
+| [`app/PROJETO.md`](app/PROJETO.md) | Visão geral: telas, fluxo de navegação e estrutura dos dados |
+| [`app/COMO-USAR-E-PUBLICAR.md`](app/COMO-USAR-E-PUBLICAR.md) | Passo a passo para abrir, testar e publicar de graça |

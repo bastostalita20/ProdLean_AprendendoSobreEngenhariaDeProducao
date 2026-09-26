@@ -1,0 +1,22 @@
+# Configuração do Netlify (lida automaticamente quando o site está ligado ao GitHub)
+# O app é estático: não há build; publica-se a pasta "app".
+[build]
+  publish = "app"
+  command = ""
+
+# Sempre revalidar o código e o conteúdo, para as atualizações chegarem rápido.
+# (O modo offline continua funcionando pelo service worker.)
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/conteudo/*"
+  [headers.values]
+    Cache-Control = "no-cache"
