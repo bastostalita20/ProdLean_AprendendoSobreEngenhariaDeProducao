@@ -114,7 +114,7 @@ async function recuperarVidas(p) {
 
   // Capa da lição com nível único (M1)
   await p.evaluate(() => ir('licao/m01-l1')); await p.waitForTimeout(150);
-  checar(await p.$('#comecar') && (await p.textContent('body')).includes('Nível único'), 'capa de lição de nível único');
+  checar(await p.$('#comecar') && (await p.$$('.lvl-card')).length === 3, 'capa da lição do M1 com os 3 níveis');
 
   // Módulos do curso: todas as lições em todos os níveis. Grade: 1º tópico de cada disciplina (amostra de todas).
   const licoes = await p.evaluate(() => LICOES.filter(l => !modulo(l.modulo).grade || modulo(l.modulo).licoes[0].id === l.id).map(l => ({ id: l.id, niveis: niveisDaLicao(l) })));

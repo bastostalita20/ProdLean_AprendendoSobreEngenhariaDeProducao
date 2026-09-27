@@ -15,67 +15,67 @@
 
   /* ================= MÓDULO 1 — FUNDAMENTOS ================= */
   add("m01-l1", [
-    { id: "m01-b01", tipo: "multipla", pergunta: "Qual destas vagas é típica para um engenheiro de produção recém-formado?",
+    { id: "m01-b01", nivel: "facil", tipo: "multipla", pergunta: "Qual destas vagas é típica para um engenheiro de produção recém-formado?",
       opcoes: ["Analista de PCP", "Médico do trabalho", "Advogado trabalhista", "Arquiteto de interiores"], correta: 0,
       explicacao: "Também aparecem: analista de processos, melhoria contínua, qualidade, supply chain e trainee." },
-    { id: "m01-b02", tipo: "vf", pergunta: "A ART (Anotação de Responsabilidade Técnica) é exigida para assinar projetos técnicos de engenharia.",
+    { id: "m01-b02", nivel: "facil", tipo: "vf", pergunta: "A ART (Anotação de Responsabilidade Técnica) é exigida para assinar projetos técnicos de engenharia.",
       correta: true, explicacao: "É registrada no CREA e identifica o responsável técnico pelo serviço." },
-    { id: "m01-b03", tipo: "caso", contexto: "Você resolveu um problema de atraso na expedição do seu estágio e quer registrar isso no seu portfólio.",
+    { id: "m01-b03", nivel: "facil", tipo: "caso", contexto: "Você resolveu um problema de atraso na expedição do seu estágio e quer registrar isso no seu portfólio.",
       pergunta: "Qual registro é mais forte para uma entrevista?",
       opcoes: ["“Ajudei na expedição”", "“Mapeei o fluxo, apliquei 5 Porquês e reduzi o atraso médio de 2 dias para 6 horas”", "“Participei de reuniões”", "“Aprendi muito”"], correta: 1,
       explicacao: "Problema → ferramenta → resultado em número." }
   ]);
   add("m01-l2", [
-    { id: "m01-b04", tipo: "multipla", pergunta: "O que a linha de montagem móvel de Ford (1913) permitiu principalmente?",
+    { id: "m01-b04", nivel: "facil", tipo: "multipla", pergunta: "O que a linha de montagem móvel de Ford (1913) permitiu principalmente?",
       opcoes: ["Produção em massa a custo muito menor", "Personalização total de cada carro", "O fim da divisão do trabalho", "A eliminação de todos os estoques"], correta: 0,
       explicacao: "Alto volume, pouca variedade e custo unitário baixo." },
-    { id: "m01-b05", tipo: "lacuna", pergunta: "O controle estatístico de processo nasceu dos trabalhos de ___ nos anos 1920 e 1930.",
+    { id: "m01-b05", nivel: "facil", tipo: "lacuna", pergunta: "O controle estatístico de processo nasceu dos trabalhos de ___ nos anos 1920 e 1930.",
       opcoes: ["Shewhart", "Ford", "Gantt", "Adam Smith"], correta: 0,
       explicacao: "Walter Shewhart criou as cartas de controle (Módulo 5)." },
-    { id: "m01-b06", tipo: "vf", pergunta: "Adam Smith descreveu a divisão do trabalho com o exemplo de uma fábrica de alfinetes.",
+    { id: "m01-b06", nivel: "facil", tipo: "vf", pergunta: "Adam Smith descreveu a divisão do trabalho com o exemplo de uma fábrica de alfinetes.",
       correta: true, explicacao: "Em *A Riqueza das Nações* (1776)." }
   ]);
   add("m01-l3", [
-    { id: "m01-b07", tipo: "ligar", pergunta: "Ligue a atividade à área da ABEPRO:",
+    { id: "m01-b07", nivel: "facil", tipo: "ligar", pergunta: "Ligue a atividade à área da ABEPRO:",
       pares: [["Previsão de demanda e sequenciamento", "Operações"], ["Análise de investimento", "Econômica"], ["Desenvolvimento de novo produto", "Produto"], ["Gestão ambiental e eficiência energética", "Sustentabilidade"]],
       explicacao: "Cada problema real costuma envolver várias áreas, mas tem uma área principal." },
-    { id: "m01-b08", tipo: "multipla", pergunta: "A análise ergonômica de um posto de trabalho pertence principalmente a qual área?",
+    { id: "m01-b08", nivel: "facil", tipo: "multipla", pergunta: "A análise ergonômica de um posto de trabalho pertence principalmente a qual área?",
       opcoes: ["Engenharia do Trabalho", "Logística", "Engenharia Econômica", "Engenharia do Produto"], correta: 0,
       explicacao: "Ergonomia, segurança e organização do trabalho." },
-    { id: "m01-b09", tipo: "caso", contexto: "Um vazamento de óleo das prensas contamina o piso e escorre para o solo do pátio.",
+    { id: "m01-b09", nivel: "facil", tipo: "caso", contexto: "Um vazamento de óleo das prensas contamina o piso e escorre para o solo do pátio.",
       pergunta: "Qual área da ABEPRO está mais diretamente envolvida?",
       opcoes: ["Engenharia da Sustentabilidade", "Engenharia Econômica", "Engenharia do Produto", "Educação em Engenharia de Produção"], correta: 0,
       explicacao: "Gestão ambiental. Também há risco de segurança (Trabalho) e custo (Econômica)." }
   ]);
   add("m01-l4", [
-    { id: "m01-b10", tipo: "multipla", pergunta: "Num salão de beleza, qual é a principal entrada transformada?",
+    { id: "m01-b10", nivel: "facil", tipo: "multipla", pergunta: "Num salão de beleza, qual é a principal entrada transformada?",
       opcoes: ["O próprio cliente", "A tesoura", "O cabeleireiro", "A cadeira"], correta: 0,
       explicacao: "Tesoura, cadeira e cabeleireiro são recursos transformadores." },
-    { id: "m01-b11", tipo: "vf", pergunta: "Serviços costumam ter alto contato com o cliente durante a produção.",
+    { id: "m01-b11", nivel: "facil", tipo: "vf", pergunta: "Serviços costumam ter alto contato com o cliente durante a produção.",
       correta: true, explicacao: "Produção e consumo acontecem ao mesmo tempo." },
-    { id: "m01-b12", tipo: "caso", contexto: "Uma companhia aérea não consegue estocar os assentos vazios do voo de hoje.",
+    { id: "m01-b12", nivel: "facil", tipo: "caso", contexto: "Uma companhia aérea não consegue estocar os assentos vazios do voo de hoje.",
       pergunta: "Qual a principal implicação para a gestão da operação?",
       opcoes: ["Nenhuma", "Precisa ajustar capacidade e demanda (preços por horário, overbooking controlado)", "Deve produzir assentos em lotes maiores", "Deve estocar passageiros"], correta: 1,
       explicacao: "Capacidade não usada em serviços se perde: equilibrar oferta e demanda é central." }
   ]);
   add("m01-l5", [
-    { id: "m01-b13", tipo: "multipla", pergunta: "Uma gráfica que imprime pequenas tiragens personalizadas para muitos clientes, compartilhando as mesmas máquinas, está mais próxima de qual tipo de processo?",
+    { id: "m01-b13", nivel: "facil", tipo: "multipla", pergunta: "Uma gráfica que imprime pequenas tiragens personalizadas para muitos clientes, compartilhando as mesmas máquinas, está mais próxima de qual tipo de processo?",
       opcoes: ["Jobbing", "Contínuo", "Massa", "Projeto"], correta: 0,
       explicacao: "Baixo volume, alta variedade, recursos compartilhados." },
-    { id: "m01-b14", tipo: "ligar", pergunta: "Ligue o serviço ao tipo de processo:",
+    { id: "m01-b14", nivel: "facil", tipo: "ligar", pergunta: "Ligue o serviço ao tipo de processo:",
       pares: [["Consultoria jurídica", "Serviço profissional"], ["Agência bancária", "Loja de serviços"], ["Metrô", "Serviço de massa"]],
       explicacao: "“O Padre Leva a Missa”." },
-    { id: "m01-b15", tipo: "vf", pergunta: "Quanto maior o volume de produção, maior costuma ser a variedade de produtos.",
+    { id: "m01-b15", nivel: "facil", tipo: "vf", pergunta: "Quanto maior o volume de produção, maior costuma ser a variedade de produtos.",
       correta: false, explicacao: "É o contrário: volume alto costuma vir com variedade baixa." }
   ]);
   add("m01-l6", [
-    { id: "m01-b16", tipo: "ligar", pergunta: "Ligue a promessa ao objetivo de desempenho:",
+    { id: "m01-b16", nivel: "facil", tipo: "ligar", pergunta: "Ligue a promessa ao objetivo de desempenho:",
       pares: [["Entregar em 24 horas", "Rapidez"], ["Chegar exatamente no dia combinado", "Confiabilidade"], ["Fazer sob medida para cada cliente", "Flexibilidade"], ["Zero defeito", "Qualidade"]],
       explicacao: "“Qual Rato Come Farinha Cara?”" },
-    { id: "m01-b17", tipo: "multipla", pergunta: "Escolher o local de uma nova fábrica é uma decisão:",
+    { id: "m01-b17", nivel: "facil", tipo: "multipla", pergunta: "Escolher o local de uma nova fábrica é uma decisão:",
       opcoes: ["Estratégica", "Tática", "Operacional", "Rotineira"], correta: 0,
       explicacao: "Longo prazo e difícil de reverter." },
-    { id: "m01-b18", tipo: "vf", pergunta: "Decisões operacionais costumam ter horizonte de dias ou horas.",
+    { id: "m01-b18", nivel: "facil", tipo: "vf", pergunta: "Decisões operacionais costumam ter horizonte de dias ou horas.",
       correta: true, explicacao: "Ex.: sequência das ordens de amanhã." }
   ]);
   add("m01-l7", [
@@ -102,11 +102,11 @@
       explicacao: "Produzir mais não é o mesmo que ser mais produtivo: compare saídas e entradas." }
   ]);
   add("m01-l8", [
-    { id: "m01-b19", tipo: "caso", contexto: "Na Doces Serra, a produtividade é medida em peças produzidas por hora, incluindo as que vão para o refugo.",
+    { id: "m01-b19", nivel: "facil", tipo: "caso", contexto: "Na Doces Serra, a produtividade é medida em peças produzidas por hora, incluindo as que vão para o refugo.",
       pergunta: "Qual o risco desse indicador?",
       opcoes: ["Nenhum", "Premia produzir rápido mesmo gerando refugo; o certo é medir peças boas", "Mede demais a qualidade", "Só funciona em serviços"], correta: 1,
       explicacao: "O indicador precisa refletir o que o cliente recebe: peças boas." },
-    { id: "m01-b20", tipo: "multipla", pergunta: "Ao chegar na Doces Serra para entender os atrasos, qual dado você pediria primeiro?",
+    { id: "m01-b20", nivel: "facil", tipo: "multipla", pergunta: "Ao chegar na Doces Serra para entender os atrasos, qual dado você pediria primeiro?",
       opcoes: ["% de entregas no prazo e lead time por pedido", "A cor preferida da diretoria", "O número de vagas do estacionamento", "O preço das ações da concorrente"], correta: 0,
       explicacao: "Comece pelo indicador que descreve o problema." }
   ]);
@@ -118,26 +118,26 @@
       pergunta: "O padrão da linha é {padrao} peças por turno. Hoje ela produziu {real}. Qual a eficiência operacional (%)? (1 casa)",
       resolucao: "Eficiência = {real} ÷ {padrao} × 100 ≈ {=real/padrao*100:1}%",
       explicacao: "Compara o realizado com o padrão para os mesmos recursos." },
-    { id: "m01-b21", tipo: "vf", pergunta: "Eficácia sem eficiência significa atingir a meta gastando recursos demais.",
+    { id: "m01-b21", nivel: "facil", tipo: "vf", pergunta: "Eficácia sem eficiência significa atingir a meta gastando recursos demais.",
       correta: true, explicacao: "Acertou o alvo, mas gastou flechas demais." }
   ]);
 
   /* ================= MÓDULO 13 — ESTATÍSTICA ================= */
   add("m13-l1", [
-    { id: "m13-b01", tipo: "multipla", pergunta: "O que caracteriza uma amostra aleatória simples?",
+    { id: "m13-b01", nivel: "facil", tipo: "multipla", pergunta: "O que caracteriza uma amostra aleatória simples?",
       opcoes: ["Escolher as peças mais fáceis de pegar", "Cada elemento da população tem a mesma chance de ser escolhido", "Medir apenas o primeiro lote do dia", "Escolher as peças que parecem defeituosas"], correta: 1,
       explicacao: "A aleatoriedade protege contra vieses de seleção." },
-    { id: "m13-b02", tipo: "vf", pergunta: "A letra grega σ representa o desvio-padrão da população.",
+    { id: "m13-b02", nivel: "facil", tipo: "vf", pergunta: "A letra grega σ representa o desvio-padrão da população.",
       correta: true, explicacao: "Na amostra, usa-se s." },
-    { id: "m13-b03", tipo: "ligar", pergunta: "Classifique a variável:",
+    { id: "m13-b03", nivel: "facil", tipo: "ligar", pergunta: "Classifique a variável:",
       pares: [["Tempo de espera do cliente", "Quantitativa contínua"], ["Número de reclamações por semana", "Quantitativa discreta"], ["Turno (manhã, tarde, noite)", "Qualitativa nominal"], ["Grau de risco (baixo, médio, alto)", "Qualitativa ordinal"]],
       explicacao: "Discreta se conta, contínua se mede; ordinal tem ordem." }
   ]);
   add("m13-l2", [
-    { id: "m13-b04", tipo: "multipla", pergunta: "Para acompanhar o refugo diário ao longo de 3 meses, o melhor gráfico é:",
+    { id: "m13-b04", nivel: "facil", tipo: "multipla", pergunta: "Para acompanhar o refugo diário ao longo de 3 meses, o melhor gráfico é:",
       opcoes: ["Linha", "Pizza", "Radar", "Pictograma"], correta: 0,
       explicacao: "Evolução no tempo → linha." },
-    { id: "m13-b05", tipo: "vf", pergunta: "Um gráfico de pizza com 12 fatias é a melhor escolha para comparar 12 fornecedores.",
+    { id: "m13-b05", nivel: "facil", tipo: "vf", pergunta: "Um gráfico de pizza com 12 fatias é a melhor escolha para comparar 12 fornecedores.",
       correta: false, explicacao: "Use barras ordenadas: ninguém compara 12 ângulos." }
   ]);
   add("m13-l3", [
@@ -153,7 +153,7 @@
       pergunta: "Tempos de atendimento (min): {x}. Qual a mediana?",
       resolucao: "Ordenados: {=ordenar(x)}\nn = 6 (par) → média do 3º e do 4º valores = {=mediana(x):2} min",
       explicacao: "Primeiro ordene; com n par, a mediana é a média dos dois centrais." },
-    { id: "m13-b06", tipo: "caso", contexto: "O tempo de atendimento de um call center tem muitos casos rápidos e alguns muito longos (clientes com problemas complexos).",
+    { id: "m13-b06", nivel: "facil", tipo: "caso", contexto: "O tempo de atendimento de um call center tem muitos casos rápidos e alguns muito longos (clientes com problemas complexos).",
       pergunta: "Qual medida de centro deve ser reportada junto com a média?",
       opcoes: ["A mediana, porque resiste aos valores extremos", "A moda, sempre", "A amplitude", "Nenhuma"], correta: 0,
       explicacao: "Distribuição assimétrica: a média é puxada pelos casos longos." }
@@ -166,7 +166,7 @@
       pergunta: "Q1 = {q1} e Q3 = {q3}. Acima de qual valor um dado é considerado outlier (regra 1,5 × IQR)?",
       resolucao: "IQR = {q3} − {q1} = {iqr}\nLimite superior = {q3} + 1,5 × {iqr} = {=q3+1.5*iqr:2}",
       explicacao: "O limite inferior seria Q1 − 1,5 × IQR." },
-    { id: "m13-b07", tipo: "vf", pergunta: "Um ponto além do bigode no boxplot deve ser apagado imediatamente da base de dados.",
+    { id: "m13-b07", nivel: "facil", tipo: "vf", pergunta: "Um ponto além do bigode no boxplot deve ser apagado imediatamente da base de dados.",
       correta: false, explicacao: "Investigue a causa primeiro: pode ser erro de registro ou um problema real do processo." }
   ]);
   add("m13-l5", [
@@ -186,7 +186,7 @@
       explicacao: "Referência prática: < 15% baixa; 15–30% média; > 30% alta dispersão." }
   ]);
   add("m13-l6", [
-    { id: "m13-b08", tipo: "caso", contexto: "Dois fornecedores entregam eixos com diâmetro médio de 20,00 mm. O desvio-padrão do fornecedor X é 0,01 mm; o do Y é 0,04 mm. A tolerância é ±0,05 mm.",
+    { id: "m13-b08", nivel: "facil", tipo: "caso", contexto: "Dois fornecedores entregam eixos com diâmetro médio de 20,00 mm. O desvio-padrão do fornecedor X é 0,01 mm; o do Y é 0,04 mm. A tolerância é ±0,05 mm.",
       pergunta: "Qual fornecedor é melhor para a qualidade?",
       opcoes: ["X: mesma média e muito menos variação", "Y: variação maior dá mais flexibilidade", "São iguais", "Não dá para saber sem o preço"], correta: 0,
       explicacao: "Com σ = 0,04, os limites ficam a apenas 1,25 σ da média (muitas peças fora)." }
@@ -243,7 +243,7 @@
       pergunta: "Valor de referência μ₀ = {mu0}. Amostra: n = {n}, x̄ = {xb}, s = {s}. Qual a estatística t? (2 casas)",
       resolucao: "EP = {s} ÷ √{n} = {ep:3}\nt = ({xb} − {mu0}) ÷ {ep:3} ≈ {=(xb-mu0)/ep:2}",
       explicacao: "Compare |t| com o valor crítico (≈ 2 para amostras médias e 95%)." },
-    { id: "m13-b09", tipo: "multipla", pergunta: "O teste deu p-valor = 0,20 com α = 0,05. Qual a decisão?",
+    { id: "m13-b09", nivel: "facil", tipo: "multipla", pergunta: "O teste deu p-valor = 0,20 com α = 0,05. Qual a decisão?",
       opcoes: ["Rejeitar H0", "Não rejeitar H0 (não há evidência suficiente de diferença)", "Provar que H0 é verdadeira", "Refazer com α = 0,30"], correta: 1,
       explicacao: "p alto: sem evidência. E não rejeitar não prova H0." }
   ]);
@@ -254,7 +254,7 @@
       pergunta: "A reta de regressão é ŷ = {a} + {b}·x. Qual o valor previsto para x = {x}?",
       resolucao: "ŷ = {a} + {b} × {x} = {=a+b*x:2}",
       explicacao: "Cuidado ao extrapolar para fora da faixa dos dados." },
-    { id: "m13-b10", tipo: "vf", pergunta: "Um R² de 0,64 corresponde a um coeficiente de correlação r de ±0,8.",
+    { id: "m13-b10", nivel: "facil", tipo: "vf", pergunta: "Um R² de 0,64 corresponde a um coeficiente de correlação r de ±0,8.",
       correta: true, explicacao: "R² = r² → r = ±√0,64 = ±0,8 (o sinal vem da inclinação)." }
   ]);
   add("m13-l12", [

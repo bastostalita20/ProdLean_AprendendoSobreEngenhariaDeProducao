@@ -20,8 +20,8 @@ app/
 ├── icone.svg / icone-192.png / icone-512.png
 └── conteudo/
     ├── indice.js       ← LISTA dos arquivos de módulo que o app deve carregar
-    ├── modulo-01.js    ← Módulo 1 — Fundamentos (9 lições)
-    ├── modulo-13.js    ← Módulo 13 — Estatística (12 lições)
+    ├── modulo-01.js    ← Módulo 1 — Fundamentos (9 lições, 3 níveis)
+    ├── modulo-13.js    ← Módulo 13 — Estatística (12 lições, 3 níveis)
     ├── modulo-02.js    ← Módulo 2 — Gestão de Projetos (10 lições, 3 níveis)
     ├── modulo-04.js    ← Módulo 4 — Engenharia de Métodos (7 lições, 3 níveis)
     ├── modulo-03.js    ← Módulo 3 — PCP (8 lições, 3 níveis)
@@ -233,7 +233,7 @@ glossario: [ { termo: "Folga livre", definicao: "…" } ]
 
 **Blocos novos:** `contexto` (🏭 por que importa), `exemplo` (🧮 exemplo resolvido), `passos` (🛠️ passo a passo), `limitacao` (⚖️ limitações e trade-offs), `referencia` (📚 para aprofundar).
 
-**Lições sem nenhum `nivel`** (M1 e M13, por enquanto) aparecem como **“nível único”**: nada quebra.
+**Lições sem nenhum `nivel`** aparecem como **“nível único”**: nada quebra. (Hoje todos os módulos do curso têm os 3 níveis; no M1 e no M13 o conteúdo original virou o nível Fácil.)
 
 ### Indicadores honestos (perfil)
 - **Lições concluídas:** conteúdo percorrido (por nível).
