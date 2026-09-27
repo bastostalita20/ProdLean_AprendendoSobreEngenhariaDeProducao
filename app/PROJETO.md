@@ -39,10 +39,10 @@ parametros.js           ← motor das questões com números sorteados
 | Tela | Rota | O que tem |
 |---|---|---|
 | 🏠 **Início** | `#inicio` | Três entradas grandes: **🎮 Exercícios**, **🧠 Mapas mentais** e **📚 Conteúdo**, mais “Continuar de onde parei”. |
-| 🎮 **Exercícios** | `#exercicios` | A interface de estudo gamificada: chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar**, nível, atalhos para a Trilha do curso, a Grade CEFET, Revisão, Flashcards, Quiz e Modo ônibus. |
+| 🎮 **Exercícios** | `#exercicios` | A interface de estudo gamificada: chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar**, nível, atalhos para a Trilha do curso, a Grade curricular, Revisão, Flashcards, Quiz e Modo ônibus. |
 | 📚 **Conteúdo** | `#conteudo` · `#conteudo/g-calc1` · `#conteudo/m03` | Leitura por disciplina da grade (agrupada por período, com busca) ou por módulo do curso (com seletor de nível). Cada disciplina mostra tópicos, fórmulas com o significado de cada símbolo, “Na produção”, exemplos e glossário. |
 | 🧠 **Mapas mentais** | `#mapas` · `#mapa/g-calc1` | Escolha a matéria e o que entra (tópicos, fórmulas, significados dos símbolos, glossário, aplicações, exemplos, mnemônicos, quais tópicos, preto e branco). O mapa é desenhado numa folha **A4 (210 × 297 mm)**, com a fonte ajustada automaticamente para caber, e pode ser impresso ou salvo em PDF. |
-| 🗺️ **Trilha** | `#trilha` · `#trilha/grade/3` | Duas abas: **📘 Curso** (módulos) e **🎓 Grade CEFET** (disciplinas por período; cada uma começa liberada). |
+| 🗺️ **Trilha** | `#trilha` · `#trilha/grade/3` | Duas abas: **📘 Curso** (módulos) e **🎓 Grade curricular** (disciplinas por período; cada uma começa liberada). |
 | 🗺️ (detalhe) | `#trilha` | Caminho em zigue-zague com "bolinhas": ✓ dourada = concluída, verde pulsando = atual ("COMEÇAR"), 🔒 = bloqueada. Faixa de cada módulo com objetivo, progresso, 🎧 Ouvir resumo e 🃏 Flashcards. |
 | 📖 **Lição** | `#licao/m01-l1` | Fase 1: blocos curtos, um por vez, com a cor do curso (🔴🟡🟢🔵🟣), perguntas "🤔 Antes de ler" com botão Revelar e 🔊 Ouvir. Fase 2: exercícios; errou → perde ❤️ e a questão volta para o fim. Tela final com XP e % de acerto. |
 | ⚡ **Quiz Relâmpago** | `#quiz` | 10 perguntas, 20 s cada, 4 blocos fixos 🔴▲ 🔵◆ 🟡● 🟢■. 500–1000 pontos por acerto (mais rápido = mais pontos) + combo 🔗 (+100 por acerto seguido, até +500). Ranking local (top 10). **Desafio em grupo**: 2 a 6 jogadores passando o celular, placar a cada pergunta e pódio. |
@@ -273,7 +273,7 @@ Um módulo com `liberaApos: ["m13"]` fica no fim da trilha, mas a sua primeira l
 
 ## 10. Grade curricular (disciplinas) — `conteudo/grade/`
 
-As disciplinas da grade 2017 do Bacharelado em Engenharia de Produção do CEFET/RJ (fluxograma enviado pela aluna) ficam em `conteudo/grade/p01.js` a `p09.js` (o 10º período está em `p09.js`). Cada disciplina é um objeto em `window.DISCIPLINAS`:
+As disciplinas da grade curricular do Bacharelado em Engenharia de Produção (fluxograma enviado pela aluna) ficam em `conteudo/grade/p01.js` a `p09.js` (o 10º período está em `p09.js`). Cada disciplina é um objeto em `window.DISCIPLINAS`:
 
 ```js
 { id: "g-calc1", codigo: "GEXT-7301", nome: "Cálculo a Uma Variável", periodo: 1,

@@ -1271,7 +1271,7 @@ function telaInicio() {
     </div>
     <div class="grid2">
       <a class="tile" href="#trilha"><span class="big">🗺️</span><b>Trilha do curso</b><div class="small muted">módulos 1 a 14</div></a>
-      <a class="tile" href="#trilha/grade/1"><span class="big">🎓</span><b>Grade CEFET</b><div class="small muted">disciplinas por período</div></a>
+      <a class="tile" href="#trilha/grade/1"><span class="big">🎓</span><b>Grade curricular</b><div class="small muted">disciplinas por período</div></a>
       <a class="tile" href="#revisar">${pend ? `<span class="badge">${pend}</span>` : ""}<span class="big">🔁</span><b>Revisão</b><div class="small muted">${pend ? pend + " pendentes" : "em dia ✓"}</div></a>
       <a class="tile" href="#flashcards">${cartas ? `<span class="badge">${cartas}</span>` : ""}<span class="big">🃏</span><b>Flashcards</b><div class="small muted">${cartas} para hoje</div></a>
       <a class="tile" href="#quiz"><span class="big">⚡</span><b>Quiz Relâmpago</b><div class="small muted">estilo Kahoot</div></a>
@@ -1303,7 +1303,7 @@ function telaTrilha(visao, per) {
     return h + `</div>`;
   };
   let html = barraTopo() + `<h1>🗺️ Trilha</h1>
-    <div class="seg"><a href="#trilha" class="${grade ? "" : "on"}">📘 Curso</a><a href="#trilha/grade/${per || 1}" class="${grade ? "on" : ""}">🎓 Grade CEFET</a></div>`;
+    <div class="seg"><a href="#trilha" class="${grade ? "" : "on"}">📘 Curso</a><a href="#trilha/grade/${per || 1}" class="${grade ? "on" : ""}">🎓 Grade curricular</a></div>`;
   if (!grade) {
     html += `<p class="muted small mt">Conclua uma lição (em qualquer nível) para liberar a próxima. Os ícones 🌱🔧🧠 abaixo de cada lição acendem conforme você conclui cada nível.</p>`;
     const mods = MODS.filter(m => !m.grade);
@@ -1320,7 +1320,7 @@ function telaTrilha(visao, per) {
     });
   } else {
     const p = Math.min(10, Math.max(1, +per || 1));
-    html += `<p class="muted small mt">As disciplinas da grade 2017 do CEFET/RJ, por período. Todas começam liberadas; dentro de cada disciplina, um tópico libera o próximo.</p>
+    html += `<p class="muted small mt">As disciplinas da grade curricular, por período. Todas começam liberadas; dentro de cada disciplina, um tópico libera o próximo.</p>
       <div class="pchips">${Array.from({ length: 10 }, (_, i) => i + 1).map(n => {
         const ds = disciplinas().filter(m => m.periodo === n), ok = ds.filter(moduloConcluido).length;
         return `<a href="#trilha/grade/${n}" class="${n === p ? "on" : ""}">${n}º${ds.length ? `<small>${ok}/${ds.length}</small>` : ""}</a>`;

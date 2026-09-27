@@ -19,7 +19,7 @@ Curso completo de Engenharia de Produção, com 31 dias de estudo, 14 módulos e
 
 ## 🎓 Grade curricular no app
 
-As **56 disciplinas** do fluxograma do Bacharelado em Engenharia de Produção do CEFET/RJ (grade 2017), do 1º ao 10º período, estão no app com **conteúdo, exercícios e mapas mentais**. As matérias de exatas são apresentadas com foco em produção (onde se usa derivada, limite, integral, matriz, EDO etc. na carreira). Arquivos em `app/conteudo/grade/`.
+As **56 disciplinas** da grade curricular do Bacharelado em Engenharia de Produção, do 1º ao 10º período, estão no app com **conteúdo, exercícios e mapas mentais**. As matérias de exatas são apresentadas com foco em produção (onde se usa derivada, limite, integral, matriz, EDO etc. na carreira). Arquivos em `app/conteudo/grade/`.
 
 ## 📱 App (`app/`)
 
