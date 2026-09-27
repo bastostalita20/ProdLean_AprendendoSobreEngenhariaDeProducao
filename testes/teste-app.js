@@ -306,8 +306,17 @@ async function recuperarVidas(p) {
   checar(td.includes('Por quê?') && td.includes('Na prática') && td.includes('Quer entender melhor?') && await p.evaluate(id => S.desafios[id].acertou, idDia) && await p.evaluate(() => S.xpTotal) === xpD + 10, 'desafio do dia: resposta, por quê, na prática, conteúdo e +10 XP');
   await p.evaluate(() => ir('desafio')); await p.waitForTimeout(100);
   checar(!(await p.$('#qarea')) && (await p.textContent('body')).includes('Resposta certa'), 'desafio do dia não repete no mesmo dia');
+  // vários desafios seguidos pelo botão "Mais um desafio" (antes travava no 3º: o endereço não mudava)
+  const enderecos = new Set();
+  for (let i = 0; i < 5; i++) {
+    await p.click('a.btn:has-text("Mais um desafio")'); await p.waitForTimeout(150);
+    enderecos.add(await p.evaluate(() => location.hash));
+    if (!(await p.$('#qarea'))) break;
+    await responder(p, true); await p.waitForTimeout(80);
+  }
+  checar(enderecos.size === 5 && (await p.textContent('body')).includes('Por quê?'), `5 desafios extras seguidos sem travar (${enderecos.size} endereços)`);
   await p.evaluate(() => ir('desafio/historico')); await p.waitForTimeout(100);
-  checar((await p.$$('.mini')).length === 1, 'histórico de desafios');
+  checar((await p.$$('.mini')).length === 6, 'histórico de desafios');
   // Modo Estágio (opcional) prioriza a área
   await p.evaluate(() => ir('estagio')); await p.click('[data-a="pcp"]'); await p.waitForTimeout(100);
   checar(await p.evaluate(() => S.config.estagio) === 'pcp', 'ativar Modo Estágio');
@@ -326,7 +335,7 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => S.config.nivel) === 'medio', 'Estudar por nível define o nível padrão');
   // Persistência: recarregar mantém favoritos, histórico e desafios
   await p.reload(); await p.waitForSelector('.topbar');
-  checar(await p.evaluate(() => S.favoritos.length === 1 && S.historico.length >= 3 && Object.keys(S.desafios).length >= 1), 'favoritos, histórico e desafios persistem após recarregar');
+  checar(await p.evaluate(() => S.favoritos.length === 1 && S.historico.length >= 3 && Object.keys(S.desafios).length >= 6), 'favoritos, histórico e desafios persistem após recarregar');
   await p.evaluate(() => ir('salvos')); await p.waitForTimeout(100);
   checar((await p.$$('.mini')).length >= 4, 'tela de favoritos e histórico');
   // Todas as telas

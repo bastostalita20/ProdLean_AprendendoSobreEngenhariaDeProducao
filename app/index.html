@@ -1022,6 +1022,10 @@ function rotear() {
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", rotear);
+document.addEventListener("click", ev => {
+  const a = ev.target.closest && ev.target.closest('a[href^="#"]');
+  if (a && a.getAttribute("href") === location.hash) { ev.preventDefault(); rotear(); }
+});
 
 // Barra superior com ofensiva, XP do dia, vidas e nível
 function barraTopo() {
@@ -1519,14 +1523,12 @@ function telaDesafio(modo, param) {
   let d;
   if (modo === "ver") d = D.find(x => x.id === param);
   else if (modo === "extra") {
-    const A = areaEstagio(), nao = D.filter(x => !S.desafios[x.id]);
-    let pool = nao.length ? nao : D;
-    if (A) { const pa = pool.filter(x => (x.areas || []).includes(A.id)); if (pa.length) pool = pa; }
-    d = pool[Math.floor(Math.random() * pool.length)];
+    d = D.find(x => x.id === param);
+    if (!d) { location.replace("#desafio/extra/" + sortearExtra()); return; } // cada desafio extra tem seu próprio endereço
   } else d = desafioDoDia();
   if (!d) { app().innerHTML = barraTopo() + `<h1>⚡ Desafio</h1><p class="muted">Nenhum desafio disponível.</p>`; return; }
   const f = FERR(d.ferramenta), reg = S.desafios[d.id];
-  const titulo = modo === "ver" ? "⚡ Desafio" : modo === "extra" ? "⚡ Mais um desafio" : "⚡ Desafio do dia";
+  const titulo = modo === "ver" ? "⚡ Desafio" : modo === "extra" ? "⚡ Desafio extra" : "⚡ Desafio do dia";
   const areas = (d.areas || []).map(a => PROB().areasEstagio.find(y => y.id === a)).filter(Boolean);
   const cab = barraTopo() + `<h1>${titulo}</h1><p class="lead">Resolva em 2 minutos. Um problema real, uma decisão.</p>
     <div class="row wrap mb"><span class="chip-nivel">⏱️ ~2 min</span>${areas.map(a => `<span class="chip-nivel">${a.icone} ${esc(a.nome)}</span>`).join("")}</div>`;
@@ -1537,9 +1539,9 @@ function telaDesafio(modo, param) {
     <div class="bloco serio"><div class="tag">🏭 Na prática</div>${fmt(d.pratica)}</div>
     <button class="btn small sec mb" id="ouvir-desafio">🔊 Ouvir a explicação</button>
     ${f ? `<h2 class="sec-t">Quer entender melhor?</h2><div class="lista">${htmlItem({ href: "#ferramenta/" + d.ferramenta, icone: f.icone, tipo: "Ferramenta", titulo: f.nome, sub: f.oque })}</div>` : ""}
-    <a class="btn" href="#desafio/extra">⚡ Mais um desafio</a>
+    <a class="btn" href="#desafio/extra/${sortearExtra(d.id)}">⚡ Mais um desafio</a>
     <a class="btn sec" href="#desafio/historico">🕘 Desafios feitos (${Object.keys(S.desafios).length})</a>`;
-  const jaFeito = reg && (modo === "ver" || (modo !== "extra" && reg.data === hoje()));
+  const jaFeito = reg && (modo === "ver" || reg.data === hoje());
   const ligarOuvir = () => { $("#ouvir-desafio").onclick = () => falar(["Resposta: " + d.opcoes[d.correta] + ".", "Por quê? " + d.porque, "Na prática: " + d.pratica], "Desafio"); };
   if (jaFeito) { app().innerHTML = cab + resultado(reg.acertou); ligarOuvir(); return; }
   app().innerHTML = cab + `<div id="qarea" class="lesson-pad"></div>`;
@@ -1553,6 +1555,14 @@ function telaDesafio(modo, param) {
     ligarOuvir();
     window.scrollTo(0, 0);
   });
+}
+// Sorteia um desafio ainda não feito (da área do Modo Estágio, se houver), diferente do atual
+function sortearExtra(atual) {
+  const D = (window.DESAFIOS || []).filter(x => x.id !== atual), A = areaEstagio();
+  const nao = D.filter(x => !S.desafios[x.id]);
+  let pool = nao.length ? nao : D;
+  if (A) { const pa = pool.filter(x => (x.areas || []).includes(A.id)); if (pa.length) pool = pa; }
+  return pool.length ? pool[Math.floor(Math.random() * pool.length)].id : (atual || "");
 }
 function telaHistoricoDesafios() {
   const D = window.DESAFIOS || [];
