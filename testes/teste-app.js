@@ -361,7 +361,7 @@ async function recuperarVidas(p) {
   for (const [nome, vp] of [['320', { width: 320, height: 640 }], ['tablet', { width: 768, height: 1024 }], ['desktop', { width: 1280, height: 800 }]]) {
     const cx = await b.newContext({ viewport: vp });
     const pg = await cx.newPage(); let larg = true;
-    for (const r of ['licao/m01-l1', 'inicio', 'ferramenta/mrp', 'problemas', 'desafio', 'estudar']) {
+    for (const r of ['licao/m01-l1', 'inicio', 'ferramenta/mrp', 'problemas', 'desafio', 'estudar', 'conteudo/g-logist', 'conteudo/g-calc1', 'conteudo/m03', 'consulta/l%3Ag-logist-l2']) {
       await pg.goto('http://localhost:8765/index.html#' + r); await pg.waitForTimeout(400);
       if (!(await pg.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))) { larg = false; log('   rolagem horizontal em', nome, r); }
     }
@@ -369,6 +369,24 @@ async function recuperarVidas(p) {
     await pg.screenshot({ path: `${SP}/n-largura-${nome}.png`, fullPage: true });
     await cx.close();
   }
+  // ===== 5) Ouvir o conteúdo (a fala é interceptada: o teste confere o que seria lido) =====
+  const ov = await b.newContext({ ...devices['Pixel 7'] });
+  const po = await ov.newPage(); const errosOv = []; po.on('pageerror', e => errosOv.push(e.message));
+  await po.addInitScript(() => { window.__falas = []; SpeechSynthesis.prototype.speak = function (u) { window.__falas.push(u.text); }; });
+  await po.goto('http://localhost:8765/index.html'); await po.waitForSelector('.topbar');
+  for (const [rota, sel, deveTer] of [
+    ['conteudo/m03', '#ouvir-mod', 'Planejamento'], ['conteudo/m03/m03-l6', '[data-ouvir-l="m03-l6"]', 'Capacidade'],
+    ['conteudo/g-logist', '#ouvir-tudo', 'Curva ABC'], ['conteudo/g-logist', '[data-ouvir-tp="1"]', 'Gestão de estoques'], ['conteudo/g-logist', '#ouvir', 'Logística'],
+    ['ferramenta/lec', '#ouvir-ficha', 'O que é'], ['consulta/l%3Am04-l5', '#ouvir-ficha', 'Takt'], ['problema/estoque-demais', '#ouvir-prob', 'Por onde começar']]) {
+    await po.evaluate(r => ir(r), rota); await po.waitForTimeout(150);
+    await po.evaluate(() => { window.__falas = []; }); await po.click(sel); await po.waitForTimeout(50);
+    const r = await po.evaluate(() => ({ n: __falas.length, txt: __falas.join(' '), barra: !document.querySelector('#listenbar').classList.contains('hidden') }));
+    checar(r.n > 0 && r.barra && r.txt.includes(deveTer) && !r.txt.includes('|'), `ouvir: ${rota} ${sel} (${r.n} frases)`);
+    await po.click('#listen-stop');
+  }
+  checar(await po.evaluate(() => document.querySelector('#listenbar').classList.contains('hidden')), 'botão Parar encerra a leitura');
+  checar(!errosOv.length, 'ouvir sem erros de JavaScript');
+  await ov.close();
   await b.close();
   log(falhas.length ? `\n❌ ${falhas.length} FALHA(S):\n- ` + falhas.join('\n- ') : '\n✅ TODOS OS TESTES PASSARAM');
   process.exit(falhas.length ? 1 : 0);

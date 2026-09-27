@@ -352,6 +352,7 @@ input[type="range"] { width: 100%; }
 @keyframes drop { from { transform: translate(-50%, -30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 70; }
 .errbox { background: var(--err-soft); color: var(--err); border: 2px solid var(--err); border-radius: 12px; padding: 10px; font-size: .85rem; margin: 10px 0; white-space: pre-line; }
+.ouvindo .app { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
 .listen-bar { position: fixed; left: 0; right: 0; bottom: calc(64px + env(safe-area-inset-bottom)); z-index: 35; display: flex; justify-content: center; padding: 0 16px; }
 .listen-bar .inner { width: 100%; max-width: 560px; background: #46178f; color: #fff; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
 .listen-bar button { background: rgba(255,255,255,.2); border: 0; color: #fff; border-radius: 10px; padding: 6px 10px; font-weight: 800; }
@@ -919,7 +920,9 @@ function proximoToast() {
    VOZ: "Ouvir a lição" (síntese de voz do navegador, em português)
    --------------------------------------------------------------------- */
 function limparParaFala(t) {
-  return String(t || "").replace(/\*\*/g, "").replace(/\*/g, "")
+  return String(t || "").replace(/^\s*\|[\s:|-]+\|\s*$/gm, "").replace(/\|/g, ", ") // tabelas: lê as células, não as barras
+    .replace(/\/h\b/g, " por hora").replace(/\/(dia|mês|ano|semana|turno|pedido|unidade|un|min|kg|t)\b/g, " por $1") // unidades: "un/dia" → "un por dia"
+    .replace(/\*\*/g, "").replace(/\*/g, "")
     .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu, "")
     // símbolos de fórmulas lidos por extenso (estatística, matemática)
     .replace(/x̄/g, "x barra").replace(/ȳ/g, "y barra").replace(/ŷ/g, "y chapéu").replace(/μ₀/g, "mi zero")
@@ -944,12 +947,13 @@ function falar(partes, titulo = "Ouvindo…") {
   if (!lista.length) return;
   $("#listen-title").textContent = titulo;
   $("#listenbar").classList.remove("hidden");
+  document.body.classList.add("ouvindo");
   desbloquear("ouvinte");
   lista.forEach((txt, i) => {
     const u = new SpeechSynthesisUtterance(txt);
     u.lang = "pt-BR"; u.rate = S.config.velocidadeVoz;
     const v = vozPT(); if (v) u.voice = v;
-    if (i === lista.length - 1) u.onend = () => $("#listenbar").classList.add("hidden");
+    if (i === lista.length - 1) u.onend = () => { $("#listenbar").classList.add("hidden"); document.body.classList.remove("ouvindo"); };
     speechSynthesis.speak(u);
   });
 }
@@ -959,7 +963,19 @@ function textoFalaBloco(b) {
   if (b.legenda) partes.push("Onde: " + b.legenda.map(([s, d]) => `${s}: ${d}`).join("; "));
   return partes;
 }
-function pararFala() { if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#listenbar").classList.add("hidden"); }
+function pararFala() { if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#listenbar").classList.add("hidden"); document.body.classList.remove("ouvindo"); }
+// Textos para ouvir: uma lição inteira (no nível escolhido) e um tópico da grade
+function textoFalaLicao(l, nivel) {
+  const nv = niveisDaLicao(l).includes(nivel) ? nivel : niveisDaLicao(l)[0];
+  return ["Lição: " + l.titulo + "."].concat(doNivel(l.blocos, nv).filter(b => b.tipo !== "mapa").flatMap(textoFalaBloco));
+}
+function textoFalaTopico(tp, i) {
+  const p = [`Tópico ${i + 1}: ${tp.t}.`].concat(tp.pontos || []);
+  (tp.formulas || []).forEach(([f, sig]) => p.push(`Fórmula: ${f}. ${sig}.`));
+  if (tp.producao) p.push("Na produção: " + tp.producao);
+  if (tp.exemplo) p.push("Exemplo: " + tp.exemplo);
+  return p;
+}
 document.getElementById("listen-stop").onclick = pararFala;
 if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => {}; // força carregar as vozes
 
@@ -1349,7 +1365,7 @@ function mostrarFicha(F, item, padraoVoltar) {
   const c3 = [
     F.quando ? `<div class="bloco dica"><div class="tag">📌 Quando usar</div>${fmt(F.quando)}</div>` : "",
     (F.dados || []).length ? `<div class="bloco texto"><div class="tag">🗂️ Quais dados preciso</div><ul class="dados-list">${F.dados.map(x => `<li>${fmt(x)}</li>`).join("")}</ul></div>` : "",
-    (F.formulasTxt || []).length ? `<div class="bloco formula"><div class="tag">📐 Fórmula</div>${F.formulasTxt.map(([f, s]) => `<div class="fx-l"><span class="fx">${esc(f)}</span><span class="small muted">${fmt(s)}</span></div>`).join("")}</div>` : "",
+    (F.formulasTxt || []).length ? `<div class="bloco formula"><div class="tag">📐 Fórmula</div>${htmlLegenda(F.formulasTxt, true)}</div>` : "",
     (F.formulas || []).map(htmlBloco).join(""),
     (F.entenda || []).map(htmlBloco).join(""),
     F.errosTxt ? `<div class="bloco atencao"><div class="tag">⚠️ Erros comuns</div>${fmt(F.errosTxt)}</div>` : (F.erros || []).map(blocoErro).join("")
@@ -1363,7 +1379,8 @@ function mostrarFicha(F, item, padraoVoltar) {
   const niveis = [["c-30s", "⚡ 30 s", c30], ["c-3min", "📚 3 min", c3], ["c-pratica", "🏭 Na prática", cPr], ["c-teste", "🧠 Teste", cTe], ["c-aprofunde", "🔬 Aprofunde", cAp]].filter(x => x[2]);
   app().innerHTML = barraTopo() + `<p class="small"><a href="javascript:void(0)" id="voltar">‹ Voltar</a></p>
     <div class="ficha-head"><span class="eyebrow">${esc(F.tipo)}</span><h1>${F.icone} ${esc(F.titulo)}</h1>
-      <p class="small muted">${esc(F.origem)}</p><button class="favbtn" id="fav">☆ Salvar</button></div>
+      <p class="small muted">${esc(F.origem)}</p>
+      <div class="row wrap"><button class="favbtn" id="fav">☆ Salvar</button><button class="favbtn" id="ouvir-ficha">🔊 Ouvir</button></div></div>
     <nav class="cnav" aria-label="Níveis da consulta">${niveis.map(([id, t]) => `<button data-ir="${id}">${t}</button>`).join("")}</nav>
     ${secao("c-30s", "⚡", "30 segundos", "Resumo", c30)}
     ${secao("c-3min", "📚", "3 minutos", "Entenda", c3)}
@@ -1374,6 +1391,7 @@ function mostrarFicha(F, item, padraoVoltar) {
   $$("[data-ir]").forEach(b => b.onclick = () => document.getElementById(b.dataset.ir).scrollIntoView({ behavior: "smooth", block: "start" }));
   $$("[data-revelar]").forEach(b => b.onclick = () => { b.nextElementSibling.classList.remove("hidden"); b.remove(); });
   ligarFavorito(item);
+  $("#ouvir-ficha").onclick = () => falar(textoFalaFicha(F), F.titulo);
   const bt = $("#testar");
   if (bt) bt.onclick = () => {
     const area = $("#teste-area");
@@ -1387,6 +1405,20 @@ function mostrarFicha(F, item, padraoVoltar) {
         ${praticar ? `<a class="btn sec" href="${praticar.href}">🎮 Praticar mais nesta lição</a>` : ""}`;
     });
   };
+}
+// Ordem de leitura da ficha: resumo → entenda → erros → prática
+function textoFalaFicha(F) {
+  const p = [F.titulo + ".", "O que é: " + F.resumo];
+  if (F.paraque) p.push("Para que serve: " + F.paraque);
+  if (F.quando) p.push("Quando usar: " + F.quando);
+  if ((F.dados || []).length) p.push("Dados necessários: " + F.dados.join("; ") + ".");
+  (F.formulasTxt || []).forEach(([f, sig]) => p.push(`Fórmula: ${f}. ${sig}.`));
+  (F.formulas || []).concat(F.entenda || []).forEach(b => p.push(...textoFalaBloco(b)));
+  if (F.errosTxt) p.push("Erros comuns: " + F.errosTxt);
+  (F.erros || []).forEach(b => p.push("Erros comuns. " + (b.titulo || ""), b.texto));
+  if (F.exemploTxt) p.push("Exemplo prático: " + F.exemploTxt);
+  (F.pratica || []).forEach(b => p.push(...textoFalaBloco(b)));
+  return p;
 }
 function telaConsulta(kParam) {
   const k = dec(kParam);
@@ -1455,12 +1487,14 @@ function telaProblema(id) {
   registrarVisita(item);
   app().innerHTML = barraTopo() + `<p class="small"><a href="#problemas/${c.id}">‹ ${c.icone} ${esc(c.nome)}</a></p>
     <div class="ficha-head"><span class="eyebrow">🚨 Problema</span><h1>${esc(p.titulo)}</h1><p class="lead">${esc(p.desc)}</p>
-      <button class="favbtn" id="fav">☆ Salvar</button></div>
+      <div class="row wrap"><button class="favbtn" id="fav">☆ Salvar</button><button class="favbtn" id="ouvir-prob">🔊 Ouvir</button></div></div>
     <div class="bloco dica mt"><div class="tag">🧭 Por onde começar</div>${fmt(p.comecar)}</div>
     <h2 class="sec-t">Ferramentas que podem ajudar</h2>
     <div class="lista">${p.ferramentas.map((fid, i) => { const f = FERR(fid); return htmlItem({ href: "#ferramenta/" + fid, icone: f.icone, tipo: i === 0 ? "Comece por aqui" : "Ferramenta", titulo: f.nome, sub: f.paraque }); }).join("")}</div>
     <p class="small muted">Cada ferramenta mostra o que é, para que serve, quando usar, os dados necessários, um exemplo prático e onde aprofundar.</p>`;
   ligarFavorito(item);
+  $("#ouvir-prob").onclick = () => falar([p.titulo + ".", p.desc, "Por onde começar: " + p.comecar,
+    "Ferramentas que podem ajudar: " + p.ferramentas.map(f => FERR(f).nome).join("; ") + "."], p.titulo);
 }
 
 /* =====================================================================
@@ -1501,11 +1535,13 @@ function telaDesafio(modo, param) {
     <div class="bloco ${acertou ? "dica" : "atencao"}"><div class="tag">${acertou ? "✅ Resposta certa" : "❌ Não foi dessa vez"}</div><b>Resposta:</b> ${fmt(d.opcoes[d.correta])}</div>
     <div class="bloco conceito"><div class="tag">🤔 Por quê?</div>${fmt(d.porque)}</div>
     <div class="bloco serio"><div class="tag">🏭 Na prática</div>${fmt(d.pratica)}</div>
+    <button class="btn small sec mb" id="ouvir-desafio">🔊 Ouvir a explicação</button>
     ${f ? `<h2 class="sec-t">Quer entender melhor?</h2><div class="lista">${htmlItem({ href: "#ferramenta/" + d.ferramenta, icone: f.icone, tipo: "Ferramenta", titulo: f.nome, sub: f.oque })}</div>` : ""}
     <a class="btn" href="#desafio/extra">⚡ Mais um desafio</a>
     <a class="btn sec" href="#desafio/historico">🕘 Desafios feitos (${Object.keys(S.desafios).length})</a>`;
   const jaFeito = reg && (modo === "ver" || (modo !== "extra" && reg.data === hoje()));
-  if (jaFeito) { app().innerHTML = cab + resultado(reg.acertou); return; }
+  const ligarOuvir = () => { $("#ouvir-desafio").onclick = () => falar(["Resposta: " + d.opcoes[d.correta] + ".", "Por quê? " + d.porque, "Na prática: " + d.pratica], "Desafio"); };
+  if (jaFeito) { app().innerHTML = cab + resultado(reg.acertou); ligarOuvir(); return; }
   app().innerHTML = cab + `<div id="qarea" class="lesson-pad"></div>`;
   const q = { id: "desafio-" + d.id, tipo: "multipla", pergunta: d.pergunta, opcoes: d.opcoes, correta: d.correta, explicacao: d.porque };
   renderQuestao(q, $("#qarea"), acertou => {
@@ -1514,6 +1550,7 @@ function telaDesafio(modo, param) {
     salvar();
     if (primeira) ganharXP(acertou ? 10 : 3); // conta para a meta diária e a ofensiva
     app().innerHTML = cab + resultado(acertou);
+    ligarOuvir();
     window.scrollTo(0, 0);
   });
 }
@@ -1702,11 +1739,13 @@ function telaDisciplina(m, alvo) {
     ${rel.length ? `<div class="bloco conexao"><div class="tag">🟣 Aprofunde no curso</div>${rel.map(r => `<a href="#conteudo/${r.id}">${r.icone} Módulo ${r.numero} — ${esc(r.titulo)}</a>`).join("<br>")}</div>` : ""}
     <div class="row wrap mb"><a class="btn small" href="#licao/${proxL.id}" style="text-decoration:none">🎮 Exercícios</a>
       <a class="btn small sec" href="#mapa/${m.id}" style="text-decoration:none">🧠 Mapa mental</a>
-      <button class="btn small sec" id="ouvir">🎧 Ouvir</button></div>
+      <button class="btn small sec" id="ouvir">🎧 Ouvir resumo</button>
+      <button class="btn small sec" id="ouvir-tudo">🎧 Ouvir tudo</button></div>
     ${d.topicos.map((tp, i) => `<div class="topico" id="tp-${m.licoes[i].id}">
       <h2>${i + 1}. ${esc(tp.t)}</h2>
+      <button class="btn small sec mb" data-ouvir-tp="${i}">🔊 Ouvir este tópico</button>
       ${(tp.pontos || []).length ? `<ul class="pontos">${tp.pontos.map(p => `<li>${fmt(p)}</li>`).join("")}</ul>` : ""}
-      ${(tp.formulas || []).length ? `<div class="bloco formula"><div class="tag">🔵 Fórmulas e significados</div><table class="legenda">${tp.formulas.map(([f, s]) => `<tr><td>${esc(f)}</td><td>${fmt(s)}</td></tr>`).join("")}</table></div>` : ""}
+      ${(tp.formulas || []).length ? `<div class="bloco formula"><div class="tag">🔵 Fórmulas e significados</div>${htmlLegenda(tp.formulas)}</div>` : ""}
       ${tp.producao ? `<div class="bloco serio"><div class="tag">🏭 Na produção</div>${fmt(tp.producao)}</div>` : ""}
       ${tp.exemplo ? `<div class="bloco exemplo"><div class="tag">🧮 Exemplo</div>${fmt(tp.exemplo)}</div>` : ""}
       <p class="small"><a href="#licao/${m.licoes[i].id}">🎮 Exercícios deste tópico (${m.licoes[i].questoes.length})</a></p></div>`).join("")}
@@ -1714,6 +1753,8 @@ function telaDisciplina(m, alvo) {
     ${(d.referencias || []).length ? `<div class="bloco referencia"><div class="tag">📚 Para aprofundar</div>${d.referencias.map(r => "• " + fmt(r)).join("<br>")}</div>` : ""}
     <p class="small muted">Conteúdo de estudo elaborado a partir dos temas usuais desta disciplina; não substitui a ementa oficial e o plano de ensino do professor.</p>`;
   $("#ouvir").onclick = () => falar(m.resumoAudio, "Resumo: " + m.titulo);
+  $("#ouvir-tudo").onclick = () => falar([d.nome + ".", d.intro].concat(d.topicos.flatMap(textoFalaTopico)), d.nome);
+  $$("[data-ouvir-tp]").forEach(b => b.onclick = () => { const i = +b.dataset.ouvirTp; falar(textoFalaTopico(d.topicos[i], i), d.topicos[i].t); });
   if (alvo) rolarAte("tp-" + alvo);
 }
 function telaModuloLeitura(m, alvo) {
@@ -1725,15 +1766,20 @@ function telaModuloLeitura(m, alvo) {
       <h1>${m.icone} Módulo ${m.numero} — ${esc(m.titulo)}</h1>
       <p class="muted small">${esc(m.objetivo || "")}</p>
       ${temNiveis ? `<div class="seg">${ORDEM_NIVEIS.map(n => `<button data-n="${n}" class="${n === nivel ? "on" : ""}">${NIVEIS_ESTUDO[n].icone} ${NIVEIS_ESTUDO[n].nome}</button>`).join("")}</div>` : ""}
-      <div class="row wrap mb mt"><a class="btn small sec" href="#mapa/${m.id}" style="text-decoration:none">🧠 Mapa mental</a>
+      <div class="row wrap mb mt"><button class="btn small sec" id="ouvir-mod">🎧 Ouvir o módulo</button>
+        <a class="btn small sec" href="#mapa/${m.id}" style="text-decoration:none">🧠 Mapa mental</a>
         ${(m.glossario || []).length ? `<a class="btn small sec" href="#glossario/${m.id}" style="text-decoration:none">📖 Glossário</a>` : ""}</div>
       ${m.licoes.map((l, i) => {
         const nv = niveisDaLicao(l).includes(nivel) ? nivel : niveisDaLicao(l)[0];
         return `<details class="periodo" id="lic-${l.id}" ${i === iAlvo ? "open" : ""}><summary><b>${l.icone || "⭐"} ${esc(l.titulo)}</b></summary>
+          <button class="btn small sec mb" data-ouvir-l="${l.id}">🔊 Ouvir esta lição</button>
           ${doNivel(l.blocos, nv).map(htmlBloco).join("")}
           <p class="small"><a href="#licao/${l.id}">🎮 Exercícios desta lição</a></p></details>`;
       }).join("")}`;
     $$(".seg button").forEach(b => b.onclick = () => { nivel = b.dataset.n; desenhar(); });
+    const nomeNv = nivel !== "unico" ? ` (${NIVEIS_ESTUDO[nivel].nome})` : "";
+    $("#ouvir-mod").onclick = () => falar([`Módulo ${m.numero}: ${m.titulo}.`, m.objetivo || ""].concat(m.licoes.flatMap(l => textoFalaLicao(l, nivel))), m.titulo + nomeNv);
+    $$("[data-ouvir-l]").forEach(b => b.onclick = () => { const l = m.licoes.find(x => x.id === b.dataset.ouvirL); falar(textoFalaLicao(l, nivel), l.titulo + nomeNv); });
     $$("[data-revelar]").forEach(b => b.onclick = () => { b.nextElementSibling.classList.remove("hidden"); b.remove(); });
   }
   desenhar();
@@ -2175,6 +2221,12 @@ const ROTULO_BLOCO = {
   contexto: "🏭 Por que isso importa", exemplo: "🧮 Exemplo resolvido", passos: "🛠️ Passo a passo",
   limitacao: "⚖️ Limitações e trade-offs", referencia: "📚 Para aprofundar"
 };
+// Legenda de fórmulas: símbolos curtos em tabela; fórmulas longas empilhadas (não estouram a largura do celular)
+function htmlLegenda(lista, empilhar = false) {
+  if (empilhar || lista.some(([sim]) => String(sim).length > 12))
+    return lista.map(([f, sig]) => `<div class="fx-l"><span class="fx">${esc(f)}</span><span class="small muted">${fmt(sig)}</span></div>`).join("");
+  return `<table class="legenda">${lista.map(([sim, desc]) => `<tr><td>${esc(sim)}</td><td>${fmt(desc)}</td></tr>`).join("")}</table>`;
+}
 function htmlBloco(b) {
   if (b.tipo === "recall") {
     return `<div class="bloco recall"><div class="tag">${ROTULO_BLOCO.recall}</div><h3>${fmt(b.pergunta)}</h3>
@@ -2183,7 +2235,7 @@ function htmlBloco(b) {
   }
   let corpo = b.tipo === "mapa" ? `<pre${b.largo ? ' style="white-space: pre"' : ""}>${esc(b.texto)}</pre>` : fmt(b.texto);  // largo: rola na horizontal em vez de quebrar (ex.: Gantt)
   // Fórmulas com legenda das variáveis
-  if (b.legenda) corpo += `<table class="legenda">${b.legenda.map(([sim, desc]) => `<tr><td>${esc(sim)}</td><td>${fmt(desc)}</td></tr>`).join("")}</table>`;
+  if (b.legenda) corpo += htmlLegenda(b.legenda);
   // não repete o título quando ele é igual ao rótulo do bloco (ex.: "Por que isso importa")
   const repetido = b.titulo && (ROTULO_BLOCO[b.tipo] || "").toLowerCase().endsWith(String(b.titulo).toLowerCase());
   return `<div class="bloco ${b.tipo}"><div class="tag">${ROTULO_BLOCO[b.tipo] || ""}</div>${b.titulo && !repetido ? `<h3>${fmt(b.titulo)}</h3>` : ""}${corpo}</div>`;
@@ -2682,11 +2734,7 @@ function telaOuvir() {
   $$("[data-res]").forEach(b => b.onclick = () => { const m = modulo(b.dataset.res); falar(m.resumoAudio, "Resumo: " + m.titulo); });
   $$("[data-tudo]").forEach(b => b.onclick = () => {
     const m = modulo(b.dataset.tudo), partes = [];
-    m.licoes.filter(l => licaoLiberada(l.id)).forEach(l => {
-      partes.push("Lição: " + l.titulo);
-      const nv = niveisDaLicao(l).includes(S.config.nivel) ? S.config.nivel : niveisDaLicao(l)[0];
-      doNivel(l.blocos, nv).forEach(x => partes.push(...textoFalaBloco(x)));
-    });
+    m.licoes.filter(l => licaoLiberada(l.id)).forEach(l => partes.push(...textoFalaLicao(l, S.config.nivel)));
     falar(partes, "Lições: " + m.titulo);
   });
 }
