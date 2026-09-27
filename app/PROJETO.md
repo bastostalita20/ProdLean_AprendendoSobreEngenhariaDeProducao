@@ -24,7 +24,10 @@ app/
     ├── modulo-13.js    ← Módulo 13 — Estatística (12 lições)
     ├── modulo-02.js    ← Módulo 2 — Gestão de Projetos (10 lições, 3 níveis)
     ├── modulo-04.js    ← Módulo 4 — Engenharia de Métodos (7 lições, 3 níveis)
+    ├── modulo-03.js    ← Módulo 3 — PCP (8 lições, 3 níveis)
+    ├── modulo-06.js    ← Módulo 6 — Lean (9 lições, 3 níveis)
     ├── modulo-14.js    ← Módulo 14 — Dados e Analytics (8 lições, 3 níveis, trilha paralela)
+    ├── grade/p01.js … p09.js ← disciplinas da grade curricular, por período (seção 10)
     └── banco-questoes.js ← questões extras e modelos com números sorteados (sempre por último)
 parametros.js           ← motor das questões com números sorteados
 ```
@@ -35,8 +38,12 @@ parametros.js           ← motor das questões com números sorteados
 
 | Tela | Rota | O que tem |
 |---|---|---|
-| 🏠 **Início** | `#inicio` | Chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar** (próxima lição), nível e barra até o próximo, atalhos para Revisão, Flashcards, Quiz e Modo ônibus. |
-| 🗺️ **Trilha** | `#trilha` | Caminho em zigue-zague com "bolinhas": ✓ dourada = concluída, verde pulsando = atual ("COMEÇAR"), 🔒 = bloqueada. Faixa de cada módulo com objetivo, progresso, 🎧 Ouvir resumo e 🃏 Flashcards. |
+| 🏠 **Início** | `#inicio` | Três entradas grandes: **🎮 Exercícios**, **🧠 Mapas mentais** e **📚 Conteúdo**, mais “Continuar de onde parei”. |
+| 🎮 **Exercícios** | `#exercicios` | A interface de estudo gamificada: chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar**, nível, atalhos para a Trilha do curso, a Grade CEFET, Revisão, Flashcards, Quiz e Modo ônibus. |
+| 📚 **Conteúdo** | `#conteudo` · `#conteudo/g-calc1` · `#conteudo/m03` | Leitura por disciplina da grade (agrupada por período, com busca) ou por módulo do curso (com seletor de nível). Cada disciplina mostra tópicos, fórmulas com o significado de cada símbolo, “Na produção”, exemplos e glossário. |
+| 🧠 **Mapas mentais** | `#mapas` · `#mapa/g-calc1` | Escolha a matéria e o que entra (tópicos, fórmulas, significados dos símbolos, glossário, aplicações, exemplos, mnemônicos, quais tópicos, preto e branco). O mapa é desenhado numa folha **A4 (210 × 297 mm)**, com a fonte ajustada automaticamente para caber, e pode ser impresso ou salvo em PDF. |
+| 🗺️ **Trilha** | `#trilha` · `#trilha/grade/3` | Duas abas: **📘 Curso** (módulos) e **🎓 Grade CEFET** (disciplinas por período; cada uma começa liberada). |
+| 🗺️ (detalhe) | `#trilha` | Caminho em zigue-zague com "bolinhas": ✓ dourada = concluída, verde pulsando = atual ("COMEÇAR"), 🔒 = bloqueada. Faixa de cada módulo com objetivo, progresso, 🎧 Ouvir resumo e 🃏 Flashcards. |
 | 📖 **Lição** | `#licao/m01-l1` | Fase 1: blocos curtos, um por vez, com a cor do curso (🔴🟡🟢🔵🟣), perguntas "🤔 Antes de ler" com botão Revelar e 🔊 Ouvir. Fase 2: exercícios; errou → perde ❤️ e a questão volta para o fim. Tela final com XP e % de acerto. |
 | ⚡ **Quiz Relâmpago** | `#quiz` | 10 perguntas, 20 s cada, 4 blocos fixos 🔴▲ 🔵◆ 🟡● 🟢■. 500–1000 pontos por acerto (mais rápido = mais pontos) + combo 🔗 (+100 por acerto seguido, até +500). Ranking local (top 10). **Desafio em grupo**: 2 a 6 jogadores passando o celular, placar a cada pergunta e pódio. |
 | 🔁 **Revisar** | `#revisar` | Revisão espaçada (D+1, D+3, D+7, D+15, D+30) das questões erradas, agenda das próximas revisões, treino livre (intercalado), treino de pontos fracos, lista de baralhos de flashcards. |
@@ -263,3 +270,27 @@ glossario: [ { termo: "Folga livre", definicao: "…" } ]
 ## 9. Trilha paralela (`liberaApos`)
 
 Um módulo com `liberaApos: ["m13"]` fica no fim da trilha, mas a sua primeira lição libera assim que os módulos indicados forem concluídos. É o caso do Módulo 14 (Dados), que depende só da Estatística. Lições já concluídas continuam sempre liberadas, mesmo se a ordem da trilha mudar com a chegada de novos módulos.
+
+## 10. Grade curricular (disciplinas) — `conteudo/grade/`
+
+As disciplinas da grade 2017 do Bacharelado em Engenharia de Produção do CEFET/RJ (fluxograma enviado pela aluna) ficam em `conteudo/grade/p01.js` a `p09.js` (o 10º período está em `p09.js`). Cada disciplina é um objeto em `window.DISCIPLINAS`:
+
+```js
+{ id: "g-calc1", codigo: "GEXT-7301", nome: "Cálculo a Uma Variável", periodo: 1,
+  area: "exatas",            // exatas | engenharia | producao | gestao | humanas (define a cor)
+  icone: "📈", creditos: "(5-0-0) 5 créditos",
+  prereq: ["g-..."],         // ids de outras disciplinas (opcional)
+  relacionado: ["m03"],      // módulos do curso que aprofundam o tema (opcional)
+  intro: "Para que serve na Engenharia de Produção…",
+  topicos: [{ t: "Derivadas", pontos: ["frase", …], formulas: [["fórmula", "significado dos símbolos"]],
+              producao: "onde se usa na produção", exemplo: "exemplo resolvido" }],
+  glossario: [["termo", "definição"]],
+  questoes: [{ t: 2, id: "g-calc1-q05", tipo: "multipla", … }]   // t = índice do tópico
+}
+```
+
+- O app converte cada disciplina num **módulo da aba Grade** (uma lição por tópico, com os exercícios daquele tópico). Assim XP, revisão espaçada, quiz e perfil funcionam igual aos módulos.
+- Os mesmos dados alimentam o **Conteúdo** e os **Mapas mentais** (não há duplicação).
+- As matérias de exatas trazem sempre a aplicação em produção (ex.: derivada → custo marginal e lote econômico; limite → custo médio em escala; integral → produção acumulada e energia).
+- Validação: `node testes/validar-grade.js` (ids, tópicos com exercícios, modelos com números sorteados).
+- Observações: o conteúdo segue os temas usuais de cada disciplina e **não substitui a ementa oficial**; algumas posições das colunas F e G do fluxograma (pré-requisitos) não ficaram claras na extração do PDF e foram omitidas.

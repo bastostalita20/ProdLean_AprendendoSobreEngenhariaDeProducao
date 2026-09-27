@@ -145,6 +145,67 @@ p { margin: 0 0 .6rem; }
 .tile .big { font-size: 1.8rem; display: block; }
 .badge { position: absolute; top: 6px; right: 8px; background: var(--err); color: #fff; font-size: .72rem; font-weight: 800; border-radius: 999px; padding: 1px 7px; }
 
+/* Hub, abas, períodos, conteúdo e mapas mentais */
+.hub-card { display: flex; gap: 14px; align-items: center; text-decoration: none; color: #fff; border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px; box-shadow: 0 5px 0 rgba(0,0,0,.25); font-size: 1.4rem; }
+.hub-card b { display: block; font-size: 1.25rem; margin-bottom: 2px; }
+.hub-card .small { display: block; opacity: .92; }
+.hub-card .hub-ico { font-size: 2.6rem; }
+.hub-card.ex { background: linear-gradient(135deg, #1f8a4c, #2fae66); }
+.hub-card.mp { background: linear-gradient(135deg, #6a3fc1, #9b6bea); }
+.hub-card.ct { background: linear-gradient(135deg, #1f5fbf, #3f8ae6); }
+.hub-card .progress { height: 8px; background: rgba(255,255,255,.3); display: block; }
+.hub-card .progress > span { display: block; height: 100%; background: #fff; border-radius: 999px; }
+.seg { display: flex; background: var(--surface-2); border-radius: 12px; padding: 4px; gap: 4px; }
+.seg a, .seg button { flex: 1; text-align: center; padding: 8px 6px; border-radius: 9px; border: 0; background: none; text-decoration: none; color: var(--muted); font-weight: 700; font-size: .9rem; }
+.seg .on { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+.pchips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; }
+.pchips a { flex: 0 0 auto; min-width: 48px; text-align: center; padding: 6px 8px; border-radius: 12px; border: 2px solid var(--border); text-decoration: none; color: var(--text); font-weight: 800; }
+.pchips a small { display: block; font-size: .65rem; color: var(--muted); font-weight: 600; }
+.pchips a.on { border-color: var(--primary); background: var(--primary-soft); }
+.minilink { color: #fff; font-size: .8rem; font-weight: 700; background: rgba(255,255,255,.2); padding: 4px 10px; border-radius: 999px; text-decoration: none; }
+details.periodo { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px; }
+details.periodo summary { cursor: pointer; padding: 4px 0; }
+details.periodo[open] summary { margin-bottom: 8px; }
+.card.disc { margin-bottom: 8px; }
+.disc-head { color: #fff; border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.disc-head h1 { margin: 4px 0; }
+.topico { margin: 18px 0; }
+.topico h2 { border-bottom: 2px solid var(--border); padding-bottom: 4px; }
+ul.pontos { padding-left: 20px; margin: 6px 0 10px; } ul.pontos li { margin-bottom: 6px; }
+.opts { display: flex; flex-direction: column; gap: 6px; font-size: .9rem; }
+.opts label { display: flex; gap: 8px; align-items: center; }
+.a4-wrap { width: 100%; overflow: hidden; position: relative; margin-bottom: 20px; }
+.a4 { --fs: 12px; position: absolute; left: 0; top: 0; transform-origin: 0 0; width: 794px; height: 1123px; background: #fff; color: #1d1d1d; padding: 26px 26px 20px; font-size: var(--fs); line-height: 1.3; box-shadow: 0 2px 10px rgba(0,0,0,.25); display: flex; flex-direction: column; overflow: hidden; }
+.a4 .lig { position: absolute; left: 0; top: 0; width: 794px; height: 1123px; pointer-events: none; z-index: 0; }
+.a4-head, .a4-foot { display: flex; justify-content: space-between; font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: .06em; position: relative; z-index: 1; }
+.a4-foot { margin-top: auto; justify-content: center; padding-top: 6px; }
+.a4-body { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 26px; margin-top: 10px; position: relative; z-index: 1; flex: 1; }
+.a4 .col { display: flex; flex-direction: column; justify-content: space-around; gap: 12px; }
+.a4 .meio { justify-content: center; }
+.a4 .nucleo { background: #1d1d1d; color: #fff; border-radius: 18px; padding: 14px 10px; text-align: center; font-weight: 800; font-size: calc(var(--fs) * 1.35); line-height: 1.2; }
+.a4 .nucleo .ni { font-size: 2.1em; margin-bottom: 4px; }
+.a4 .ramo { background: #fff; border: 2px solid var(--c); border-radius: 12px; overflow: hidden; }
+.a4 .ramo-t { background: var(--c); color: #fff; font-weight: 800; padding: 5px 8px; font-size: calc(var(--fs) * 1.1); }
+.a4 .ramo ul { margin: 0; padding: 6px 8px 6px 22px; }
+.a4 .ramo li { margin-bottom: 3px; }
+.a4 .ramo li.f { list-style: none; margin-left: -14px; background: #f3f5fa; border-radius: 6px; padding: 3px 6px; }
+.a4 .fx { font-family: "Cambria Math", "Times New Roman", serif; font-weight: 700; display: block; font-size: 1.05em; }
+.a4 .sg { display: block; color: #444; font-size: .92em; }
+.a4 .ramo li.pr, .a4 .ramo li.ex, .a4 .ramo li.mn { list-style: none; margin-left: -14px; }
+.a4 .glos { position: relative; z-index: 1; margin-top: 14px; border: 2px dashed #999; border-radius: 12px; padding: 8px 10px; }
+.a4 .glos-t { font-weight: 800; margin-bottom: 4px; }
+.a4 .glos-g { column-count: 2; column-gap: 18px; } .a4 .glos-g div { break-inside: avoid; margin-bottom: 3px; }
+.a4.pb .nucleo { background: #fff; color: #111; border: 3px solid #111; }
+.a4.pb .ramo-t { background: #fff; color: #111; border-bottom: 2px solid #333; }
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { background: #fff !important; }
+  body * { visibility: hidden; }
+  .a4, .a4 * { visibility: visible; }
+  .a4 { position: fixed; left: 0; top: 0; transform: none !important; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .nav, .topbar, .no-print { display: none !important; }
+}
+
 /* =====================================================================
    4. TRILHA (estilo Duolingo)
    ===================================================================== */
@@ -328,9 +389,9 @@ input[type="range"] { width: 100%; }
 <nav class="nav" id="nav">
   <div class="nav-inner">
     <a href="#inicio" data-tab="inicio"><span class="ico">🏠</span>Início</a>
-    <a href="#trilha" data-tab="trilha"><span class="ico">🗺️</span>Trilha</a>
-    <a href="#quiz" data-tab="quiz"><span class="ico">⚡</span>Quiz</a>
-    <a href="#revisar" data-tab="revisar"><span class="ico">🔁</span>Revisar</a>
+    <a href="#exercicios" data-tab="exercicios"><span class="ico">🎮</span>Exercícios</a>
+    <a href="#mapas" data-tab="mapas"><span class="ico">🧠</span>Mapas</a>
+    <a href="#conteudo" data-tab="conteudo"><span class="ico">📚</span>Conteúdo</a>
     <a href="#perfil" data-tab="perfil"><span class="ico">👤</span>Perfil</a>
   </div>
 </nav>
@@ -495,6 +556,9 @@ const errosConteudo = []; // problemas encontrados nos arquivos de conteúdo
 
 function prepararConteudo() {
   MODS = (window.MODULOS || []).slice().sort((a, b) => (a.ordem ?? a.numero) - (b.ordem ?? b.numero));
+  (window.DISCIPLINAS || []).slice().sort((a, b) => a.periodo - b.periodo).forEach((d, k) => {
+    try { MODS.push(disciplinaParaModulo(d, k)); } catch (e) { errosConteudo.push(`Disciplina "${d.nome || d.id}": ${e.message}`); }
+  });
   // Banco de questões extra (conteudo/banco-questoes.js): cada item diz em que lição entra
   (window.BANCO || []).forEach(item => {
     const l = MODS.flatMap(m => m.licoes || []).find(x => x.id === item.licao);
@@ -545,6 +609,7 @@ function licaoLiberada(id) {
   if (i < 0) return false;
   // Trilha paralela: a 1ª lição de um módulo com "liberaApos" depende só desses módulos
   const m = modulo(LICOES[i].modulo);
+  if (m && m.grade && m.licoes[0].id === id) return true; // cada disciplina da grade começa liberada
   if (m && m.liberaApos && m.licoes[0].id === id)
     return [].concat(m.liberaApos).every(mid => { const pre = modulo(mid); return pre && moduloConcluido(pre); });
   return licaoConcluida(LICOES[i - 1].id);
@@ -855,14 +920,16 @@ function rotear() {
   atualizarVidasDoDia();
   const [nome, param, param2] = (location.hash.slice(1) || "inicio").split("/");
   const telas = {
-    inicio: telaInicio, trilha: telaTrilha, licao: telaLicao, quiz: telaQuiz, revisar: telaRevisar,
+    inicio: telaHub, exercicios: telaInicio, trilha: telaTrilha, licao: telaLicao, quiz: telaQuiz, revisar: telaRevisar,
     revisao: telaSessaoRevisao, flashcards: telaFlashcards, perfil: telaPerfil, conquistas: telaConquistas,
-    config: telaConfig, ouvir: telaOuvir, glossario: telaGlossario
+    config: telaConfig, ouvir: telaOuvir, glossario: telaGlossario,
+    conteudo: telaConteudo, mapas: telaMapas, mapa: telaMapa
   };
   const semNav = ["licao", "revisao", "quizjogo"].includes(nome);
   document.getElementById("nav").classList.toggle("hidden", semNav);
-  $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.tab === nome ||
-    (a.dataset.tab === "revisar" && ["flashcards", "glossario"].includes(nome)) || (a.dataset.tab === "perfil" && ["conquistas", "config"].includes(nome))));
+  const aba = { trilha: "exercicios", quiz: "exercicios", revisar: "exercicios", flashcards: "exercicios", glossario: "exercicios", ouvir: "exercicios",
+    mapa: "mapas", conquistas: "perfil", config: "perfil" }[nome] || nome;
+  $$("#nav a").forEach(a => a.classList.toggle("active", a.dataset.tab === aba));
   (telas[nome] || telaInicio)(param, param2);
   window.scrollTo(0, 0);
 }
@@ -881,7 +948,291 @@ function barraTopo() {
 }
 
 /* =====================================================================
-   TELA: INÍCIO
+   GRADE CURRICULAR (disciplinas) — conteudo/grade/*.js
+   Cada disciplina vira um "módulo" da trilha (aba Grade), com uma lição
+   por tópico. O mesmo dado alimenta o Conteúdo e os Mapas mentais.
+   ===================================================================== */
+const AREAS = {
+  exatas:     { nome: "Ciências exatas", cor: "#3b6fd8" },
+  engenharia: { nome: "Engenharia básica", cor: "#8a5cd1" },
+  producao:   { nome: "Engenharia de Produção", cor: "#1f8a4c" },
+  gestao:     { nome: "Gestão e economia", cor: "#d9822b" },
+  humanas:    { nome: "Humanidades", cor: "#c2477a" }
+};
+function disciplinaParaModulo(d, k) {
+  if (!d.id || !d.nome || !Array.isArray(d.topicos) || !d.topicos.length) throw new Error("precisa de id, nome e topicos");
+  const qs = d.questoes || [];
+  return {
+    id: d.id, numero: d.codigo, titulo: d.nome, icone: d.icone || "📘", grade: true, periodo: d.periodo, fonte: d,
+    ordem: 1000 + d.periodo * 100 + k,
+    objetivo: d.intro,
+    resumoAudio: [d.intro].concat(d.topicos.map(tp => tp.t + ". " + (tp.pontos || []).join(" "))).join(" "),
+    glossario: (d.glossario || []).map(([termo, definicao]) => ({ termo, definicao })),
+    licoes: d.topicos.map((tp, i) => {
+      const blocos = [];
+      if (tp.producao) blocos.push({ tipo: "contexto", titulo: "Na Engenharia de Produção", texto: tp.producao });
+      if ((tp.pontos || []).length) blocos.push({ tipo: "conceito", titulo: tp.t, texto: tp.pontos.map(p => "• " + p).join("\n") });
+      if ((tp.formulas || []).length) blocos.push({ tipo: "formula", titulo: "Fórmulas e significados", texto: "", legenda: tp.formulas });
+      if (tp.exemplo) blocos.push({ tipo: "exemplo", titulo: "Exemplo", texto: tp.exemplo });
+      const questoes = qs.filter(q => q.t === i).map(q => { const c = Object.assign({}, q); delete c.t; return c; });
+      if (!questoes.length) errosConteudo.push(`${d.id}: o tópico "${tp.t}" não tem exercícios`);
+      return { id: `${d.id}-l${i + 1}`, titulo: tp.t, icone: tp.icone || d.icone || "📘", blocos, questoes };
+    })
+  };
+}
+const disciplinas = () => MODS.filter(m => m.grade);
+const rotaTrilha = m => m && m.grade ? `trilha/grade/${m.periodo}` : "trilha";
+const nomeDisciplina = id => { const m = modulo(id); return m ? m.titulo : id; };
+
+/* =====================================================================
+   TELA: INÍCIO (hub com as três áreas)
+   ===================================================================== */
+function telaHub() {
+  const prox = proximaLicao();
+  const total = LICOES.length, feitas = LICOES.filter(l => licaoConcluida(l.id)).length;
+  const nDisc = disciplinas().length, nMods = MODS.length - nDisc;
+  const aviso = errosConteudo.length ? `<div class="errbox">⚠️ Encontrei problemas no conteúdo (veja em ⚙️ Configurações → Verificador).</div>` : "";
+  app().innerHTML = barraTopo() + aviso + `
+    <h1>Olá, ${esc(S.config.nome || "estudante")}! 👋</h1>
+    <p class="muted small">O que você quer fazer agora?</p>
+    <a class="hub-card ex" href="#exercicios">
+      <span class="hub-ico">🎮</span>
+      <span class="grow"><b>Exercícios</b><span class="small">Trilha, quiz relâmpago, revisão espaçada e flashcards</span>
+      <span class="progress mt"><span style="width:${total ? Math.round(feitas / total * 100) : 0}%"></span></span>
+      <span class="small">${feitas}/${total} lições concluídas</span></span>›</a>
+    <a class="hub-card mp" href="#mapas">
+      <span class="hub-ico">🧠</span>
+      <span class="grow"><b>Mapas mentais</b><span class="small">Monte mapas em folha A4 com tópicos, fórmulas e significados, escolhendo o que entra. Imprima ou salve em PDF.</span></span>›</a>
+    <a class="hub-card ct" href="#conteudo">
+      <span class="hub-ico">📚</span>
+      <span class="grow"><b>Conteúdo</b><span class="small">${nDisc} disciplinas da grade (por período) e ${nMods} módulos do curso para ler e ouvir</span></span>›</a>
+    ${prox ? `<a class="card link" href="#licao/${prox.id}"><span class="big">▶</span><span class="grow"><b>Continuar de onde parei</b><br><span class="small muted">${esc(prox.titulo)}</span></span>›</a>` : ""}`;
+}
+
+/* =====================================================================
+   TELA: CONTEÚDO (leitura por disciplina ou por módulo)
+   ===================================================================== */
+function listaPorPeriodo(link, filtro) {
+  const norm = t => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const f = norm(filtro || "");
+  let html = "";
+  for (let p = 1; p <= 10; p++) {
+    const ds = disciplinas().filter(m => m.periodo === p && (!f || norm(m.titulo + " " + m.numero).includes(f)));
+    if (!ds.length) continue;
+    html += `<details class="periodo" ${f ? "open" : ""}><summary><b>${p}º período</b> <span class="small muted">· ${ds.length} disciplina${ds.length > 1 ? "s" : ""}</span></summary>
+      ${ds.map(m => { const A = AREAS[m.fonte.area] || AREAS.producao; return `<a class="card link disc" href="${link(m)}" style="border-left:6px solid ${A.cor}">
+        <span class="big">${m.icone}</span><span class="grow"><b>${esc(m.titulo)}</b><br><span class="small muted">${esc(m.numero || "")} · ${A.nome}</span></span>›</a>`; }).join("")}
+    </details>`;
+  }
+  return html;
+}
+function telaConteudo(id) {
+  if (id) { const m = modulo(id); if (!m) { ir("conteudo"); return; } return m.grade ? telaDisciplina(m) : telaModuloLeitura(m); }
+  app().innerHTML = barraTopo() + `<h1>📚 Conteúdo</h1>
+    <p class="muted small">Leia a matéria no seu ritmo. Cada disciplina mostra os tópicos principais, as fórmulas com o significado de cada símbolo e onde aquilo aparece na Engenharia de Produção.</p>
+    <input type="text" id="busca" placeholder="Buscar disciplina (ex.: cálculo, custos)…" aria-label="Buscar disciplina">
+    <h2 class="mt">🎓 Grade curricular</h2><div id="lista"></div>
+    <h2 class="mt">📘 Módulos do curso</h2>
+    ${MODS.filter(m => !m.grade).map(m => `<a class="card link" href="#conteudo/${m.id}"><span class="big">${m.icone}</span>
+      <span class="grow"><b>Módulo ${m.numero} — ${esc(m.titulo)}</b><br><span class="small muted">${m.licoes.length} lições</span></span>›</a>`).join("")}`;
+  const desenhar = f => { $("#lista").innerHTML = listaPorPeriodo(m => "#conteudo/" + m.id, f) || `<p class="muted">Nenhuma disciplina encontrada.</p>`; };
+  desenhar("");
+  $("#busca").oninput = e => desenhar(e.target.value);
+}
+function telaDisciplina(m) {
+  const d = m.fonte, A = AREAS[d.area] || AREAS.producao;
+  const proxL = m.licoes.find(l => !licaoConcluida(l.id)) || m.licoes[0];
+  const pre = (d.prereq || []).map(p => { const x = modulo(p); return x ? `<a href="#conteudo/${x.id}">${esc(x.titulo)}</a>` : esc(p); });
+  const rel = (d.relacionado || []).map(r => modulo(r)).filter(Boolean);
+  app().innerHTML = barraTopo() + `
+    <p class="small"><a href="#conteudo">‹ Conteúdo</a></p>
+    <div class="disc-head" style="background:${A.cor}">
+      <div class="small">${d.periodo}º PERÍODO · ${esc(d.codigo || "")} · ${esc(d.creditos || "")}</div>
+      <h1>${d.icone || "📘"} ${esc(d.nome)}</h1><div class="small">${A.nome}</div></div>
+    ${pre.length ? `<p class="small muted">🧩 Pré-requisitos: ${pre.join(", ")}</p>` : ""}
+    <div class="bloco contexto"><div class="tag">🏭 Para que serve na Engenharia de Produção</div>${fmt(d.intro)}</div>
+    ${rel.length ? `<div class="bloco conexao"><div class="tag">🟣 Aprofunde no curso</div>${rel.map(r => `<a href="#conteudo/${r.id}">${r.icone} Módulo ${r.numero} — ${esc(r.titulo)}</a>`).join("<br>")}</div>` : ""}
+    <div class="row wrap mb"><a class="btn small" href="#licao/${proxL.id}" style="text-decoration:none">🎮 Exercícios</a>
+      <a class="btn small sec" href="#mapa/${m.id}" style="text-decoration:none">🧠 Mapa mental</a>
+      <button class="btn small sec" id="ouvir">🎧 Ouvir</button></div>
+    ${d.topicos.map((tp, i) => `<div class="topico">
+      <h2>${i + 1}. ${esc(tp.t)}</h2>
+      ${(tp.pontos || []).length ? `<ul class="pontos">${tp.pontos.map(p => `<li>${fmt(p)}</li>`).join("")}</ul>` : ""}
+      ${(tp.formulas || []).length ? `<div class="bloco formula"><div class="tag">🔵 Fórmulas e significados</div><table class="legenda">${tp.formulas.map(([f, s]) => `<tr><td>${esc(f)}</td><td>${fmt(s)}</td></tr>`).join("")}</table></div>` : ""}
+      ${tp.producao ? `<div class="bloco serio"><div class="tag">🏭 Na produção</div>${fmt(tp.producao)}</div>` : ""}
+      ${tp.exemplo ? `<div class="bloco exemplo"><div class="tag">🧮 Exemplo</div>${fmt(tp.exemplo)}</div>` : ""}
+      <p class="small"><a href="#licao/${m.licoes[i].id}">🎮 Exercícios deste tópico (${m.licoes[i].questoes.length})</a></p></div>`).join("")}
+    ${(d.glossario || []).length ? `<div class="card"><h2>📖 Significados</h2>${d.glossario.map(([t, g]) => `<div class="glos-item"><b>${esc(t)}</b><div class="small">${fmt(g)}</div></div>`).join("")}</div>` : ""}
+    ${(d.referencias || []).length ? `<div class="bloco referencia"><div class="tag">📚 Para aprofundar</div>${d.referencias.map(r => "• " + fmt(r)).join("<br>")}</div>` : ""}
+    <p class="small muted">Conteúdo de estudo elaborado a partir dos temas usuais desta disciplina; não substitui a ementa oficial e o plano de ensino do professor.</p>`;
+  $("#ouvir").onclick = () => falar(m.resumoAudio, "Resumo: " + m.titulo);
+}
+function telaModuloLeitura(m) {
+  const temNiveis = moduloTemNiveis(m);
+  let nivel = temNiveis ? (ORDEM_NIVEIS.includes(S.config.nivel) ? S.config.nivel : "facil") : "unico";
+  function desenhar() {
+    app().innerHTML = barraTopo() + `<p class="small"><a href="#conteudo">‹ Conteúdo</a></p>
+      <h1>${m.icone} Módulo ${m.numero} — ${esc(m.titulo)}</h1>
+      <p class="muted small">${esc(m.objetivo || "")}</p>
+      ${temNiveis ? `<div class="seg">${ORDEM_NIVEIS.map(n => `<button data-n="${n}" class="${n === nivel ? "on" : ""}">${NIVEIS_ESTUDO[n].icone} ${NIVEIS_ESTUDO[n].nome}</button>`).join("")}</div>` : ""}
+      <div class="row wrap mb mt"><a class="btn small sec" href="#mapa/${m.id}" style="text-decoration:none">🧠 Mapa mental</a>
+        ${(m.glossario || []).length ? `<a class="btn small sec" href="#glossario/${m.id}" style="text-decoration:none">📖 Glossário</a>` : ""}</div>
+      ${m.licoes.map((l, i) => {
+        const nv = niveisDaLicao(l).includes(nivel) ? nivel : niveisDaLicao(l)[0];
+        return `<details class="periodo" ${i === 0 ? "open" : ""}><summary><b>${l.icone || "⭐"} ${esc(l.titulo)}</b></summary>
+          ${doNivel(l.blocos, nv).map(htmlBloco).join("")}
+          <p class="small"><a href="#licao/${l.id}">🎮 Exercícios desta lição</a></p></details>`;
+      }).join("")}`;
+    $$(".seg button").forEach(b => b.onclick = () => { nivel = b.dataset.n; desenhar(); });
+    $$("[data-revelar]").forEach(b => b.onclick = () => { b.nextElementSibling.classList.remove("hidden"); b.remove(); });
+  }
+  desenhar();
+}
+
+/* =====================================================================
+   MAPAS MENTAIS EM FOLHA A4
+   ===================================================================== */
+const CORES_MAPA = ["#e4572e", "#3b6fd8", "#1f8a4c", "#d9822b", "#8a5cd1", "#c2477a", "#138a9e", "#7a6a1f"];
+const limpar = t => String(t || "").replace(/\*\*/g, "").replace(/\*/g, "");
+// Primeira ideia de um texto: ignora tabelas e marcadores e junta a linha seguinte quando a primeira termina em “:”
+const primeiraFrase = t => {
+  const ls = limpar(t).split("\n").map(x => x.trim().replace(/^(•|-|\d+\.)\s*/, "")).filter(x => x && !x.startsWith("|"));
+  let x = ls[0] || "";
+  if (/:$/.test(x) && ls[1]) x += " " + ls[1];
+  const i = x.slice(20).search(/[.;](\s|$)/);
+  x = i >= 0 ? x.slice(0, i + 20) : x;
+  return x.length > 150 ? x.slice(0, x.lastIndexOf(" ", 148)) + "…" : x;
+};
+// Extrai tópicos, fórmulas, significados e aplicações de uma disciplina ou de um módulo do curso
+function dadosMapa(m) {
+  if (m.grade) {
+    const d = m.fonte;
+    return { titulo: d.nome, sub: `${d.periodo}º período · ${d.codigo || ""}`, icone: d.icone,
+      topicos: d.topicos.map(tp => ({ titulo: tp.t, pontos: tp.pontos || [], formulas: tp.formulas || [], producao: tp.producao ? [tp.producao] : [], exemplos: tp.exemplo ? [tp.exemplo] : [], mnemonicos: [] })),
+      glossario: d.glossario || [] };
+  }
+  return { titulo: m.titulo, sub: `Módulo ${m.numero}`, icone: m.icone,
+    topicos: m.licoes.filter(l => !/chef/i.test(l.titulo)).map(l => {
+      const b = l.blocos || [], unicos = a => Array.from(new Set(a));
+      return { titulo: l.titulo.replace(/^👾\s*/, ""),
+        pontos: unicos(b.filter(x => x.tipo === "conceito" && !/checklist/i.test(x.titulo || "")).map(x => limpar(x.titulo) + (x.texto ? ": " + primeiraFrase(x.texto) : ""))).slice(0, 3),
+        formulas: b.filter(x => x.tipo === "formula").slice(0, 3).map(x => [limpar(x.texto).split("\n").join("  ·  "), (x.legenda || []).map(([s, dd]) => `${s} = ${limpar(dd)}`).join("; ") || limpar(x.titulo)]),
+        producao: b.filter(x => x.tipo === "serio" || x.tipo === "contexto").map(x => primeiraFrase(x.texto)).slice(0, 1),
+        exemplos: b.filter(x => x.tipo === "exemplo").map(x => limpar(x.titulo) + ": " + primeiraFrase(x.texto)).slice(0, 1),
+        mnemonicos: b.filter(x => x.tipo === "mnemonico").map(x => primeiraFrase(x.texto)).slice(0, 1) };
+    }),
+    glossario: (m.glossario || []).map(g => [g.termo, g.definicao]) };
+}
+function telaMapas() {
+  app().innerHTML = barraTopo() + `<h1>🧠 Mapas mentais</h1>
+    <p class="muted small">Escolha a matéria. Depois você decide o que entra no mapa (tópicos, fórmulas, significados, aplicações e exemplos). Cada mapa ocupa uma folha A4, pronta para imprimir ou salvar em PDF.</p>
+    <input type="text" id="busca" placeholder="Buscar disciplina…" aria-label="Buscar disciplina">
+    <h2 class="mt">🎓 Grade curricular</h2><div id="lista"></div>
+    <h2 class="mt">📘 Módulos do curso</h2>
+    ${MODS.filter(m => !m.grade).map(m => `<a class="card link" href="#mapa/${m.id}"><span class="big">${m.icone}</span>
+      <span class="grow"><b>Módulo ${m.numero} — ${esc(m.titulo)}</b></span>›</a>`).join("")}`;
+  const desenhar = f => { $("#lista").innerHTML = listaPorPeriodo(m => "#mapa/" + m.id, f) || `<p class="muted">Nenhuma disciplina encontrada.</p>`; };
+  desenhar("");
+  $("#busca").oninput = e => desenhar(e.target.value);
+}
+const OPCOES_MAPA = [
+  ["pontos", "Tópicos principais"], ["formulas", "Fórmulas"], ["significados", "Significado dos símbolos das fórmulas"],
+  ["glossario", "Glossário (significados dos termos)"], ["producao", "Na Engenharia de Produção"], ["exemplos", "Exemplos"], ["mnemonicos", "Mnemônicos"]
+];
+function telaMapa(id) {
+  const m = modulo(id);
+  if (!m) { ir("mapas"); return; }
+  const D = dadosMapa(m);
+  const salvo = (S.config.mapa || {});
+  const op = Object.assign({ pontos: true, formulas: true, significados: true, glossario: true, producao: true, exemplos: false, mnemonicos: false, maxGlos: 12, pb: false }, salvo);
+  let marcados = D.topicos.map(() => true);
+  app().innerHTML = barraTopo() + `<p class="small no-print"><a href="#mapas">‹ Mapas mentais</a> · <a href="#conteudo/${m.id}">📚 Ler o conteúdo</a></p>
+    <h1 class="no-print">🧠 ${esc(D.titulo)}</h1>
+    <details class="periodo no-print" open><summary><b>⚙️ O que entra no mapa</b></summary>
+      <div class="opts">${OPCOES_MAPA.map(([k, t]) => `<label><input type="checkbox" data-op="${k}" ${op[k] ? "checked" : ""}> ${t}</label>`).join("")}
+        <label>Termos do glossário: <select id="maxGlos">${[6, 9, 12, 18, 24, 999].map(n => `<option value="${n}" ${op.maxGlos === n ? "selected" : ""}>${n === 999 ? "todos" : n}</option>`).join("")}</select></label>
+        <label><input type="checkbox" id="pb" ${op.pb ? "checked" : ""}> Preto e branco (economiza tinta)</label></div>
+      <p class="small muted mt">Tópicos:</p>
+      <div class="opts">${D.topicos.map((tp, i) => `<label><input type="checkbox" data-tp="${i}" checked> ${esc(tp.titulo)}</label>`).join("")}</div>
+    </details>
+    <div class="row wrap mb no-print"><button class="btn small" id="imprimir">🖨️ Imprimir / salvar PDF</button></div>
+    <p class="small muted no-print" id="aviso-mapa"></p>
+    <div class="a4-wrap" id="a4wrap"><div class="a4" id="a4"></div></div>`;
+  const redesenhar = () => {
+    S.config.mapa = op; salvar();
+    desenharMapaA4($("#a4"), D, op, marcados);
+    ajustarEscalaA4();
+  };
+  $$("[data-op]").forEach(c => c.onchange = () => { op[c.dataset.op] = c.checked; redesenhar(); });
+  $$("[data-tp]").forEach(c => c.onchange = () => { marcados[+c.dataset.tp] = c.checked; redesenhar(); });
+  $("#maxGlos").onchange = e => { op.maxGlos = +e.target.value; redesenhar(); };
+  $("#pb").onchange = e => { op.pb = e.target.checked; redesenhar(); };
+  $("#imprimir").onclick = () => { document.title = "Mapa mental - " + D.titulo; window.print(); document.title = "EngProd Play"; };
+  const aoRedimensionar = () => ajustarEscalaA4();
+  window.addEventListener("resize", aoRedimensionar);
+  limparTela = () => window.removeEventListener("resize", aoRedimensionar);
+  redesenhar();
+}
+function ajustarEscalaA4() {
+  const w = $("#a4wrap"), a = $("#a4");
+  if (!w || !a) return;
+  const esc_ = Math.min(1, w.clientWidth / 794);
+  a.style.transform = `scale(${esc_})`;
+  w.style.height = Math.ceil(1123 * esc_) + "px";
+}
+function desenharMapaA4(a4, D, op, marcados) {
+  const tops = D.topicos.map((tp, i) => ({ tp, i })).filter(x => marcados[x.i]);
+  const caixa = ({ tp, i }) => {
+    const cor = op.pb ? "#333" : CORES_MAPA[i % CORES_MAPA.length];
+    const itens = [];
+    if (op.pontos) tp.pontos.forEach(p => itens.push(`<li>${fmt(p)}</li>`));
+    if (op.formulas) tp.formulas.forEach(([f, s]) => itens.push(`<li class="f"><span class="fx">${esc(f)}</span>${op.significados && s ? `<span class="sg">${fmt(s)}</span>` : ""}</li>`));
+    if (op.producao) tp.producao.forEach(p => itens.push(`<li class="pr">🏭 ${fmt(p)}</li>`));
+    if (op.exemplos) tp.exemplos.forEach(p => itens.push(`<li class="ex">🧮 ${fmt(p)}</li>`));
+    if (op.mnemonicos) tp.mnemonicos.forEach(p => itens.push(`<li class="mn">🔊 ${fmt(p)}</li>`));
+    return `<div class="ramo" style="--c:${cor}"><div class="ramo-t">${esc(tp.titulo)}</div>${itens.length ? `<ul>${itens.join("")}</ul>` : ""}</div>`;
+  };
+  // Distribui os ramos entre as colunas esquerda e direita equilibrando o tamanho
+  const peso = x => 40 + (op.pontos ? x.tp.pontos.join(" ").length : 0) + (op.formulas ? x.tp.formulas.join(" ").length * 1.3 : 0) + (op.producao ? x.tp.producao.join(" ").length : 0) + (op.exemplos ? x.tp.exemplos.join(" ").length : 0);
+  const esq = [], dir = []; let pe = 0, pd = 0;
+  tops.forEach(x => { if (pe <= pd) { esq.push(x); pe += peso(x); } else { dir.push(x); pd += peso(x); } });
+  const glos = op.glossario ? D.glossario.slice(0, op.maxGlos) : [];
+  a4.className = "a4" + (op.pb ? " pb" : "");
+  a4.innerHTML = `<svg class="lig" id="lig"></svg>
+    <div class="a4-head"><span>🧠 Mapa mental</span><span>${esc(D.sub)}</span></div>
+    <div class="a4-body">
+      <div class="col">${esq.map(caixa).join("")}</div>
+      <div class="col meio"><div class="nucleo"><div class="ni">${D.icone || "📘"}</div><div>${esc(D.titulo)}</div></div></div>
+      <div class="col">${dir.map(caixa).join("")}</div>
+    </div>
+    ${glos.length ? `<div class="glos"><div class="glos-t">📖 Significados</div><div class="glos-g">${glos.map(([t, g]) => `<div><b>${esc(t)}:</b> ${fmt(limpar(g))}</div>`).join("")}</div></div>` : ""}
+    <div class="a4-foot">EngProd Play · ${esc(D.titulo)}</div>`;
+  // Ajusta a fonte para caber exatamente numa folha A4 (794 × 1123 px a 96 dpi)
+  const aviso = $("#aviso-mapa");
+  let fs = 13;
+  a4.style.transform = "none";
+  a4.style.height = "auto";
+  a4.style.setProperty("--fs", fs + "px");
+  while (a4.scrollHeight > 1123 && fs > 6) { fs -= 0.25; a4.style.setProperty("--fs", fs + "px"); }
+  const coube = a4.scrollHeight <= 1123;
+  a4.style.height = "1123px";
+  if (aviso) aviso.textContent = coube ? (fs < 8 ? "💡 Letra pequena: desmarque alguns itens ou tópicos para o mapa ficar mais legível." : "")
+    : "⚠️ Há informação demais para uma folha A4. Desmarque alguns itens ou tópicos.";
+  // Linhas curvas ligando o núcleo a cada ramo
+  const svg = a4.querySelector("#lig"), n = a4.querySelector(".nucleo");
+  const pos = el => { let x = 0, y = 0, e = el; while (e && e !== a4) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };
+  const N = pos(n), cx = N.x + N.w / 2, cy = N.y + N.h / 2;
+  svg.setAttribute("viewBox", `0 0 794 1123`);
+  svg.innerHTML = $$(".ramo", a4).map(r => {
+    const R = pos(r), esquerda = R.x + R.w / 2 < cx;
+    const x1 = esquerda ? N.x : N.x + N.w, x2 = esquerda ? R.x + R.w : R.x, y2 = R.y + 14;
+    const cor = getComputedStyle(r).getPropertyValue("--c").trim() || "#555";
+    return `<path d="M${x1},${cy} C${(x1 + x2) / 2},${cy} ${(x1 + x2) / 2},${y2} ${x2},${y2}" stroke="${cor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  }).join("");
+}
+
+/* =====================================================================
+   TELA: EXERCÍCIOS (antiga tela inicial)
    ===================================================================== */
 function telaInicio() {
   const prox = proximaLicao();
@@ -892,6 +1243,7 @@ function telaInicio() {
   const nv = nivelAtual(), prox_nv = NIVEIS[nv + 1];
   const aviso = errosConteudo.length ? `<div class="errbox">⚠️ Encontrei problemas no conteúdo (veja em ⚙️ Configurações → Verificador).</div>` : "";
   app().innerHTML = barraTopo() + aviso + `
+    <h1>🎮 Exercícios</h1>
     <div class="hero">
       <div class="flame" aria-hidden="true">${of ? "🔥" : "🪵"}</div>
       <div class="streak-num">${of} ${of === 1 ? "dia" : "dias"}</div>
@@ -918,6 +1270,8 @@ function telaInicio() {
       <p class="small muted mt">${prox_nv ? `Faltam ${prox_nv.xp - S.xpTotal} XP para ${prox_nv.icone} ${prox_nv.nome}` : "Nível máximo! 👑"}</p>
     </div>
     <div class="grid2">
+      <a class="tile" href="#trilha"><span class="big">🗺️</span><b>Trilha do curso</b><div class="small muted">módulos 1 a 14</div></a>
+      <a class="tile" href="#trilha/grade/1"><span class="big">🎓</span><b>Grade CEFET</b><div class="small muted">disciplinas por período</div></a>
       <a class="tile" href="#revisar">${pend ? `<span class="badge">${pend}</span>` : ""}<span class="big">🔁</span><b>Revisão</b><div class="small muted">${pend ? pend + " pendentes" : "em dia ✓"}</div></a>
       <a class="tile" href="#flashcards">${cartas ? `<span class="badge">${cartas}</span>` : ""}<span class="big">🃏</span><b>Flashcards</b><div class="small muted">${cartas} para hoje</div></a>
       <a class="tile" href="#quiz"><span class="big">⚡</span><b>Quiz Relâmpago</b><div class="small muted">estilo Kahoot</div></a>
@@ -930,32 +1284,58 @@ function telaInicio() {
 /* =====================================================================
    TELA: TRILHA
    ===================================================================== */
-function telaTrilha() {
+function telaTrilha(visao, per) {
   const desloc = [0, 55, 80, 55, 0, -55, -80, -55]; // zigue-zague do caminho
-  let html = barraTopo() + `<h1>🗺️ Trilha</h1><p class="muted small">Conclua uma lição (em qualquer nível) para liberar a próxima. Os ícones 🌱🔧🧠 abaixo de cada lição acendem conforme você conclui cada nível.</p>`;
-  if (!MODS.length) html += `<div class="errbox">Nenhum módulo carregado. Confira a pasta "conteudo/".</div>`;
+  const grade = visao === "grade";
   let k = 0;
-  MODS.forEach(m => {
-    const lib = moduloLiberado(m), feitas = m.licoes.filter(l => licaoConcluida(l.id)).length;
-    html += `<div class="mod-banner ${lib ? "" : "locked"}">
-      <div class="row"><div><div class="small" style="opacity:.85">MÓDULO ${m.numero}</div><b>${m.icone} ${esc(m.titulo)}</b></div>
-      <div class="small" style="text-align:right"><b>${feitas}/${m.licoes.length}</b>${moduloTemNiveis(m) ? `<br>${ORDEM_NIVEIS.map(n => `${NIVEIS_ESTUDO[n].icone}${m.licoes.filter(l => nivelConcluido(l.id, n)).length}`).join(" ")}` : ""}</div></div>
-      ${lib ? `<div class="small mt" style="opacity:.9">🎯 ${esc(m.objetivo || "")}</div>` : ""}
-      ${m.liberaApos ? `<div class="small mt" style="opacity:.9">🔀 Trilha paralela: libera ao concluir ${[].concat(m.liberaApos).map(id => { const x = modulo(id); return x ? "o Módulo " + x.numero : id; }).join(" e ")}.</div>` : ""}
-    </div><div class="path">`;
+  const caminho = m => {
+    let h = `<div class="path">`;
     m.licoes.forEach(l => {
       const feita = licaoConcluida(l.id), liberada = licaoLiberada(l.id);
       const atual = liberada && !feita;
       const cls = feita ? "done" : atual ? "current" : "locked";
       const ico = feita ? "✓" : liberada ? (l.icone || "⭐") : "🔒";
-      html += `<a class="node ${cls}" style="transform:translateX(${desloc[k++ % desloc.length]}px)" href="${liberada ? "#licao/" + l.id : "javascript:void(0)"}" ${liberada ? "" : `data-bloq="1"`}>
+      h += `<a class="node ${cls}" style="transform:translateX(${desloc[k++ % desloc.length]}px)" href="${liberada ? "#licao/" + l.id : "javascript:void(0)"}" ${liberada ? "" : `data-bloq="1"`}>
         ${atual ? `<span class="start">COMEÇAR</span>` : ""}
         <span class="ball">${ico}</span><span class="lbl">${esc(l.titulo)}</span>
         ${niveisDaLicao(l)[0] !== "unico" && liberada ? `<span class="lvls" aria-label="níveis concluídos">${niveisDaLicao(l).map(n => `<i class="${nivelConcluido(l.id, n) ? "on" : ""}" title="${NIVEIS_ESTUDO[n].nome}">${NIVEIS_ESTUDO[n].icone}</i>`).join("")}</span>` : ""}</a>`;
     });
-    html += `</div>`;
-    if (lib) html += `<div class="row mb" style="justify-content:center"><button class="btn small sec" data-ouvir="${m.id}">🎧 Ouvir resumo</button> <a class="btn small sec" style="text-decoration:none" href="#flashcards/${m.id}">🃏 Flashcards</a></div>`;
-  });
+    return h + `</div>`;
+  };
+  let html = barraTopo() + `<h1>🗺️ Trilha</h1>
+    <div class="seg"><a href="#trilha" class="${grade ? "" : "on"}">📘 Curso</a><a href="#trilha/grade/${per || 1}" class="${grade ? "on" : ""}">🎓 Grade CEFET</a></div>`;
+  if (!grade) {
+    html += `<p class="muted small mt">Conclua uma lição (em qualquer nível) para liberar a próxima. Os ícones 🌱🔧🧠 abaixo de cada lição acendem conforme você conclui cada nível.</p>`;
+    const mods = MODS.filter(m => !m.grade);
+    if (!mods.length) html += `<div class="errbox">Nenhum módulo carregado. Confira a pasta "conteudo/".</div>`;
+    mods.forEach(m => {
+      const lib = moduloLiberado(m), feitas = m.licoes.filter(l => licaoConcluida(l.id)).length;
+      html += `<div class="mod-banner ${lib ? "" : "locked"}">
+        <div class="row"><div><div class="small" style="opacity:.85">MÓDULO ${m.numero}</div><b>${m.icone} ${esc(m.titulo)}</b></div>
+        <div class="small" style="text-align:right"><b>${feitas}/${m.licoes.length}</b>${moduloTemNiveis(m) ? `<br>${ORDEM_NIVEIS.map(n => `${NIVEIS_ESTUDO[n].icone}${m.licoes.filter(l => nivelConcluido(l.id, n)).length}`).join(" ")}` : ""}</div></div>
+        ${lib ? `<div class="small mt" style="opacity:.9">🎯 ${esc(m.objetivo || "")}</div>` : ""}
+        ${m.liberaApos ? `<div class="small mt" style="opacity:.9">🔀 Trilha paralela: libera ao concluir ${[].concat(m.liberaApos).map(id => { const x = modulo(id); return x ? "o Módulo " + x.numero : id; }).join(" e ")}.</div>` : ""}
+      </div>` + caminho(m);
+      if (lib) html += `<div class="row mb" style="justify-content:center"><button class="btn small sec" data-ouvir="${m.id}">🎧 Ouvir resumo</button> <a class="btn small sec" style="text-decoration:none" href="#flashcards/${m.id}">🃏 Flashcards</a></div>`;
+    });
+  } else {
+    const p = Math.min(10, Math.max(1, +per || 1));
+    html += `<p class="muted small mt">As disciplinas da grade 2017 do CEFET/RJ, por período. Todas começam liberadas; dentro de cada disciplina, um tópico libera o próximo.</p>
+      <div class="pchips">${Array.from({ length: 10 }, (_, i) => i + 1).map(n => {
+        const ds = disciplinas().filter(m => m.periodo === n), ok = ds.filter(moduloConcluido).length;
+        return `<a href="#trilha/grade/${n}" class="${n === p ? "on" : ""}">${n}º${ds.length ? `<small>${ok}/${ds.length}</small>` : ""}</a>`;
+      }).join("")}</div>`;
+    const ds = disciplinas().filter(m => m.periodo === p);
+    if (!ds.length) html += `<p class="muted mt">Nenhuma disciplina deste período foi carregada.</p>`;
+    ds.forEach(m => {
+      const A = AREAS[m.fonte.area] || AREAS.producao, feitas = m.licoes.filter(l => licaoConcluida(l.id)).length;
+      html += `<div class="mod-banner" style="background:${A.cor};box-shadow:0 4px 0 rgba(0,0,0,.25)">
+        <div class="row"><div><div class="small" style="opacity:.85">${esc(m.numero || "")} · ${A.nome}</div><b>${m.icone} ${esc(m.titulo)}</b></div>
+        <div class="small" style="text-align:right"><b>${feitas}/${m.licoes.length}</b></div></div>
+        <div class="row wrap mt"><a class="minilink" href="#conteudo/${m.id}">📚 Conteúdo</a><a class="minilink" href="#mapa/${m.id}">🧠 Mapa</a></div>
+      </div>` + caminho(m);
+    });
+  }
   app().innerHTML = html;
   $$("[data-bloq]").forEach(a => a.onclick = () => { som("erro"); toast("🔒 Conclua a lição anterior primeiro."); });
   $$("[data-ouvir]").forEach(b => b.onclick = () => { const m = modulo(b.dataset.ouvir); falar(m.resumoAudio, "Resumo: " + m.titulo); });
@@ -1192,7 +1572,7 @@ function telaCapa(l) {
         }).join("")}</ul></div>` : ""}
       <p class="small muted">⏱️ ~${minutos} min · ${nb} blocos · ${nq} exercícios${nBanco > nq ? ` sorteados de um banco de ${nBanco}` : ""}${nModelos ? ` · 🎲 ${nModelos} com números que mudam a cada vez` : ""}${(m.glossario || []).length ? ` · <a href="#glossario/${m.id}">📖 glossário do módulo</a>` : ""}</p>
       <div class="footer-action"><button class="btn" id="comecar">Começar${unico ? "" : ` no ${NIVEIS_ESTUDO[sel].nome}`} ▶</button></div>`;
-    $("#voltar").onclick = () => ir("trilha");
+    $("#voltar").onclick = () => ir(rotaTrilha(m));
     $$(".lvl-card").forEach(b => b.onclick = () => { sel = b.dataset.n; som("clique"); desenhar(); });
     $("#comecar").onclick = () => {
       if (!unico) { S.config.nivel = sel; salvar(); } // lembra a preferência
@@ -1225,7 +1605,7 @@ function telaLicao(id, nivel) {
       <span class="hearts">❤️ ${S.vidas}</span></div>`;
   }
   function ligarSair() {
-    $("#sair").onclick = () => { if (confirm("Sair da lição? O progresso desta lição será perdido.")) { saindo = true; ir("trilha"); } };
+    $("#sair").onclick = () => { if (confirm("Sair da lição? O progresso desta lição será perdido.")) { saindo = true; ir(rotaTrilha(m)); } };
   }
   // Fase 1: conteúdo, um bloco por vez (chunking)
   function mostrarBloco() {
@@ -1304,7 +1684,7 @@ function telaLicao(id, nivel) {
         <div class="mt"><button class="btn small sec" id="ouvir-resumo">🔊 Ouvir resumo</button></div></div>` : ""}
       ${prox ? `<button class="btn" id="seguir">Próxima lição ▶</button>` : ""}
       ${acima && pct >= 60 ? `<button class="btn sec" id="subir">${NIVEIS_ESTUDO[acima].icone} Fazer esta lição no ${NIVEIS_ESTUDO[acima].nome}</button>` : ""}
-      <button class="btn sec" onclick="ir('trilha')">Voltar à trilha</button>
+      <button class="btn sec" onclick="ir('${rotaTrilha(m)}')">Voltar à trilha</button>
     </div>`;
     const s = $("#seguir");
     if (s) s.onclick = () => ir("licao/" + prox.id);
@@ -1321,7 +1701,7 @@ function semVidas() {
     <div style="font-size:4rem">💔</div><h1>Acabaram as vidas</h1>
     <p class="muted">Recupere vidas revisando: cada acerto na revisão devolve ❤️ 1 vida. Amanhã elas recarregam sozinhas.</p>
     <button class="btn" onclick="ir('revisao/vidas')">🔁 Revisar para recuperar vidas</button>
-    <button class="btn sec" onclick="ir('trilha')">Voltar à trilha</button></div>`;
+    <button class="btn sec" onclick="ir('exercicios')">Voltar</button></div>`;
 }
 
 /* =====================================================================
@@ -1354,7 +1734,7 @@ function telaRevisar() {
     <div class="card">
       <h2>🃏 Flashcards</h2>
       <p class="muted small">Vire a carta e avalie: errei / difícil / fácil.</p>
-      ${MODS.filter(moduloLiberado).map(m => `<a class="card link" href="#flashcards/${m.id}" style="margin-bottom:8px"><span class="big">${m.icone}</span>
+      ${MODS.filter(m => (m.flashcards || []).length && moduloLiberado(m)).map(m => `<a class="card link" href="#flashcards/${m.id}" style="margin-bottom:8px"><span class="big">${m.icone}</span>
         <span class="grow"><b>${esc(m.titulo)}</b><br><span class="small muted">${cartasPendentes(m.id).length} para hoje · ${(m.flashcards || []).length} cartas</span></span>›</a>`).join("") || `<p class="small muted">Libere um módulo na trilha primeiro.</p>`}
     </div>`;
 }
@@ -1414,7 +1794,7 @@ function telaSessaoRevisao(modo) {
 function telaFlashcards(modId) {
   if (!modId) {
     app().innerHTML = barraTopo() + `<h1>🃏 Flashcards</h1>` +
-      (MODS.filter(moduloLiberado).map(m => `<a class="card link" href="#flashcards/${m.id}"><span class="big">${m.icone}</span>
+      (MODS.filter(m => (m.flashcards || []).length && moduloLiberado(m)).map(m => `<a class="card link" href="#flashcards/${m.id}"><span class="big">${m.icone}</span>
         <span class="grow"><b>${esc(m.titulo)}</b><br><span class="small muted">${cartasPendentes(m.id).length} para hoje</span></span>›</a>`).join("")
         || `<p class="muted">Libere um módulo na trilha primeiro.</p>`);
     return;
@@ -1642,7 +2022,7 @@ function telaOuvir() {
     ${temVoz ? "" : `<div class="errbox">Seu navegador não suporta leitura em voz alta. Tente o Chrome.</div>`}
     <label class="small muted">Velocidade da voz: <b id="vv">${S.config.velocidadeVoz}x</b></label>
     <input type="range" min="0.7" max="1.5" step="0.1" value="${S.config.velocidadeVoz}" id="vel">
-    ${MODS.filter(moduloLiberado).map(m => `<div class="card mt"><b>${m.icone} ${esc(m.titulo)}</b>
+    ${MODS.filter(m => !m.grade && moduloLiberado(m)).map(m => `<div class="card mt"><b>${m.icone} ${esc(m.titulo)}</b>
       <div class="row wrap mt"><button class="btn small" data-res="${m.id}">▶ Resumo ritmado</button>
       <button class="btn small sec" data-tudo="${m.id}">📖 Lições completas</button></div></div>`).join("")
       || `<p class="muted">Libere um módulo na trilha primeiro.</p>`}`;
@@ -1673,7 +2053,8 @@ function telaPerfil() {
     ${(i === 13 || (i === maiorIdx && vals[i] > 0)) ? `<span class="val">${vals[i]}</span>` : ""}
     <div class="fill" style="height:${vals[i] / max * 100}%"></div></div>`).join("");
   // Por módulo: conclusão de conteúdo, desempenho nos exercícios e retenção confirmada (são coisas diferentes!)
-  const porMod = MODS.map(m => {
+  // Disciplinas da grade só aparecem no perfil depois de começadas (senão a lista ficaria enorme)
+  const porMod = MODS.filter(m => !m.grade || m.licoes.some(l => licaoConcluida(l.id))).map(m => {
     let a = 0, e = 0, conf = 0;
     const totalQ = Object.values(Q).filter(q => q.modulo === m.id).length;
     Object.entries(S.questoes).forEach(([id, s]) => { if (Q[id] && Q[id].modulo === m.id) { a += s.acertos; e += s.erros; if (s.confirmada) conf++; } });

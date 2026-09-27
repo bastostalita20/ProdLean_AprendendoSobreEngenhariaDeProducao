@@ -10,6 +10,7 @@
    ===================================================================== */
 const { chromium, devices } = require('playwright');
 const path = require('path');
+const fs = require('fs');
 const SP = process.argv[2] || '/tmp';
 const log = (...a) => console.log(...a);
 const falhas = [];
@@ -115,7 +116,8 @@ async function recuperarVidas(p) {
   await p.evaluate(() => ir('licao/m01-l1')); await p.waitForTimeout(150);
   checar(await p.$('#comecar') && (await p.textContent('body')).includes('Nível único'), 'capa de lição de nível único');
 
-  const licoes = await p.evaluate(() => LICOES.map(l => ({ id: l.id, niveis: niveisDaLicao(l) })));
+  // Módulos do curso: todas as lições em todos os níveis. Grade: 1º tópico de cada disciplina (amostra de todas).
+  const licoes = await p.evaluate(() => LICOES.filter(l => !modulo(l.modulo).grade || modulo(l.modulo).licoes[0].id === l.id).map(l => ({ id: l.id, niveis: niveisDaLicao(l) })));
   const errosPorLicao = { 'm01-l1': ['multipla'], 'm01-l2': ['ligar', 'ordenar'], 'm01-l4': ['lacuna'], 'm01-l7': ['calculo'], 'm13-l3': ['calculo', 'caso'], 'm13-l10': ['ligar', 'vf'], 'm02-l2': ['discursiva'], 'm02-l4': ['calculo'] };
   let vidasZeradas = 0;
   for (const l of licoes) {
@@ -221,8 +223,37 @@ async function recuperarVidas(p) {
   checar(nGlos >= 2, 'glossário com busca (achou ' + nGlos + ' termos para “folga”)');
   await p.screenshot({ path: SP + '/n-glossario.png', fullPage: true });
 
+  // Grade curricular: disciplinas convertidas, trilha por período, conteúdo e mapas mentais A4
+  const g = await p.evaluate(() => ({ n: disciplinas().length, periodos: new Set(disciplinas().map(m => m.periodo)).size,
+    semQuestao: LICOES.filter(l => modulo(l.modulo).grade && !l.questoes.length).length,
+    feitas: disciplinas().filter(m => licaoConcluida(m.licoes[0].id)).length }));
+  log(`grade: ${g.n} disciplinas em ${g.periodos} períodos; 1º tópico concluído em ${g.feitas}`);
+  checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
+  await p.evaluate(() => ir('inicio')); await p.waitForTimeout(150);
+  checar((await p.$$('.hub-card')).length === 3, 'início com Exercícios, Mapas mentais e Conteúdo');
+  await p.click('.hub-card.ex'); await p.waitForTimeout(150);
+  checar((await p.textContent('h1')).includes('Exercícios') && await p.$('a[href="#trilha/grade/1"]'), 'Exercícios abre a interface de estudo (com acesso à grade)');
+  await p.evaluate(() => ir('trilha/grade/3')); await p.waitForTimeout(150);
+  checar((await p.$$('.pchips a')).length === 10 && (await p.textContent('body')).includes('Equações Diferenciais Ordinárias'), 'trilha da grade por período');
+  await p.evaluate(() => ir('conteudo/g-calc1')); await p.waitForTimeout(150);
+  const tc = await p.textContent('body');
+  checar(tc.includes('Derivadas') && tc.includes('Na produção') && (await p.$$('.topico')).length >= 3, 'conteúdo da disciplina com tópicos e aplicações');
+  await p.evaluate(() => ir('conteudo/m03')); await p.waitForTimeout(150);
+  checar((await p.$$('details.periodo')).length >= 5, 'conteúdo de um módulo do curso');
+  for (const id of ['g-calc1', 'g-engeco', 'm06']) {
+    await p.evaluate(x => ir('mapa/' + x), id); await p.waitForTimeout(300);
+    const mp = await p.evaluate(() => { const a = document.querySelector('#a4'); return { h: a.scrollHeight, ramos: a.querySelectorAll('.ramo').length, linhas: a.querySelectorAll('#lig path').length, aviso: document.querySelector('#aviso-mapa').textContent }; });
+    checar(mp.ramos >= 3 && mp.linhas === mp.ramos && mp.h <= 1123 && !mp.aviso.startsWith('⚠️'), `mapa mental A4 de ${id} (${mp.ramos} ramos)`);
+  }
+  await p.click('[data-op="formulas"]'); await p.waitForTimeout(150);
+  checar(!(await p.$('#a4 .fx')), 'mapa: desmarcar “Fórmulas” remove as fórmulas');
+  await p.evaluate(() => ir('mapa/g-calc1')); await p.waitForTimeout(300);
+  await p.pdf({ path: SP + '/mapa-a4.pdf', format: 'A4', printBackground: true });
+  const pdf = fs.readFileSync(SP + '/mapa-a4.pdf', 'latin1');
+  checar((pdf.match(/\/Type\s*\/Page[^s]/g) || []).length === 1, 'mapa impresso ocupa exatamente 1 folha A4');
+
   // Todas as telas
-  for (const r of ['inicio', 'trilha', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
+  for (const r of ['inicio', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);
     await p.screenshot({ path: `${SP}/n-${r.replace('/', '-')}.png`, fullPage: true });
   }
