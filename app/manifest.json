@@ -1,7 +1,7 @@
 {
-  "name": "EngProd Play — Curso de Engenharia de Produção",
-  "short_name": "EngProd Play",
-  "description": "Trilha gamificada, quiz relâmpago, revisão espaçada e flashcards de Engenharia de Produção.",
+  "name": "Problema — Engenharia de Produção",
+  "short_name": "Problema",
+  "description": "Tem um problema? Descubra o que a Engenharia de Produção pode fazer: consulta rápida, problemas reais, desafio do dia e estudo completo.",
   "lang": "pt-BR",
   "start_url": "./index.html",
   "scope": "./",

@@ -1,6 +1,21 @@
-# 📱 EngProd Play — visão geral do projeto
+# 📱 Problema — visão geral do projeto
 
-App web de estudo gamificado para o curso de Engenharia de Produção. Mistura **conteúdo didático + Duolingo** (trilha, lições curtas, ofensiva, XP, vidas) **+ Kahoot** (quiz com tempo, cores, formas e ranking).
+> **Tem um problema? Descubra o que a Engenharia de Produção pode fazer.**
+> O app é uma ponte entre **FACULDADE → REVISÃO → PROBLEMA REAL → APLICAÇÃO NO TRABALHO**:
+> “Esqueci um conceito ou apareceu um problema no estágio. Vou abrir o Problema e descobrir rapidamente o que preciso saber.”
+
+```
+                     PROBLEMA
+                        │
+      ┌─────────────────┼─────────────────┐
+   CONSULTAR        PROBLEMAS          DESAFIO
+ “Esqueci algo”  “Preciso resolver”  “Quero praticar”
+      └─────────────────┼─────────────────┘
+                     ESTUDAR
+                 “Quero aprender”
+```
+
+Por trás dos quatro caminhos está o app de estudo gamificado (antes chamado EngProd Play), que continua inteiro dentro de **🎓 Estudar**. Mistura **conteúdo didático + Duolingo** (trilha, lições curtas, ofensiva, XP, vidas) **+ Kahoot** (quiz com tempo, cores, formas e ranking).
 
 - ✅ Sem login e sem servidor: o progresso fica no **localStorage** do navegador.
 - ✅ Mobile-first: pensado para o celular, inclusive no ônibus.
@@ -28,6 +43,8 @@ app/
     ├── modulo-06.js    ← Módulo 6 — Lean (9 lições, 3 níveis)
     ├── modulo-14.js    ← Módulo 14 — Dados e Analytics (8 lições, 3 níveis, trilha paralela)
     ├── grade/p01.js … p09.js ← disciplinas da grade curricular, por período (seção 10)
+    ├── problemas.js    ← 🚨 problemas → ferramentas → conteúdo, e áreas do Modo Estágio (seção 11)
+    ├── desafios.js     ← ⚡ desafios do dia (seção 11)
     └── banco-questoes.js ← questões extras e modelos com números sorteados (sempre por último)
 parametros.js           ← motor das questões com números sorteados
 ```
@@ -38,9 +55,17 @@ parametros.js           ← motor das questões com números sorteados
 
 | Tela | Rota | O que tem |
 |---|---|---|
-| 🏠 **Início** | `#inicio` | Três entradas grandes: **🎮 Exercícios**, **🧠 Mapas mentais** e **📚 Conteúdo**, mais “Continuar de onde parei”. |
+| 🏠 **Início** | `#inicio` | “Olá! 👋 Vamos resolver alguma coisa hoje?”, pesquisa grande (“O que você precisa lembrar?”) com resultados na hora, os **4 caminhos** (🚨 Tenho um problema, 🔎 Consultar, ⚡ Desafio do dia, 🎓 Estudar) e “Para você” com dados reais: continue de onde parou, assuntos para revisar e seu progresso. |
+| 🔎 **Consultar** | `#consultar` · `#consultar/<busca>` | Central de consulta: busca conceitos, ferramentas, fórmulas, disciplinas, lições, indicadores, métodos e problemas. Sem busca: mais consultados (ou os da sua área), favoritos, vistos recentemente, todas as ferramentas e glossário. |
+| 📄 **Ficha de consulta** | `#ferramenta/<id>` · `#consulta/<chave>` | Níveis progressivos: **⚡ 30 s** (resumo: o que é, para que serve) → **📚 3 min** (quando usar, dados, fórmula, erros comuns) → **🏭 Na prática** (exemplo) → **🧠 Teste** (1 pergunta) → **🔬 Aprofunde** (links diretos ao conteúdo completo, aos exercícios, ao mapa e aos problemas relacionados). ☆ Salvar nos favoritos. Chaves: `g:<módulo>:<termo>` (conceito do glossário), `l:<lição>` (lição ou tópico). |
+| 🧰 **Ferramentas** | `#ferramentas` | Todas as fichas de ferramenta, em ordem alfabética, com filtro. |
+| 🚨 **Problemas** | `#problemas` · `#problemas/<categoria>` · `#problema/<id>` | “Qual problema você precisa resolver?”: 12 categorias e busca em linguagem do dia a dia → situações (“Tenho estoque demais”) → “Por onde começar” + ferramentas que podem ajudar → ficha → conteúdo. |
+| ⚡ **Desafio do dia** | `#desafio` · `#desafio/extra` · `#desafio/historico` · `#desafio/ver/<id>` | Um problema curto por dia (o mesmo o dia inteiro; da sua área no Modo Estágio). Depois de responder: ✅ resposta, “Por quê?”, “Na prática” e “Quer entender melhor?”. +10 XP (acerto) ou +3 XP (tentativa), contando para meta e ofensiva. Histórico com % de acerto. |
+| 🎓 **Estudar** | `#estudar` · `#estudar/assuntos` · `#estudar/areas/<área>` · `#estudar/nivel/<nível>` · `#estudar/aprofundar` | A área acadêmica completa: por assunto (módulos), por disciplina (grade), por área, por nível, revisão rápida e aprofundamento, mais os antigos cartões 🎮 Exercícios, 🧠 Mapas mentais e 📚 Conteúdo. |
+| 🎯 **Modo Estágio** | `#estagio` | Opcional. Escolha PCP, Produção, Qualidade, Logística, Suprimentos, Compras, Processos, Projetos, Dados ou Pesquisa Operacional: categorias de problema, desafios, ferramentas sugeridas, assuntos para revisar e módulos passam a aparecer primeiro. |
+| ⭐ **Favoritos e histórico** | `#salvos` | Itens salvos, últimas consultas (até 30) e atalho para os desafios feitos. |
 | 🎮 **Exercícios** | `#exercicios` | A interface de estudo gamificada: chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar**, nível, atalhos para a Trilha do curso, a Grade curricular, Revisão, Flashcards, Quiz e Modo ônibus. |
-| 📚 **Conteúdo** | `#conteudo` · `#conteudo/g-calc1` · `#conteudo/m03` | Leitura por disciplina da grade (agrupada por período, com busca) ou por módulo do curso (com seletor de nível). Cada disciplina mostra tópicos, fórmulas com o significado de cada símbolo, “Na produção”, exemplos e glossário. |
+| 📚 **Conteúdo** | `#conteudo` · `#conteudo/g-calc1` · `#conteudo/m03` · `#conteudo/m03/m03-l6` (abre e destaca a lição/tópico) | Leitura por disciplina da grade (agrupada por período, com busca) ou por módulo do curso (com seletor de nível). Cada disciplina mostra tópicos, fórmulas com o significado de cada símbolo, “Na produção”, exemplos e glossário. |
 | 🧠 **Mapas mentais** | `#mapas` · `#mapa/g-calc1` | Escolha a matéria e o que entra (tópicos, fórmulas, significados dos símbolos, glossário, aplicações, exemplos, mnemônicos, quais tópicos, preto e branco). O mapa é desenhado numa folha **A4 (210 × 297 mm)**, com a fonte ajustada automaticamente para caber, e pode ser impresso ou salvo em PDF. |
 | 🗺️ **Trilha** | `#trilha` · `#trilha/grade/3` | Duas abas: **📘 Curso** (módulos) e **🎓 Grade curricular** (disciplinas por período; cada uma começa liberada). |
 | 🗺️ (detalhe) | `#trilha` | Caminho em zigue-zague com "bolinhas": ✓ dourada = concluída, verde pulsando = atual ("COMEÇAR"), 🔒 = bloqueada. Faixa de cada módulo com objetivo, progresso, 🎧 Ouvir resumo e 🃏 Flashcards. |
@@ -57,10 +82,13 @@ parametros.js           ← motor das questões com números sorteados
 
 ## 3. Fluxo de navegação
 
+Barra inferior: **🏠 Início · 🔎 Consultar · 🚨 Problemas · ⚡ Desafio · 🎓 Estudar**. Perfil (pelo ícone de nível) e ⚙️ Configurações ficam na barra superior, junto com ofensiva, XP do dia e vidas; Favoritos/Histórico ficam em Consultar e no Perfil.
+
 ```
-                    ┌──────────── barra inferior (sempre visível) ────────────┐
-                    │  🏠 Início   🗺️ Trilha   ⚡ Quiz   🔁 Revisar   👤 Perfil │
-                    └─────────────────────────────────────────────────────────┘
+🔎 Consultar ──► resultado ──► ficha (30 s → 3 min → prática → teste) ──► conteúdo completo / exercícios
+🚨 Problemas ──► categoria ──► problema ──► ferramenta (ficha) ──► conteúdo completo
+⚡ Desafio ──► resposta ──► por quê + na prática ──► ferramenta ──► conteúdo
+🎓 Estudar ──► (tudo o que já existia, abaixo)
 🏠 Início ──"Continuar"──► 📖 Lição ──► blocos ──► exercícios ──► 🎉 Resultado ──► próxima lição / trilha
    │                          │
    │                          └─ ❤️ = 0 ──► 💔 "Sem vidas" ──► 🔁 Revisão (cada acerto = +1 ❤️)
@@ -171,7 +199,12 @@ O **Quiz Relâmpago** usa automaticamente as questões `multipla`, `vf` e `lacun
   conquistas: { "primeira-licao": "2026-09-23" },
   ranking: [ { nome, pontos, acertos, total, data } ],
   metaBatidaEm: "2026-09-23",
-  config: { meta: 50, som: true, tema: "auto", velocidadeVoz: 1, nome: "Eu" }
+  favoritos: [ { k: "f:oee", href: "#ferramenta/oee", icone, tipo, titulo, sub } ],
+  historico: [ { …mesmo formato, data } ],          // últimas 30 consultas
+  desafios:  { "d07": { data: "2026-09-27", acertou: true } },
+  desafioDia: { data: "2026-09-27", id: "d07" },
+  ultimo:    { licao: "m03-l2", href, titulo, sub },  // "Continue de onde parou"
+  config: { meta: 50, som: true, tema: "auto", velocidadeVoz: 1, nome: "Eu", nivel: "facil", porSessao: 6, estagio: null }
 }
 ```
 
@@ -294,3 +327,24 @@ As disciplinas da grade curricular do Bacharelado em Engenharia de Produção (f
 - As matérias de exatas trazem sempre a aplicação em produção (ex.: derivada → custo marginal e lote econômico; limite → custo médio em escala; integral → produção acumulada e energia).
 - Validação: `node testes/validar-grade.js` (ids, tópicos com exercícios, modelos com números sorteados).
 - Observações: o conteúdo segue os temas usuais de cada disciplina e **não substitui a ementa oficial**; algumas posições das colunas F e G do fluxograma (pré-requisitos) não ficaram claras na extração do PDF e foram omitidas.
+
+---
+
+## 11. Problemas, ferramentas, desafios e Modo Estágio — `conteudo/problemas.js` e `conteudo/desafios.js`
+
+```js
+window.PROBLEMAS = {
+  categorias: [{ id: "estoque", nome: "Estoque", icone: "📦", desc: "…" }],
+  problemas: [{ id: "estoque-demais", termos: "estoque alto excesso…", cat: "estoque", titulo: "Tenho estoque demais",
+                desc: "…", comecar: "Comece pela **Curva ABC**…", ferramentas: ["curva-abc", "giro-estoque", …] }],
+  ferramentas: { "curva-abc": { nome, icone, termos, oque, paraque, quando, dados: [...], formulas: [[fórmula, significado]],
+                 exemplo, erros, ver: ["g-logist-l2", "m03-l5"] } },   // ver = lições/tópicos que já existem no app
+  areasEstagio: [{ id: "pcp", nome: "PCP", icone, cats: [...], ferramentas: [...], estudo: ["m03", "g-pcp1"] }]
+};
+window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergunta, opcoes: [...], correta: 0, porque, pratica }];
+```
+
+- **ver**: ids de lição do curso (`m03-l2`) ou de tópico da grade (`g-logist-l2` = 2º tópico da disciplina). A ficha liga direto a `#conteudo/<módulo>/<lição>`.
+- O **Verificador de conteúdo** (⚙️) aponta ferramenta, lição, categoria, módulo ou desafio que não existe.
+- A **busca** indexa ferramentas, problemas (com `termos`), disciplinas e módulos, termos de todos os glossários, lições/tópicos e fórmulas; ignora acentos, palavras curtas comuns e plural simples.
+- Hoje: 12 categorias, 42 problemas, 68 ferramentas, 42 desafios e 10 áreas de estágio.

@@ -1,6 +1,7 @@
 /* =====================================================================
    TESTE AUTOMÁTICO DO APP (para quem desenvolve; não precisa para usar)
-   Percorre todos os módulos e níveis errando de propósito, zera e recupera
+   Percorre a nova experiência (início, consultar, problemas, desafio,
+   estudar, Modo Estágio, favoritos) e todos os módulos e níveis errando de propósito, zera e recupera
    vidas, revisa até D+30, testa congelamento da ofensiva, capa/níveis,
    discursivas, glossário, retenção, quiz solo/grupo, flashcards, telas,
    modo offline, abertura por arquivo e larguras de tela.
@@ -229,8 +230,8 @@ async function recuperarVidas(p) {
     feitas: disciplinas().filter(m => licaoConcluida(m.licoes[0].id)).length }));
   log(`grade: ${g.n} disciplinas em ${g.periodos} períodos; 1º tópico concluído em ${g.feitas}`);
   checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
-  await p.evaluate(() => ir('inicio')); await p.waitForTimeout(150);
-  checar((await p.$$('.hub-card')).length === 3, 'início com Exercícios, Mapas mentais e Conteúdo');
+  await p.evaluate(() => ir('estudar')); await p.waitForTimeout(150);
+  checar((await p.$$('.hub-card')).length === 3, 'Estudar mantém Exercícios, Mapas mentais e Conteúdo');
   await p.click('.hub-card.ex'); await p.waitForTimeout(150);
   checar((await p.textContent('h1')).includes('Exercícios') && await p.$('a[href="#trilha/grade/1"]'), 'Exercícios abre a interface de estudo (com acesso à grade)');
   await p.evaluate(() => ir('trilha/grade/3')); await p.waitForTimeout(150);
@@ -252,10 +253,86 @@ async function recuperarVidas(p) {
   const pdf = fs.readFileSync(SP + '/mapa-a4.pdf', 'latin1');
   checar((pdf.match(/\/Type\s*\/Page[^s]/g) || []).length === 1, 'mapa impresso ocupa exatamente 1 folha A4');
 
+
+  // ===== Nova experiência: Início, Consultar, Problemas, Desafio, Estudar, Modo Estágio =====
+  await p.evaluate(() => ir('inicio')); await p.waitForTimeout(150);
+  checar((await p.$$('.path-card')).length === 4 && await p.$('#busca-home'), 'início com pesquisa e os 4 caminhos');
+  checar(JSON.stringify(await p.$$eval('#nav a', a => a.map(x => x.dataset.tab))) === JSON.stringify(['inicio', 'consultar', 'problemas', 'desafio', 'estudar']), 'navegação: Início + 4 caminhos');
+  checar((await p.textContent('body')).includes('Continue de onde parou') && (await p.textContent('body')).includes('Seu progresso'), 'início mostra continuar e progresso reais');
+  await p.fill('#busca-home', 'estoque de segurança'); await p.waitForTimeout(100);
+  checar(await p.$eval('#res-home .mini', a => a.getAttribute('href')) === '#ferramenta/estoque-seguranca', 'pesquisa do início acha a ferramenta primeiro');
+  await p.press('#busca-home', 'Enter'); await p.waitForTimeout(150);
+  checar((await p.evaluate(() => location.hash)).startsWith('#consultar/') && (await p.$$('#res .mini')).length >= 5, 'Enter abre Consultar com os resultados');
+  for (const [q, esperado] of [['takt', '#ferramenta/takt'], ['OEE', '#ferramenta/oee'], ['derivada', null], ['NR-17', null]]) {
+    const r = await p.evaluate(x => buscar(x).map(e => e.href), q);
+    checar(r.length > 0 && (!esperado || r[0] === esperado), `busca “${q}” (${r.length} resultados)`);
+  }
+  // Ficha de ferramenta: 30 s → 3 min → prática → teste → aprofunde
+  await p.evaluate(() => ir('ferramenta/estoque-seguranca')); await p.waitForTimeout(150);
+  const fic = await p.evaluate(() => ({ s: [...document.querySelectorAll('.csec')].map(x => x.id), links: [...document.querySelectorAll('#c-aprofunde a')].map(a => a.getAttribute('href')), txt: document.body.textContent }));
+  checar(['c-30s', 'c-3min', 'c-pratica', 'c-teste', 'c-aprofunde'].every(x => fic.s.includes(x)), 'ficha com os 5 níveis de consulta');
+  checar(['O que é', 'Para que serve', 'Quando usar', 'Quais dados preciso', 'Erros comuns', 'Exemplo prático'].every(t => fic.txt.includes(t)), 'ficha: o que é, para que serve, quando usar, dados, exemplo e erros');
+  checar(fic.links.includes('#conteudo/g-logist/g-logist-l2') && fic.links.some(h => h.startsWith('#problema/')), 'ficha leva ao conteúdo completo e aos problemas');
+  const xpAntes = await p.evaluate(() => S.xpTotal);
+  await p.click('#testar'); await responder(p, true); await p.waitForTimeout(100);
+  checar((await p.textContent('#teste-area')).includes('Você acertou') && await p.evaluate(() => S.xpTotal) > xpAntes, 'teste rápido dentro da ficha');
+  await p.click('#fav');
+  checar(await p.evaluate(() => S.favoritos.length === 1 && S.favoritos[0].k === 'f:estoque-seguranca'), 'salvar nos favoritos');
+  await p.click('#c-aprofunde a[href="#conteudo/g-logist/g-logist-l2"]'); await p.waitForTimeout(200);
+  checar(!!(await p.$('#tp-g-logist-l2')) && /estoque de segurança/i.test(await p.textContent('#tp-g-logist-l2')), 'link direto para o tópico do conteúdo');
+  await p.evaluate(() => ir('conteudo/m03/m03-l6')); await p.waitForTimeout(150);
+  checar(await p.$eval('#lic-m03-l6', d => d.open), 'link direto abre a lição certa no conteúdo do módulo');
+  // Ficha de conceito (glossário) e de lição
+  const termo = await p.evaluate(() => modulo('m03').glossario[0].termo);
+  await p.evaluate(t => ir('consulta/' + encodeURIComponent('g:m03:' + t)), termo); await p.waitForTimeout(150);
+  checar((await p.$$('.csec')).length >= 3 && (await p.textContent('.resumo-box')).length > 20, `ficha de conceito (“${termo}”)`);
+  await p.evaluate(() => ir('consulta/' + encodeURIComponent('l:m04-l5'))); await p.waitForTimeout(150);
+  checar((await p.textContent('body')).includes('Takt') && await p.$('#c-aprofunde a[href="#licao/m04-l5"]'), 'ficha de lição com link para os exercícios');
+  // Problemas: categoria → problema → ferramentas
+  await p.evaluate(() => ir('problemas')); await p.waitForTimeout(150);
+  checar((await p.$$('.cat-card')).length === 12, 'Problemas com 12 categorias');
+  await p.click('.cat-card[href="#problemas/estoque"]'); await p.waitForTimeout(100);
+  await p.click('.mini[href="#problema/estoque-demais"]'); await p.waitForTimeout(100);
+  const fer = await p.$$eval('.mini', a => a.map(x => x.getAttribute('href')));
+  checar(['curva-abc', 'giro-estoque', 'lec', 'estoque-seguranca', 'ponto-pedido', 'previsao-demanda'].every(f => fer.includes('#ferramenta/' + f)), '“Tenho estoque demais” → 6 ferramentas');
+  await p.evaluate(() => ir('problemas')); await p.fill('#busca-prob', 'estoque alto'); await p.waitForTimeout(100);
+  checar(await p.$eval('#res-prob .mini', a => a.getAttribute('href')) === '#problema/estoque-demais', 'busca por problema em linguagem do dia a dia');
+  // Desafio do dia
+  const xpD = await p.evaluate(() => S.xpTotal);
+  await p.evaluate(() => ir('desafio')); await p.waitForTimeout(150);
+  const idDia = await p.evaluate(() => S.desafioDia.id);
+  await responder(p, true); await p.waitForTimeout(100);
+  const td = await p.textContent('body');
+  checar(td.includes('Por quê?') && td.includes('Na prática') && td.includes('Quer entender melhor?') && await p.evaluate(id => S.desafios[id].acertou, idDia) && await p.evaluate(() => S.xpTotal) === xpD + 10, 'desafio do dia: resposta, por quê, na prática, conteúdo e +10 XP');
+  await p.evaluate(() => ir('desafio')); await p.waitForTimeout(100);
+  checar(!(await p.$('#qarea')) && (await p.textContent('body')).includes('Resposta certa'), 'desafio do dia não repete no mesmo dia');
+  await p.evaluate(() => ir('desafio/historico')); await p.waitForTimeout(100);
+  checar((await p.$$('.mini')).length === 1, 'histórico de desafios');
+  // Modo Estágio (opcional) prioriza a área
+  await p.evaluate(() => ir('estagio')); await p.click('[data-a="pcp"]'); await p.waitForTimeout(100);
+  checar(await p.evaluate(() => S.config.estagio) === 'pcp', 'ativar Modo Estágio');
+  await p.evaluate(() => ir('problemas')); await p.waitForTimeout(100);
+  checar(await p.$eval('.cat-card', a => a.classList.contains('fav')), 'Modo Estágio: categorias da área primeiro');
+  await p.evaluate(() => ir('desafio/extra')); await p.waitForTimeout(100);
+  checar((await p.textContent('body')).includes('📅 PCP'), 'Modo Estágio: desafio da área');
+  await p.evaluate(() => ir('estagio')); await p.click('#desligar');
+  checar(await p.evaluate(() => S.config.estagio) === null, 'desativar Modo Estágio');
+  // Estudar: por assunto, área e nível
+  await p.evaluate(() => ir('estudar/assuntos')); await p.waitForTimeout(100);
+  checar((await p.$$('.card')).length === 7, 'Estudar por assunto: 7 módulos');
+  await p.evaluate(() => ir('estudar/areas/exatas')); await p.waitForTimeout(100);
+  checar((await p.textContent('body')).includes('Cálculo a Uma Variável') && (await p.textContent('body')).includes('Estatística Aplicada'), 'Estudar por área');
+  await p.evaluate(() => ir('estudar/nivel/medio')); await p.waitForTimeout(100);
+  checar(await p.evaluate(() => S.config.nivel) === 'medio', 'Estudar por nível define o nível padrão');
+  // Persistência: recarregar mantém favoritos, histórico e desafios
+  await p.reload(); await p.waitForSelector('.topbar');
+  checar(await p.evaluate(() => S.favoritos.length === 1 && S.historico.length >= 3 && Object.keys(S.desafios).length >= 1), 'favoritos, histórico e desafios persistem após recarregar');
+  await p.evaluate(() => ir('salvos')); await p.waitForTimeout(100);
+  checar((await p.$$('.mini')).length >= 4, 'tela de favoritos e histórico');
   // Todas as telas
-  for (const r of ['inicio', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
+  for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);
-    await p.screenshot({ path: `${SP}/n-${r.replace('/', '-')}.png`, fullPage: true });
+    await p.screenshot({ path: `${SP}/n-${r.replace(/\//g, '-')}.png`, fullPage: true });
   }
   checar((await p.textContent('body')).includes('Glossário'), 'tela de glossário por módulo');
   await p.evaluate(() => ir('perfil')); await p.waitForTimeout(100);
@@ -283,8 +360,11 @@ async function recuperarVidas(p) {
   // ===== 4) Larguras de tela: 320 px (celular pequeno), tablet e desktop =====
   for (const [nome, vp] of [['320', { width: 320, height: 640 }], ['tablet', { width: 768, height: 1024 }], ['desktop', { width: 1280, height: 800 }]]) {
     const cx = await b.newContext({ viewport: vp });
-    const pg = await cx.newPage(); await pg.goto('http://localhost:8765/index.html#licao/m01-l1'); await pg.waitForTimeout(400);
-    const larg = await pg.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+    const pg = await cx.newPage(); let larg = true;
+    for (const r of ['licao/m01-l1', 'inicio', 'ferramenta/mrp', 'problemas', 'desafio', 'estudar']) {
+      await pg.goto('http://localhost:8765/index.html#' + r); await pg.waitForTimeout(400);
+      if (!(await pg.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))) { larg = false; log('   rolagem horizontal em', nome, r); }
+    }
     checar(larg, `sem rolagem horizontal em ${nome}`);
     await pg.screenshot({ path: `${SP}/n-largura-${nome}.png`, fullPage: true });
     await cx.close();

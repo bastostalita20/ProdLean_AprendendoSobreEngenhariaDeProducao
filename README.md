@@ -1,4 +1,6 @@
-# 🏭 Curso de Engenharia de Produção + EngProd Play
+# 🏭 Curso de Engenharia de Produção + app Problema
+
+> **Tem um problema? Descubra o que a Engenharia de Produção pode fazer.** O app une consulta rápida (🔎), problemas reais de empresa (🚨), desafio do dia (⚡) e o estudo completo da graduação (🎓).
 
 Curso completo de Engenharia de Produção, com 31 dias de estudo, 14 módulos e sessões curtas pensadas para quem tem TDAH e rotina apertada. Vem junto com um **app de estudo gamificado** que mistura Duolingo e Kahoot e funciona offline no celular.
 

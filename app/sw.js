@@ -4,7 +4,7 @@
    (rápido e offline) e, se houver internet, atualiza o cache por trás.
    Ao mudar o código do app, aumente o número da VERSAO abaixo.
    ===================================================================== */
-const VERSAO = "engprod-v10";
+const VERSAO = "engprod-v11";
 // Lê a lista de módulos (conteudo/indice.js) para já guardar todos no 1º acesso.
 // Quando você edita o indice.js, o navegador percebe e atualiza o cache sozinho.
 importScripts("conteudo/indice.js");
