@@ -241,7 +241,7 @@ async function recuperarVidas(p) {
   checar(tc.includes('Derivadas') && tc.includes('Na produção') && (await p.$$('.topico')).length >= 3, 'conteúdo da disciplina com tópicos e aplicações');
   await p.evaluate(() => ir('conteudo/m03')); await p.waitForTimeout(150);
   checar((await p.$$('details.periodo')).length >= 5, 'conteúdo de um módulo do curso');
-  for (const id of ['g-calc1', 'g-engeco', 'm06']) {
+  for (const id of ['g-calc1', 'g-engeco', 'm06', 'g-gproj', 'g-projprod', 'g-pcp1']) {
     await p.evaluate(x => ir('mapa/' + x), id); await p.waitForTimeout(300);
     const mp = await p.evaluate(() => { const a = document.querySelector('#a4'); return { h: a.scrollHeight, ramos: a.querySelectorAll('.ramo').length, linhas: a.querySelectorAll('#lig path').length, aviso: document.querySelector('#aviso-mapa').textContent }; });
     checar(mp.ramos >= 3 && mp.linhas === mp.ramos && mp.h <= 1123 && !mp.aviso.startsWith('⚠️'), `mapa mental A4 de ${id} (${mp.ramos} ramos)`);
@@ -338,6 +338,17 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => S.favoritos.length === 1 && S.historico.length >= 3 && Object.keys(S.desafios).length >= 6), 'favoritos, histórico e desafios persistem após recarregar');
   await p.evaluate(() => ir('salvos')); await p.waitForTimeout(100);
   checar((await p.$$('.mini')).length >= 4, 'tela de favoritos e histórico');
+  // Aprofundamento com os materiais de aula (Projeto do Produto, Gestão de Projetos, PCP I)
+  const apro = await p.evaluate(() => ['g-projprod', 'g-gproj', 'g-pcp1'].map(id => ({ id, n: modulo(id).licoes.length, q: modulo(id).licoes.reduce((t, l) => t + l.questoes.length, 0), refs: (modulo(id).fonte.referencias || []).length })));
+  checar(apro.every(x => x.n >= 7 && x.q >= 28 && x.refs >= 3), 'disciplinas aprofundadas: ' + apro.map(x => `${x.id} ${x.n} tópicos/${x.q} questões`).join(', '));
+  for (const [q, esperado] of [['kano', '#ferramenta/kano'], ['matriz bcg', '#ferramenta/matriz-bcg']]) {
+    checar(await p.evaluate(x => buscar(x)[0].href, q) === esperado, `busca “${q}” acha a ferramenta nova`);
+  }
+  for (const lid of ['g-projprod-l8', 'g-gproj-l8', 'g-pcp1-l7']) {
+    await p.evaluate(id => { const m = modulo(LICOES.find(l => l.id === id).modulo); // libera os tópicos anteriores
+      m.licoes.slice(0, m.licoes.findIndex(l => l.id === id)).forEach(l => { S.licoes[l.id] = S.licoes[l.id] || { data: hoje(), acertos: 1, total: 1, vezes: 1 }; }); S.vidas = 5; salvar(); }, lid);
+    checar((await fazerLicao(p, lid)).includes('Lição concluída'), `lição nova ${lid} concluída`);
+  }
   // Todas as telas
   for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);

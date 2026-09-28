@@ -1887,7 +1887,19 @@ function ajustarEscalaA4() {
   a.style.transform = `scale(${esc_})`;
   w.style.height = Math.ceil(1123 * esc_) + "px";
 }
-function desenharMapaA4(a4, D, op, marcados) {
+// Quando nem a letra mínima faz caber, o mapa se compacta em etapas (os mapas que já cabem não mudam):
+// 1) primeira frase de cada item; 2) até 4 pontos e 3 fórmulas por tópico; 3) até 3 pontos, 2 fórmulas e 8 termos do glossário.
+function compactarMapa(D, nivel) {
+  if (!nivel) return D;
+  const maxP = [99, 99, 4, 3][nivel], maxF = [99, 99, 3, 2][nivel];
+  return Object.assign({}, D, {
+    topicos: D.topicos.map(tp => Object.assign({}, tp, {
+      pontos: tp.pontos.map(primeiraFrase).slice(0, maxP), formulas: tp.formulas.slice(0, maxF),
+      producao: tp.producao.map(primeiraFrase), exemplos: tp.exemplos.map(primeiraFrase), mnemonicos: tp.mnemonicos.map(primeiraFrase) })),
+    glossario: nivel >= 3 ? D.glossario.slice(0, 8) : D.glossario });
+}
+function desenharMapaA4(a4, D0, op, marcados, nivel = 0) {
+  const D = compactarMapa(D0, nivel);
   const tops = D.topicos.map((tp, i) => ({ tp, i })).filter(x => marcados[x.i]);
   const caixa = ({ tp, i }) => {
     const cor = op.pb ? "#333" : CORES_MAPA[i % CORES_MAPA.length];
@@ -1922,9 +1934,11 @@ function desenharMapaA4(a4, D, op, marcados) {
   a4.style.setProperty("--fs", fs + "px");
   while (a4.scrollHeight > 1123 && fs > 6) { fs -= 0.25; a4.style.setProperty("--fs", fs + "px"); }
   const coube = a4.scrollHeight <= 1123;
+  if ((!coube || (nivel > 0 && fs < 8)) && nivel < 3) return desenharMapaA4(a4, D0, op, marcados, nivel + 1); // já resumido: prioriza letra legível
   a4.style.height = "1123px";
-  if (aviso) aviso.textContent = coube ? (fs < 8 ? "💡 Letra pequena: desmarque alguns itens ou tópicos para o mapa ficar mais legível." : "")
-    : "⚠️ Há informação demais para uma folha A4. Desmarque alguns itens ou tópicos.";
+  if (aviso) aviso.textContent = !coube ? "⚠️ Há informação demais para uma folha A4. Desmarque alguns itens ou tópicos."
+    : nivel ? "✂️ Textos resumidos para caber numa folha A4. O conteúdo completo está em 📚 Ler o conteúdo."
+    : fs < 8 ? "💡 Letra pequena: desmarque alguns itens ou tópicos para o mapa ficar mais legível." : "";
   // Linhas curvas ligando o núcleo a cada ramo
   const svg = a4.querySelector("#lig"), n = a4.querySelector(".nucleo");
   const pos = el => { let x = 0, y = 0, e = el; while (e && e !== a4) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };

@@ -318,9 +318,14 @@ As disciplinas da grade curricular do Bacharelado em Engenharia de Produção (f
   topicos: [{ t: "Derivadas", pontos: ["frase", …], formulas: [["fórmula", "significado dos símbolos"]],
               producao: "onde se usa na produção", exemplo: "exemplo resolvido" }],
   glossario: [["termo", "definição"]],
+  referencias: ["AUTOR. *Obra*. Editora."],                    // "Para aprofundar" (opcional)
   questoes: [{ t: 2, id: "g-calc1-q05", tipo: "multipla", … }]   // t = índice do tópico
 }
 ```
+
+**Aprofundar uma disciplina com material de aula:** acrescente tópicos **no fim** da lista `topicos` (o id de cada lição é `<disciplina>-l<posição>`; inserir no meio mudaria os ids e o progresso salvo), com questões `t` apontando para eles, termos no glossário e as obras de base em `referencias`. Explique com suas palavras e cite a bibliografia, não o material do professor. Assim foram aprofundadas **Projeto do Produto** (inovação e BCG, planejamento estratégico do produto, propriedade intelectual e busca de anterioridade, projeto informacional e Kano), **Gestão de Projetos** (PMBOK, requisitos e rastreabilidade, EAP/dicionário/RACI, cronograma e PERT probabilístico) e **PCP I** (previsão com parametrização no Solver e método de Holt, MRP/ERP, políticas de estoque).
+
+**Mapas longos:** se nem a letra mínima faz o mapa caber na folha A4, ele se resume sozinho em etapas (primeira frase de cada item → até 4 pontos e 3 fórmulas por tópico → até 3 pontos, 2 fórmulas e 8 termos) e avisa “✂️ Textos resumidos”. Mapas que já cabem não mudam.
 
 - O app converte cada disciplina num **módulo da aba Grade** (uma lição por tópico, com os exercícios daquele tópico). Assim XP, revisão espaçada, quiz e perfil funcionam igual aos módulos.
 - Os mesmos dados alimentam o **Conteúdo** e os **Mapas mentais** (não há duplicação).
