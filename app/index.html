@@ -1888,15 +1888,16 @@ function ajustarEscalaA4() {
   w.style.height = Math.ceil(1123 * esc_) + "px";
 }
 // Quando nem a letra mínima faz caber, o mapa se compacta em etapas (os mapas que já cabem não mudam):
-// 1) primeira frase de cada item; 2) até 4 pontos e 3 fórmulas por tópico; 3) até 3 pontos, 2 fórmulas e 8 termos do glossário.
+// 1) primeira frase de cada item; 2) até 4 pontos e 3 fórmulas por tópico; 3) até 3 pontos, 2 fórmulas e 8 termos do glossário;
+// 4) até 2 pontos, 1 fórmula e 6 termos; 5) 1 ponto, 1 fórmula, sem exemplos e 4 termos (disciplinas com muitos tópicos).
 function compactarMapa(D, nivel) {
   if (!nivel) return D;
-  const maxP = [99, 99, 4, 3][nivel], maxF = [99, 99, 3, 2][nivel];
+  const maxP = [99, 99, 4, 3, 2, 1][nivel], maxF = [99, 99, 3, 2, 1, 1][nivel], maxG = [99, 99, 99, 8, 6, 4][nivel];
   return Object.assign({}, D, {
     topicos: D.topicos.map(tp => Object.assign({}, tp, {
       pontos: tp.pontos.map(primeiraFrase).slice(0, maxP), formulas: tp.formulas.slice(0, maxF),
-      producao: tp.producao.map(primeiraFrase), exemplos: tp.exemplos.map(primeiraFrase), mnemonicos: tp.mnemonicos.map(primeiraFrase) })),
-    glossario: nivel >= 3 ? D.glossario.slice(0, 8) : D.glossario });
+      producao: tp.producao.map(primeiraFrase), exemplos: nivel >= 5 ? [] : tp.exemplos.map(primeiraFrase), mnemonicos: tp.mnemonicos.map(primeiraFrase) })),
+    glossario: D.glossario.slice(0, maxG) });
 }
 function desenharMapaA4(a4, D0, op, marcados, nivel = 0) {
   const D = compactarMapa(D0, nivel);
@@ -1934,7 +1935,7 @@ function desenharMapaA4(a4, D0, op, marcados, nivel = 0) {
   a4.style.setProperty("--fs", fs + "px");
   while (a4.scrollHeight > 1123 && fs > 6) { fs -= 0.25; a4.style.setProperty("--fs", fs + "px"); }
   const coube = a4.scrollHeight <= 1123;
-  if ((!coube || (nivel > 0 && fs < 8)) && nivel < 3) return desenharMapaA4(a4, D0, op, marcados, nivel + 1); // já resumido: prioriza letra legível
+  if ((!coube || (nivel > 0 && fs < 8)) && nivel < 5) return desenharMapaA4(a4, D0, op, marcados, nivel + 1); // já resumido: prioriza letra legível
   a4.style.height = "1123px";
   if (aviso) aviso.textContent = !coube ? "⚠️ Há informação demais para uma folha A4. Desmarque alguns itens ou tópicos."
     : nivel ? "✂️ Textos resumidos para caber numa folha A4. O conteúdo completo está em 📚 Ler o conteúdo."

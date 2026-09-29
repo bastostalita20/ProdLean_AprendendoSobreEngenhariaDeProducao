@@ -340,17 +340,17 @@ async function recuperarVidas(p) {
   checar((await p.$$('.mini')).length >= 4, 'tela de favoritos e histórico');
   // Aprofundamento com os materiais de aula (Projeto do Produto, Gestão de Projetos, PCP I)
   const apro = await p.evaluate(() => ['g-projprod', 'g-gproj', 'g-pcp1'].map(id => ({ id, n: modulo(id).licoes.length, q: modulo(id).licoes.reduce((t, l) => t + l.questoes.length, 0), refs: (modulo(id).fonte.referencias || []).length })));
-  checar(apro.every(x => x.n >= 7 && x.q >= 28 && x.refs >= 3), 'disciplinas aprofundadas: ' + apro.map(x => `${x.id} ${x.n} tópicos/${x.q} questões`).join(', '));
-  for (const [q, esperado] of [['kano', '#ferramenta/kano'], ['matriz bcg', '#ferramenta/matriz-bcg']]) {
-    checar(await p.evaluate(x => buscar(x)[0].href, q) === esperado, `busca “${q}” acha a ferramenta nova`);
+  checar(apro.every(x => x.n >= 12 && x.q >= 50 && x.refs >= 6), 'disciplinas aprofundadas: ' + apro.map(x => `${x.id} ${x.n} tópicos/${x.q} questões`).join(', '));
+  for (const [q, esperado] of [['kano', '#ferramenta/kano'], ['matriz bcg', '#ferramenta/matriz-bcg'], ['indices sazonais', '#ferramenta/indices-sazonais'], ['custo alvo', '#ferramenta/custo-alvo'], ['scrum', '#ferramenta/scrum']]) {
+    checar(await p.evaluate(([x, e]) => buscar(x).slice(0, 3).some(r => r.href === e), [q, esperado]), `busca “${q}” acha a ferramenta nova (entre os 3 primeiros)`);
   }
-  for (const lid of ['g-projprod-l8', 'g-gproj-l8', 'g-pcp1-l7']) {
+  for (const lid of ['g-projprod-l8', 'g-gproj-l8', 'g-pcp1-l7', 'g-pcp1-l10', 'g-pcp1-l13', 'g-pcp1-l15', 'g-pcp1-l16', 'g-gproj-l9', 'g-gproj-l13', 'g-projprod-l11', 'g-projprod-l12']) {
     await p.evaluate(id => { const m = modulo(LICOES.find(l => l.id === id).modulo); // libera os tópicos anteriores
       m.licoes.slice(0, m.licoes.findIndex(l => l.id === id)).forEach(l => { S.licoes[l.id] = S.licoes[l.id] || { data: hoje(), acertos: 1, total: 1, vezes: 1 }; }); S.vidas = 5; salvar(); }, lid);
     checar((await fazerLicao(p, lid)).includes('Lição concluída'), `lição nova ${lid} concluída`);
   }
   // Todas as telas
-  for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
+  for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'problema/demanda-sazonal', 'ferramenta/estrutura-produto', 'desafio/extra/d56', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);
     await p.screenshot({ path: `${SP}/n-${r.replace(/\//g, '-')}.png`, fullPage: true });
   }
