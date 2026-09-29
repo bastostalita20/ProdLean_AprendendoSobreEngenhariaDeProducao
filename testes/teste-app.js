@@ -349,6 +349,10 @@ async function recuperarVidas(p) {
       m.licoes.slice(0, m.licoes.findIndex(l => l.id === id)).forEach(l => { S.licoes[l.id] = S.licoes[l.id] || { data: hoje(), acertos: 1, total: 1, vezes: 1 }; }); S.vidas = 5; salvar(); }, lid);
     checar((await fazerLicao(p, lid)).includes('Lição concluída'), `lição nova ${lid} concluída`);
   }
+  // Siglas com o significado entre parênteses (sem entregar a resposta)
+  const sg = await p.evaluate(() => { const r = [expandirSiglas('Um projeto tem EV = R$ 80 mil e AC = R$ 100 mil. O CPI é:'), expandirSiglas('Plano mestre (PMP) e o PMP')];
+    siglasBloqueadas = bloqueioDaQuestao({ pergunta: 'Ligue', pares: [['EAP', 'Estrutura analítica do projeto']] }); r.push(expandirSiglas('A EAP')); siglasBloqueadas = null; return r; });
+  checar(sg[0].includes('EV (valor agregado)') && sg[0].includes('AC (custo real)') && sg[0].includes('CPI (índice de desempenho de custo)') && sg[1] === 'Plano mestre (PMP) e o PMP' && sg[2] === 'A EAP', 'siglas explicadas entre parênteses, sem repetir e sem entregar a resposta');
   // Todas as telas
   for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'problema/demanda-sazonal', 'ferramenta/estrutura-produto', 'desafio/extra/d56', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);

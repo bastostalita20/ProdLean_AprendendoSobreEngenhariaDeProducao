@@ -31,6 +31,7 @@ D.forEach(d => {
     if (q.variaveis) Parametros.validar(q, 300).forEach(m => e(q.id + ': ' + m));
   });
 });
+(window.SIGLAS || []).forEach(([sg, sig, ctx]) => { if (!sg || !sig) erros.push('sigla incompleta ' + sg); if (ctx) try { new RegExp(ctx); } catch (x) { erros.push('contexto inválido na sigla ' + sg); } });
 const porP = {}; D.forEach(d => porP[d.periodo] = (porP[d.periodo] || 0) + 1);
 console.log(`${D.length} disciplinas · ${D.reduce((s, d) => s + d.questoes.length, 0)} questões · por período ${JSON.stringify(porP)}`);
 if (erros.length) { console.log(erros.join('\n')); process.exit(1); } else console.log('✓ grade sem erros');

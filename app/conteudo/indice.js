@@ -20,5 +20,6 @@ self.ARQUIVOS_MODULOS = [ // "self" funciona no app e no modo offline (service w
   "grade/p06.js", "grade/p07.js", "grade/p08.js", "grade/p09.js",   // disciplinas da grade (por período)
   "problemas.js",       // 🚨 problemas → ferramentas → conteúdo (e Modo Estágio)
   "desafios.js",        // ⚡ desafio do dia
+  "siglas.js",          // 🔤 significado das siglas, mostrado entre parênteses
   "banco-questoes.js"   // questões extras e com números sorteados (sempre por último)
 ];

@@ -545,7 +545,54 @@ function embaralhar(lista) {
 }
 // Protege contra HTML malicioso/quebrado e aplica **negrito**, *itálico* e quebras de linha
 function esc(t) { return String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+// Siglas (conteudo/siglas.js): na primeira vez que aparece em cada texto, a sigla ganha o significado
+// entre parênteses — "CPI (índice de desempenho de custo)". Não explica quando já há parênteses ao lado,
+// quando o contexto não define o sentido, nos mapas A4 (semSiglas) nem quando entregaria a resposta (siglasBloqueadas).
+let semSiglas = false, siglasBloqueadas = null, _siglas = null;
+function prepararSiglas() {
+  const por = new Map();
+  (window.SIGLAS || []).forEach(([s, sig, ctx]) => { if (!por.has(s)) por.set(s, []); por.get(s).push({ sig, ctx: ctx ? new RegExp(ctx) : null }); });
+  const chaves = [...por.keys()].sort((a, b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\&]/g, "\\$&"));
+  _siglas = { por, re: chaves.length ? new RegExp(`(?<![A-Za-zÀ-ÿ0-9&/])(${chaves.join("|")})((?<=NR|ISO|NBR)[- ]\\d(?:[\\d./:-]*\\d)?)?(?![A-Za-zÀ-ÿ0-9&/])`, "g") : null };
+}
+function expandirSiglas(t) {
+  if (semSiglas || !t) return t;
+  if (!_siglas) prepararSiglas();
+  if (!_siglas.re) return t;
+  const feitas = new Set(), txt0 = String(t);
+  const achar = s => { const l = _siglas.por.get(s); return l && l.find(x => !x.ctx || x.ctx.test(txt0)); };
+  // Pares com barra ("IDC/CPI", "PMP/MPS"): um só parêntese; se os sentidos diferem, os dois
+  t = txt0.replace(/(?<![A-Za-zÀ-ÿ0-9&/])([A-Z][A-Za-z0-9&]{1,6})\/([A-Z][A-Za-z0-9&]{1,6})(?![A-Za-zÀ-ÿ0-9&/])(?!\**\s*\()/g, (m, a, b) => {
+    const ea = achar(a), eb = achar(b);
+    if (!ea || !eb || feitas.has(a) || feitas.has(b) || (siglasBloqueadas && (siglasBloqueadas.has(a) || siglasBloqueadas.has(b)))) return m;
+    feitas.add(a); feitas.add(b);
+    return norm(ea.sig) === norm(eb.sig) ? `${m} (${ea.sig})` : `${m} (${ea.sig} / ${eb.sig})`;
+  });
+  return t.replace(_siglas.re, (m, s, num, pos, txt) => {
+    if (feitas.has(s) || (siglasBloqueadas && siglasBloqueadas.has(s))) return m;
+    const antes = txt.slice(Math.max(0, pos - 3), pos), depois = txt.slice(pos + m.length);
+    if (/\(\s*\**$/.test(antes) || /^\**\s*\(/.test(depois) || /^\**\s*\/[A-Z]/.test(depois) || /[A-Z]\/\**$/.test(antes)) { feitas.add(s); return m; }
+    const e = _siglas.por.get(s).find(x => !x.ctx || x.ctx.test(txt));
+    if (!e) return m;
+    feitas.add(s);
+    return `${m} (${e.sig})`; // "NR-12", "ISO 9001": o número já vem junto da sigla em m
+  });
+}
+// Bloqueia a explicação das siglas cujo significado aparece nas alternativas (senão entregaria a resposta)
+function bloquearSiglas(textos) {
+  if (!_siglas) prepararSiglas();
+  const alvo = norm(textos.join(" | "));
+  const b = new Set();
+  _siglas.por.forEach((lista, s) => { if (lista.some(x => { const n = norm(x.sig); return alvo.includes(n.slice(0, Math.min(n.length, 16))); })) b.add(s); });
+  return b;
+}
+function bloqueioDaQuestao(q) {
+  if (!_siglas) prepararSiglas();
+  if (/sigla|significa|quer dizer|abreviaç/i.test((q.pergunta || "") + " " + (q.contexto || ""))) return new Set(_siglas.por.keys());
+  return bloquearSiglas([...(q.opcoes || []), ...(q.pares || []).flat(), ...(q.itens || [])].map(String));
+}
 function fmt(t) {
+  t = expandirSiglas(t);
   const inl = x => esc(x).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
   // Tabelas simples em Markdown (linhas começando com "|"); o resto vira texto com quebras de linha
   const linhas = String(t ?? "").split("\n"), out = [];
@@ -920,7 +967,7 @@ function proximoToast() {
    VOZ: "Ouvir a lição" (síntese de voz do navegador, em português)
    --------------------------------------------------------------------- */
 function limparParaFala(t) {
-  return String(t || "").replace(/^\s*\|[\s:|-]+\|\s*$/gm, "").replace(/\|/g, ", ") // tabelas: lê as células, não as barras
+  return String(expandirSiglas(t || "")).replace(/^\s*\|[\s:|-]+\|\s*$/gm, "").replace(/\|/g, ", ") // tabelas: lê as células, não as barras
     .replace(/\/h\b/g, " por hora").replace(/\/(dia|mês|ano|semana|turno|pedido|unidade|un|min|kg|t)\b/g, " por $1") // unidades: "un/dia" → "un por dia"
     .replace(/\*\*/g, "").replace(/\*/g, "")
     .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu, "")
@@ -999,6 +1046,7 @@ function ir(rota) {
 function rotear() {
   if (limparTela) { limparTela(); limparTela = null; }
   pararFala();
+  siglasBloqueadas = null;
   document.querySelectorAll(".sheet").forEach(e => e.remove());
   atualizarVidasDoDia();
   const [nome, param, param2] = (location.hash.slice(1) || "inicio").split("/");
@@ -1900,6 +1948,10 @@ function compactarMapa(D, nivel) {
     glossario: D.glossario.slice(0, maxG) });
 }
 function desenharMapaA4(a4, D0, op, marcados, nivel = 0) {
+  semSiglas = true; // no mapa A4 o espaço é curto: siglas ficam sem o significado
+  try { desenharMapaA4_(a4, D0, op, marcados, nivel); } finally { semSiglas = false; }
+}
+function desenharMapaA4_(a4, D0, op, marcados, nivel) {
   const D = compactarMapa(D0, nivel);
   const tops = D.topicos.map((tp, i) => ({ tp, i })).filter(x => marcados[x.i]);
   const caixa = ({ tp, i }) => {
@@ -1935,7 +1987,7 @@ function desenharMapaA4(a4, D0, op, marcados, nivel = 0) {
   a4.style.setProperty("--fs", fs + "px");
   while (a4.scrollHeight > 1123 && fs > 6) { fs -= 0.25; a4.style.setProperty("--fs", fs + "px"); }
   const coube = a4.scrollHeight <= 1123;
-  if ((!coube || (nivel > 0 && fs < 8)) && nivel < 5) return desenharMapaA4(a4, D0, op, marcados, nivel + 1); // já resumido: prioriza letra legível
+  if ((!coube || (nivel > 0 && fs < 8)) && nivel < 5) return desenharMapaA4_(a4, D0, op, marcados, nivel + 1); // já resumido: prioriza letra legível
   a4.style.height = "1123px";
   if (aviso) aviso.textContent = !coube ? "⚠️ Há informação demais para uma folha A4. Desmarque alguns itens ou tópicos."
     : nivel ? "✂️ Textos resumidos para caber numa folha A4. O conteúdo completo está em 📚 Ler o conteúdo."
@@ -2069,6 +2121,7 @@ function telaTrilha(visao, per) {
    ===================================================================== */
 function renderQuestao(q, cont, aoResponder) {
   q = Parametros.instanciar(q); // questões-modelo ganham números novos a cada vez
+  siglasBloqueadas = bloqueioDaQuestao(q);
   cont.dataset.qid = q.id;      // identifica a questão exibida (útil para testes automáticos)
   cont._q = q;
   let resposta = null;     // resposta escolhida pelo usuário
@@ -2650,6 +2703,7 @@ function jogarQuiz(jogadores) {
     const p = perguntas[iq];
     const inicio = performance.now();
     let respondeu = false;
+    siglasBloqueadas = bloqueioDaQuestao({ pergunta: p.texto, opcoes: p.alts });
     app().innerHTML = `<div class="row" style="padding-top:calc(10px + env(safe-area-inset-top))">
         <button class="iconbtn" id="sairq" aria-label="Sair">✕</button>
         <span class="grow small muted">${grupo ? esc(placar[ij].nome) + " · " : ""}Pergunta ${iq + 1}/${perguntas.length}</span>
