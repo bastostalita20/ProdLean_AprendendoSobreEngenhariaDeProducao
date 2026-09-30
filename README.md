@@ -1,4 +1,4 @@
-# 🏭 Curso de Engenharia de Produção + app Problema
+# 🏭 Curso de Engenharia de Produção + app ProdLean
 
 > **Tem um problema? Descubra o que a Engenharia de Produção pode fazer.** O app une consulta rápida (🔎), problemas reais de empresa (🚨), desafio do dia (⚡) e o estudo completo da graduação (🎓).
 

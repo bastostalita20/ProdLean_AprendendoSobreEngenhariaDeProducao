@@ -1,4 +1,4 @@
-# 📱 Problema — visão geral do projeto
+# 📱 ProdLean — visão geral do projeto
 
 > **Tem um problema? Descubra o que a Engenharia de Produção pode fazer.**
 > O app é uma ponte entre **FACULDADE → REVISÃO → PROBLEMA REAL → APLICAÇÃO NO TRABALHO**:
@@ -15,7 +15,7 @@
                  “Quero aprender”
 ```
 
-Por trás dos quatro caminhos está o app de estudo gamificado (antes chamado EngProd Play), que continua inteiro dentro de **🎓 Estudar**. Mistura **conteúdo didático + Duolingo** (trilha, lições curtas, ofensiva, XP, vidas) **+ Kahoot** (quiz com tempo, cores, formas e ranking).
+Por trás das abas está o app de estudo gamificado (antes chamado EngProd Play), que continua inteiro dentro de **🎓 Estudar**. Mistura **conteúdo didático + Duolingo** (trilha, lições curtas, ofensiva, XP) **+ Kahoot** (quiz com tempo, cores, formas e ranking).
 
 - ✅ Sem login e sem servidor: o progresso fica no **localStorage** do navegador.
 - ✅ Mobile-first: pensado para o celular, inclusive no ônibus.
@@ -55,13 +55,13 @@ parametros.js           ← motor das questões com números sorteados
 
 | Tela | Rota | O que tem |
 |---|---|---|
-| 🏠 **Início** | `#inicio` | “Olá! 👋 Vamos resolver alguma coisa hoje?”, pesquisa grande (“O que você precisa lembrar?”) com resultados na hora, os **4 caminhos** (🚨 Tenho um problema, 🔎 Consultar, ⚡ Desafio do dia, 🎓 Estudar) e “Para você” com dados reais: continue de onde parou, assuntos para revisar e seu progresso. |
+| 🏠 **Início** | `#inicio` | “Olá! 👋”, pesquisa grande com resultados na hora, **▶️ Continuar de onde parei** (última lição), **⚡ Desafio do dia embutido** (responde ali mesmo; depois mostra a resposta e o link para o porquê), **🔁 Revisão de hoje** (questões e flashcards vencidos) e **🔥 Mais consultados** em chips. |
 | 🔎 **Consultar** | `#consultar` · `#consultar/<busca>` | Central de consulta: busca conceitos, ferramentas, fórmulas, disciplinas, lições, indicadores, métodos e problemas. Sem busca: mais consultados (ou os da sua área), favoritos, vistos recentemente, todas as ferramentas e glossário. |
 | 📄 **Ficha de consulta** | `#ferramenta/<id>` · `#consulta/<chave>` | Níveis progressivos: **⚡ 30 s** (resumo: o que é, para que serve) → **📚 3 min** (quando usar, dados, fórmula, erros comuns) → **🏭 Na prática** (exemplo) → **🧠 Teste** (1 pergunta) → **🔬 Aprofunde** (links diretos ao conteúdo completo, aos exercícios, ao mapa e aos problemas relacionados). ☆ Salvar nos favoritos e 🔊 Ouvir a ficha inteira (problemas e explicação do desafio também têm 🔊 Ouvir). Chaves: `g:<módulo>:<termo>` (conceito do glossário), `l:<lição>` (lição ou tópico). |
 | 🧰 **Ferramentas** | `#ferramentas` | Todas as fichas de ferramenta, em ordem alfabética, com filtro. |
 | 🚨 **Problemas** | `#problemas` · `#problemas/<categoria>` · `#problema/<id>` | “Qual problema você precisa resolver?”: 12 categorias e busca em linguagem do dia a dia → situações (“Tenho estoque demais”) → “Por onde começar” + ferramentas que podem ajudar → ficha → conteúdo. |
 | ⚡ **Desafio do dia** | `#desafio` · `#desafio/extra` · `#desafio/historico` · `#desafio/ver/<id>` | Um problema curto por dia (o mesmo o dia inteiro; da sua área no Modo Estágio). Depois de responder: ✅ resposta, “Por quê?”, “Na prática” e “Quer entender melhor?”. +10 XP (acerto) ou +3 XP (tentativa), contando para meta e ofensiva. Histórico com % de acerto. |
-| 🎓 **Estudar** | `#estudar` · `#estudar/assuntos` · `#estudar/areas/<área>` · `#estudar/nivel/<nível>` · `#estudar/aprofundar` | A área acadêmica completa: por assunto (módulos), por disciplina (grade), por área, por nível, revisão rápida e aprofundamento, mais os antigos cartões 🎮 Exercícios, 🧠 Mapas mentais e 📚 Conteúdo. |
+| 🎓 **Estudar** | `#estudar` · `#estudar/assunto` · `#estudar/disciplina/<período>` · `#estudar/area/<área>` · `#estudar/praticar` · `#estudar/materiais` | Três blocos em abas: **📖 Estudar** (por assunto, disciplina ou área), **🎮 Praticar** (exercícios da trilha, Quiz, revisão espaçada, flashcards e pontos fracos) e **📚 Materiais** (mapas mentais, conteúdo completo, glossário e áudio). O nível Fácil/Médio/Difícil é um **filtro** no topo, salvo em `config.nivel`. Endereços antigos (`#estudar/assuntos`, `/areas/…`, `/nivel/…`, `/aprofundar`) continuam funcionando. |
 | 🎯 **Modo Estágio** | `#estagio` | Opcional. Escolha PCP, Produção, Qualidade, Logística, Suprimentos, Compras, Processos, Projetos, Dados ou Pesquisa Operacional: categorias de problema, desafios, ferramentas sugeridas, assuntos para revisar e módulos passam a aparecer primeiro. |
 | ⭐ **Favoritos e histórico** | `#salvos` | Itens salvos, últimas consultas (até 30) e atalho para os desafios feitos. |
 | 🎮 **Exercícios** | `#exercicios` | A interface de estudo gamificada: chama 🔥 da ofensiva, anel de XP do dia × meta, botão **Continuar**, nível, atalhos para a Trilha do curso, a Grade curricular, Revisão, Flashcards, Quiz e Modo ônibus. |
@@ -82,7 +82,7 @@ parametros.js           ← motor das questões com números sorteados
 
 ## 3. Fluxo de navegação
 
-Barra inferior: **🏠 Início · 🔎 Consultar · 🚨 Problemas · ⚡ Desafio · 🎓 Estudar**. Perfil (pelo ícone de nível) e ⚙️ Configurações ficam na barra superior, junto com ofensiva, XP do dia e vidas; Favoritos/Histórico ficam em Consultar e no Perfil.
+Barra inferior: **🏠 Início · 🔎 Consultar · 🚨 Problemas · 🎓 Estudar · 👤 Perfil**. O Desafio do dia fica no Início (e segue em `#desafio`). A barra superior tem só ofensiva, XP do dia e o avatar, que abre o Perfil; Configurações, Conquistas, Modo Estágio, Salvos e Desafios feitos ficam nos atalhos do topo do Perfil.
 
 ```
 🔎 Consultar ──► resultado ──► ficha (30 s → 3 min → prática → teste) ──► conteúdo completo / exercícios
@@ -90,14 +90,12 @@ Barra inferior: **🏠 Início · 🔎 Consultar · 🚨 Problemas · ⚡ Desafi
 ⚡ Desafio ──► resposta ──► por quê + na prática ──► ferramenta ──► conteúdo
 🎓 Estudar ──► (tudo o que já existia, abaixo)
 🏠 Início ──"Continuar"──► 📖 Lição ──► blocos ──► exercícios ──► 🎉 Resultado ──► próxima lição / trilha
-   │                          │
-   │                          └─ ❤️ = 0 ──► 💔 "Sem vidas" ──► 🔁 Revisão (cada acerto = +1 ❤️)
    ├──► 🔁 Revisão ──► sessão ──► resultado
    ├──► 🃏 Flashcards ──► baralho ──► concluído
    ├──► ⚡ Quiz ──► solo ──► pergunta ⇄ resultado ──► pontuação + ranking
    │            └─► grupo ──► "passe o celular" ──► pergunta ──► placar ──► … ──► 🏆 pódio
    └──► 🎧 Modo ônibus
-👤 Perfil ──► 🏅 Conquistas  |  ⚙️ Configurações (também pelo ⚙️ da barra superior)
+👤 Perfil (aba ou avatar) ──► ⚙️ Configurações · 🏅 Conquistas · 🎯 Modo Estágio · ⭐ Salvos · ⚡ Desafios
 ```
 
 O endereço muda com `#` (ex.: `#licao/m01-l3`), então o **botão voltar do celular funciona**.
@@ -113,7 +111,7 @@ O endereço muda com `#` (ex.: `#licao/m01-l3`), então o **botão voltar do cel
 | XP por acerto na revisão espaçada | 3 (treino livre: 1) |
 | XP no Quiz Relâmpago | 2 por acerto + 5 se gabaritar (grupo: 10 por partida) |
 | XP por baralho de flashcards | 1 por carta (máx. 20) |
-| Vidas | 5 por dia; perde 1 por erro na lição; +1 por acerto na revisão/treino |
+| Vidas | Desativadas: errar não bloqueia o estudo (a questão errada volta para o fim da lição e entra na revisão espaçada). Os campos `vidas` e `diaVidas` continuam no estado só por compatibilidade. |
 | Ofensiva 🔥 | +1 por dia com qualquer XP; se faltar **um** dia, o 🧊 congelamento salva a ofensiva (1 vez a cada 7 dias); faltou mais, zera |
 | Níveis | Estagiário 0 · Analista 150 · Eng. Júnior 400 · Pleno 800 · Sênior 1.400 · Gerente de Produção 2.200 · Diretor Industrial 3.500 |
 | Revisão espaçada | errou → volta em D+1; cada acerto empurra para D+3, D+7, D+15, D+30; acertou no D+30 → "dominada" |

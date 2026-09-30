@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f8a4c">
-<meta name="description" content="Tem um problema? Descubra o que a Engenharia de Produção pode fazer. Consulta rápida, problemas reais de empresa, desafio do dia e estudo completo da graduação.">
-<title>Problema · Engenharia de Produção</title>
+<meta name="description" content="ProdLean: Engenharia de Produção descomplicada. Consulta rápida de ferramentas e fórmulas, problemas reais de empresa, desafio do dia e estudo completo da graduação, grátis e offline.">
+<title>ProdLean — Engenharia de Produção descomplicada</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone-192.png">
@@ -90,7 +90,7 @@ p { margin: 0 0 .6rem; }
 .hidden { display: none !important; }
 .mt { margin-top: 12px; } .mb { margin-bottom: 12px; }
 
-/* Barra superior (ofensiva, XP, vidas) */
+/* Barra superior (ofensiva, XP e avatar) */
 .topbar {
   position: sticky; top: 0; z-index: 20; background: var(--bg);
   display: flex; justify-content: space-between; align-items: center; gap: 6px;
@@ -424,6 +424,19 @@ a.btn { text-decoration: none; text-align: center; }
 .cat-card.fav { border: 2px solid var(--primary); }
 .cat-card.on { border: 2px solid var(--primary); background: var(--primary-soft); }
 .cat-card .star { position: absolute; top: 8px; right: 10px; font-size: .8rem; }
+/* Estudar em 3 blocos (abas) e filtro de nível; Início enxuto */
+.seg { display: flex; gap: 4px; padding: 4px; margin: 4px 0 12px; border-radius: 14px; background: var(--surface-2); }
+.seg a { flex: 1; text-align: center; padding: 9px 4px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 800; font-size: .92rem; }
+.seg a.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.nivel-filtro { display: flex; gap: 6px; margin-bottom: 4px; }
+.nivel-filtro button { flex: 1; min-height: 40px; border-radius: 999px; border: 2px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; font-size: .85rem; cursor: pointer; }
+.nivel-filtro button.on { border-color: var(--primary); background: var(--primary-soft); }
+.home-desafio { padding: 14px; }
+.home-desafio .q-enunciado { font-size: 1rem; }
+.home-rev { gap: 8px; }
+.topbar .avatar { font-size: 1.1rem; }
+.chips-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.chips-row a { flex: 0 0 auto; }
 .chips-sug { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .chips-sug a { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); text-decoration: none; color: var(--text); font-weight: 600; font-size: .88rem; }
 .ficha-head { margin-bottom: 6px; }
@@ -453,8 +466,8 @@ a.btn { text-decoration: none; text-align: center; }
     <a href="#inicio" data-tab="inicio"><span class="ico">🏠</span>Início</a>
     <a href="#consultar" data-tab="consultar"><span class="ico">🔎</span>Consultar</a>
     <a href="#problemas" data-tab="problemas"><span class="ico">🚨</span>Problemas</a>
-    <a href="#desafio" data-tab="desafio"><span class="ico">⚡</span>Desafio</a>
     <a href="#estudar" data-tab="estudar"><span class="ico">🎓</span>Estudar</a>
+    <a href="#perfil" data-tab="perfil"><span class="ico">👤</span>Perfil</a>
   </div>
 </nav>
 <div id="listenbar" class="listen-bar hidden"><div class="inner"><span>🎧</span><span class="grow small" id="listen-title">Ouvindo…</span><button id="listen-stop">⏹ Parar</button></div></div>
@@ -618,7 +631,7 @@ function estadoInicial() {
     xpTotal: 0,
     xpPorDia: {},              // { "2026-09-23": 40 }
     ofensiva: { atual: 0, recorde: 0, ultimoDia: null, congeladoEm: null },
-    vidas: VIDAS_MAX, diaVidas: hoje(),
+    vidas: VIDAS_MAX, diaVidas: hoje(), // vidas não bloqueiam mais o estudo; campos mantidos por compatibilidade
     licoes: {},                // { "m01-l1": { data, acertos, total, vezes } }
     questoes: {},              // estatística por questão { acertos, erros }
     revisao: {},               // { idQuestao: { etapa, proxima } }
@@ -831,12 +844,6 @@ function ganharXP(qtd) {
   }
   salvar();
 }
-// Vidas: recarregam por completo a cada novo dia; também voltam revisando
-function atualizarVidasDoDia() {
-  if (S.diaVidas !== hoje()) { S.vidas = VIDAS_MAX; S.diaVidas = hoje(); salvar(); }
-}
-function perderVida() { S.vidas = Math.max(0, S.vidas - 1); salvar(); }
-function recuperarVida() { if (S.vidas < VIDAS_MAX) { S.vidas++; salvar(); return true; } return false; }
 
 /* ---------------------------------------------------------------------
    CONQUISTAS
@@ -1048,7 +1055,6 @@ function rotear() {
   pararFala();
   siglasBloqueadas = null;
   document.querySelectorAll(".sheet").forEach(e => e.remove());
-  atualizarVidasDoDia();
   const [nome, param, param2] = (location.hash.slice(1) || "inicio").split("/");
   const telas = {
     inicio: telaHub, exercicios: telaInicio,
@@ -1064,7 +1070,8 @@ function rotear() {
   // Aba destacada: as telas antigas de estudo ficam dentro de "Estudar"
   const aba = { exercicios: "estudar", trilha: "estudar", quiz: "estudar", revisar: "estudar", flashcards: "estudar", glossario: "estudar",
     ouvir: "estudar", conteudo: "estudar", mapas: "estudar", mapa: "estudar", consulta: "consultar", ferramentas: "consultar",
-    ferramenta: "consultar", salvos: "consultar", problema: "problemas" }[nome] || nome;
+    ferramenta: "consultar", salvos: "consultar", problema: "problemas", desafio: "inicio",
+    conquistas: "perfil", config: "perfil", estagio: "perfil" }[nome] || nome;
   $$("#nav a").forEach(a => { const on = a.dataset.tab === aba; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   (telas[nome] || telaHub)(param, param2);
   window.scrollTo(0, 0);
@@ -1075,15 +1082,13 @@ document.addEventListener("click", ev => {
   if (a && a.getAttribute("href") === location.hash) { ev.preventDefault(); rotear(); }
 });
 
-// Barra superior com ofensiva, XP do dia, vidas e nível
+// Barra superior com ofensiva, XP do dia e avatar (abre o Perfil, onde ficam as Configurações)
 function barraTopo() {
   const of = ofensivaVisivel(), nv = NIVEIS[nivelAtual()];
   return `<div class="topbar">
     <span class="chip ${of ? "" : "off"}" title="Ofensiva">🔥 ${of}</span>
     <span class="chip" title="XP hoje / meta">💎 ${xpHoje()}/${S.config.meta}</span>
-    <span class="chip" title="Vidas">❤️ ${S.vidas}</span>
-    <a class="chip" href="#perfil" style="text-decoration:none;color:inherit" title="Perfil · ${esc(nv.nome)}" aria-label="Perfil e progresso">${nv.icone}</a>
-    <a class="chip" href="#config" style="text-decoration:none;color:inherit" aria-label="Configurações">⚙️</a>
+    <a class="chip avatar" href="#perfil" style="text-decoration:none;color:inherit" title="Perfil · ${esc(nv.nome)}" aria-label="Perfil, progresso e configurações">${nv.icone}</a>
   </div>`;
 }
 
@@ -1268,32 +1273,26 @@ function buscar(q, lim = 40) {
    ===================================================================== */
 function telaHub() {
   const nome = S.config.nome && S.config.nome !== "Eu" ? ", " + esc(S.config.nome) : "";
-  const d = desafioDoDia(), feitoHoje = d && S.desafios[d.id] && S.desafios[d.id].data === hoje();
-  const aviso = errosConteudo.length ? `<div class="errbox">⚠️ Encontrei problemas no conteúdo (veja em ⚙️ Configurações → Verificador).</div>` : "";
-  const A = areaEstagio();
-  // assuntos com perguntas para revisar hoje (os da área do Modo Estágio primeiro)
-  const naArea = l => A && A.estudo.includes(l.modulo) ? 1 : 0;
-  const assuntos = [...new Set(revisoesPendentes().map(id => Q[id].licao))].map(id => LICOES.find(l => l.id === id)).filter(Boolean).sort((a, b) => naArea(b) - naArea(a));
-  const total = LICOES.length, feitas = LICOES.filter(l => licaoConcluida(l.id)).length, nDes = Object.keys(S.desafios).length;
-  const cont = continuarEstudo(), nv = NIVEIS[nivelAtual()];
-  const pessoal = [
-    cont ? htmlItem(cont) : "",
-    assuntos.length ? htmlItem({ href: "#revisao/pendentes", icone: "🔁", tipo: "Precisa revisar", titulo: `${assuntos.length} assunto${assuntos.length > 1 ? "s" : ""} para revisar`, sub: assuntos.slice(0, 3).map(l => l.titulo).join(" · ") }) : "",
-    feitas || nDes || S.xpTotal ? htmlItem({ href: "#perfil", icone: nv.icone, tipo: "Seu progresso", titulo: `${feitas} de ${total} lições · ${nDes} desafio${nDes === 1 ? "" : "s"}`, sub: `${nv.nome} · ${S.xpTotal} XP · 🔥 ${ofensivaVisivel()} dia(s) de ofensiva` }) : ""
-  ].join("");
+  const aviso = errosConteudo.length ? `<div class="errbox">⚠️ Encontrei problemas no conteúdo (veja em 👤 Perfil → Configurações → Verificador).</div>` : "";
+  const cont = continuarEstudo();
+  const pend = revisoesPendentes().length, cartas = cartasPendentes().length;
+  const d = desafioDoDia(), reg = d && S.desafios[d.id], feitoHoje = reg && reg.data === hoje();
   app().innerHTML = barraTopo() + aviso + `
     <div class="home-hello"><h1>Olá${nome}! 👋</h1><p class="lead">Vamos resolver alguma coisa hoje?</p></div>
     ${campoBusca("busca-home")}
     <div id="res-home"></div>
-    <div class="path-grid">
-      <a class="path-card prob" href="#problemas"><span class="pi" aria-hidden="true">🚨</span><b>Tenho um problema</b><span class="pd">Descubra quais ferramentas de Engenharia de Produção podem ajudar.</span></a>
-      <a class="path-card cons" href="#consultar"><span class="pi" aria-hidden="true">🔎</span><b>Consultar</b><span class="pd">Encontre rapidamente um conceito, fórmula ou ferramenta.</span></a>
-      <a class="path-card desa" href="#desafio">${d ? `<span class="selo">${feitoHoje ? "✓ feito" : "novo"}</span>` : ""}<span class="pi" aria-hidden="true">⚡</span><b>Desafio do dia</b><span class="pd">Resolva um problema real em poucos minutos.</span></a>
-      <a class="path-card estu" href="#estudar"><span class="pi" aria-hidden="true">🎓</span><b>Estudar</b><span class="pd">Continue suas trilhas e revise os conteúdos da graduação.</span></a>
-    </div>
-    ${pessoal ? `<h2 class="sec-t">Para você</h2><div class="lista">${pessoal}</div>` : ""}
-    ${linhaEstagio()}
-    <p class="center small muted">Da faculdade para o estágio 🏭</p>`;
+    <h2 class="sec-t">▶️ Continuar de onde parei</h2>
+    <div class="lista">${cont ? htmlItem(cont) : htmlItem({ href: "#estudar", icone: "🎓", tipo: "Comece por aqui", titulo: "Escolha um assunto ou disciplina", sub: "Trilhas do curso e as 56 disciplinas da graduação" })}</div>
+    ${d ? `<h2 class="sec-t">⚡ Desafio do dia <span class="small muted">· ~2 min</span></h2><div class="card home-desafio" id="home-desafio"></div>` : ""}
+    <h2 class="sec-t">🔁 Revisão de hoje</h2>
+    ${pend || cartas ? `<div class="row wrap home-rev">
+        ${pend ? `<a class="btn small" href="#revisao/pendentes">❓ ${pend} questã${pend > 1 ? "ões" : "o"} para revisar</a>` : ""}
+        ${cartas ? `<a class="btn small sec" href="#flashcards">🃏 ${cartas} flashcard${cartas > 1 ? "s" : ""}</a>` : ""}</div>`
+      : `<p class="small muted">Nada vencido hoje ✓ As questões que você errar voltam aqui no dia certo.</p>`}
+    <h2 class="sec-t">🔥 Mais consultados</h2>
+    <div class="chips-sug">${ferramentasPopulares(8).map(id => `<a href="#ferramenta/${id}">${FERR(id).icone} ${esc(FERR(id).nome)}</a>`).join("")}</div>
+    ${linhaEstagio()}`;
+  if (d) desenharDesafioHome(d, feitoHoje ? reg : null);
   const inp = $("#busca-home");
   inp.oninput = () => {
     const q = inp.value.trim(), r = buscar(q, 41);
@@ -1303,6 +1302,33 @@ function telaHub() {
   };
   $("#form-busca-home").onsubmit = ev => { ev.preventDefault(); const q = inp.value.trim(); if (q) ir("consultar/" + enc(q)); };
 }
+// Desafio do dia embutido no Início: responde ali mesmo; o resultado fica resumido com link para a explicação completa
+function desenharDesafioHome(d, reg) {
+  const box = $("#home-desafio");
+  if (!box) return;
+  if (reg) {
+    const f = FERR(d.ferramenta);
+    box.innerHTML = `<div class="small muted mb">${fmt(d.pergunta)}</div>
+      <div class="bloco ${reg.acertou ? "dica" : "atencao"}" style="margin:0 0 10px"><div class="tag">${reg.acertou ? "✅ Você acertou" : "❌ Não foi dessa vez"}</div><b>Resposta:</b> ${fmt(d.opcoes[d.correta])}</div>
+      <div class="row wrap"><a class="btn small sec" href="#desafio/ver/${d.id}">🤔 Ver o porquê${f ? " e a ferramenta" : ""}</a>
+        <a class="btn small" href="#desafio/extra/${sortearExtra(d.id)}">⚡ Mais um desafio</a></div>`;
+    return;
+  }
+  box.innerHTML = `<div id="qarea"></div>`;
+  const q = { id: "desafio-" + d.id, tipo: "multipla", pergunta: d.pergunta, opcoes: d.opcoes, correta: d.correta, explicacao: d.porque };
+  renderQuestao(q, $("#qarea", box), acertou => { registrarDesafio(d, acertou); desenharDesafioHome(d, S.desafios[d.id]); });
+}
+function registrarDesafio(d, acertou) {
+  const primeira = !S.desafios[d.id];
+  S.desafios[d.id] = { data: hoje(), acertou };
+  salvar();
+  if (primeira) ganharXP(acertou ? 10 : 3); // conta para a meta diária e a ofensiva
+}
+// Ferramentas mais consultadas (as da área do Modo Estágio primeiro)
+function ferramentasPopulares(n) {
+  const A = areaEstagio();
+  return (A ? A.ferramentas : []).concat(POPULARES).filter((v, i, a) => a.indexOf(v) === i && FERR(v)).slice(0, n);
+}
 
 /* =====================================================================
    TELA: CONSULTAR — central de consulta rápida
@@ -1310,7 +1336,7 @@ function telaHub() {
 const POPULARES = ["estoque-seguranca", "oee", "takt", "curva-abc", "capabilidade", "vpl-tir", "lec", "caminho-critico", "mrp", "pareto"];
 function telaConsultar(qParam) {
   const q0 = dec(qParam), A = areaEstagio();
-  const pops = (A ? A.ferramentas : []).concat(POPULARES).filter((v, i, a) => a.indexOf(v) === i && FERR(v)).slice(0, 10);
+  const pops = ferramentasPopulares(10);
   app().innerHTML = barraTopo() + `<h1>🔎 Consultar</h1>
     <p class="lead">Esqueceu como funciona? Encontre um conceito, fórmula, ferramenta ou disciplina.</p>
     ${campoBusca("busca-consulta", q0)}
@@ -1595,10 +1621,7 @@ function telaDesafio(modo, param) {
   app().innerHTML = cab + `<div id="qarea" class="lesson-pad"></div>`;
   const q = { id: "desafio-" + d.id, tipo: "multipla", pergunta: d.pergunta, opcoes: d.opcoes, correta: d.correta, explicacao: d.porque };
   renderQuestao(q, $("#qarea"), acertou => {
-    const primeira = !S.desafios[d.id];
-    S.desafios[d.id] = { data: hoje(), acertou };
-    salvar();
-    if (primeira) ganharXP(acertou ? 10 : 3); // conta para a meta diária e a ofensiva
+    registrarDesafio(d, acertou);
     app().innerHTML = cab + resultado(acertou);
     ligarOuvir();
     window.scrollTo(0, 0);
@@ -1627,87 +1650,69 @@ function telaHistoricoDesafios() {
    TELA: ESTUDAR — a área acadêmica completa (tudo o que já existia)
    ===================================================================== */
 const areaDe = m => m.grade ? m.fonte.area : (m.area || (m.id === "m13" ? "exatas" : "producao"));
+// Estudar em 3 blocos: Estudar (assunto / disciplina / área), Praticar e Materiais. O nível é um filtro.
 function telaEstudar(sub, param) {
-  if (sub === "assuntos") return telaEstudarAssuntos();
-  if (sub === "areas") return telaEstudarAreas(param);
-  if (sub === "nivel") return telaEstudarNivel(param);
-  if (sub === "aprofundar") return telaEstudarAprofundar();
-  const cont = continuarEstudo(), pend = revisoesPendentes().length, cartas = cartasPendentes().length;
-  const nDisc = disciplinas().length, nMods = MODS.length - nDisc;
-  const total = LICOES.length, feitas = LICOES.filter(l => licaoConcluida(l.id)).length;
+  const antigos = { assuntos: "assunto", areas: "area", aprofundar: "materiais" };
+  if (sub === "nivel") { if (ORDEM_NIVEIS.includes(param) && S.config.nivel !== param) { S.config.nivel = param; salvar(); } sub = "assunto"; param = null; }
+  sub = antigos[sub] || sub || "assunto";
+  const bloco = sub === "praticar" ? "praticar" : sub === "materiais" ? "materiais" : "estudar";
+  const nivel = ORDEM_NIVEIS.includes(S.config.nivel) ? S.config.nivel : "facil";
+  const abas = [["estudar", "📖 Estudar", "#estudar"], ["praticar", "🎮 Praticar", "#estudar/praticar"], ["materiais", "📚 Materiais", "#estudar/materiais"]];
+  const filtroNivel = `<div class="nivel-filtro" role="group" aria-label="Nível">${ORDEM_NIVEIS.map(k => `<button class="${k === nivel ? "on" : ""}" data-nivel="${k}" aria-pressed="${k === nivel}">${NIVEIS_ESTUDO[k].icone} ${NIVEIS_ESTUDO[k].nome}</button>`).join("")}</div>`;
+  let corpo = "";
+  if (bloco === "estudar") {
+    const sabas = [["assunto", "Assunto"], ["disciplina", "Disciplina"], ["area", "Área"]];
+    corpo = filtroNivel + `<div class="pchips mb">${sabas.map(([k, t]) => `<a href="#estudar/${k}" class="${k === sub ? "on" : ""}">${t}</a>`).join("")}</div>` +
+      (sub === "disciplina" ? estudarDisciplinas(param) : sub === "area" ? estudarAreas(param) : estudarAssuntos(nivel));
+  } else if (bloco === "praticar") {
+    const pend = revisoesPendentes().length, cartas = cartasPendentes().length, fracas = pontosFracos(1).length;
+    const total = LICOES.length, feitas = LICOES.filter(l => licaoConcluida(l.id)).length;
+    corpo = filtroNivel + `<div class="lista">
+      ${htmlItem({ href: "#exercicios", icone: "🎮", titulo: "Exercícios da trilha", sub: `${feitas}/${total} lições concluídas · no nível ${NIVEIS_ESTUDO[nivel].nome}` })}
+      ${htmlItem({ href: "#quiz", icone: "⚡", titulo: "Quiz Relâmpago", sub: "Perguntas rápidas com tempo, sozinho ou em grupo" })}
+      ${htmlItem({ href: "#revisar", icone: "🔁", titulo: "Revisão espaçada", sub: pend ? `${pend} pergunta(s) para hoje` : "Os erros voltam em D+1, D+3, D+7, D+15 e D+30" }, pend ? `<span class="badge-in">${pend}</span>` : "")}
+      ${htmlItem({ href: "#flashcards", icone: "🃏", titulo: "Flashcards", sub: cartas ? `${cartas} para hoje` : "Conceitos e fórmulas em cartões" }, cartas ? `<span class="badge-in">${cartas}</span>` : "")}
+      ${fracas ? htmlItem({ href: "#revisao/fracos", icone: "🎯", titulo: "Treinar pontos fracos", sub: "As perguntas que você mais erra" }) : ""}
+    </div>`;
+  } else {
+    const nTermos = MODS.reduce((t, m) => t + (m.glossario || []).length, 0);
+    corpo = `<div class="lista">
+      ${htmlItem({ href: "#mapas", icone: "🧠", titulo: "Mapas mentais A4", sub: "Escolha o que entra e imprima ou salve em PDF" })}
+      ${htmlItem({ href: "#conteudo", icone: "📚", titulo: "Conteúdo completo", sub: `${disciplinas().length} disciplinas e ${MODS.length - disciplinas().length} módulos para ler no seu ritmo` })}
+      ${htmlItem({ href: "#glossario", icone: "📖", titulo: "Glossário", sub: `${nTermos} termos técnicos com definição` })}
+      ${htmlItem({ href: "#ouvir", icone: "🎧", titulo: "Ouvir (modo ônibus)", sub: "Resumos e lições em áudio" })}
+    </div>`;
+  }
   app().innerHTML = barraTopo() + `<h1>🎓 Estudar</h1>
-    <p class="lead">Da faculdade para o estágio: trilhas, disciplinas, exercícios, mapas e revisão.</p>
-    ${cont ? `<div class="lista">${htmlItem(cont)}</div>` : ""}
-    <h2 class="sec-t">Como você quer estudar?</h2>
-    <div class="lista">
-      ${htmlItem({ href: "#estudar/assuntos", icone: "🎓", titulo: "Por assunto", sub: `${nMods} módulos do curso: fundamentos, estatística, projetos, métodos, PCP, Lean e dados` })}
-      ${htmlItem({ href: "#conteudo", icone: "📚", titulo: "Por disciplina", sub: `${nDisc} disciplinas da grade, do 1º ao 10º período` })}
-      ${htmlItem({ href: "#estudar/areas", icone: "📊", titulo: "Por área", sub: "Exatas, engenharia básica, Engenharia de Produção, gestão e humanidades" })}
-      ${htmlItem({ href: "#estudar/nivel", icone: "🧠", titulo: "Por nível", sub: "Fácil (fundamentos), Médio (aplicação) ou Difícil (aprofundamento)" })}
-      ${htmlItem({ href: "#revisar", icone: "⚡", titulo: "Revisão rápida", sub: pend || cartas ? `${pend} pergunta(s) e ${cartas} flashcard(s) para hoje` : "Revisão espaçada, flashcards e treino dos pontos fracos" }, pend ? `<span class="badge-in">${pend}</span>` : "")}
-      ${htmlItem({ href: "#estudar/aprofundar", icone: "🔬", titulo: "Aprofundamento", sub: "Conteúdo completo, mapas mentais A4, glossário e nível Difícil" })}
-    </div>
-    <h2 class="sec-t">Seus recursos de estudo</h2>
-    <a class="hub-card ex" href="#exercicios">
-      <span class="hub-ico" aria-hidden="true">🎮</span>
-      <span class="grow"><b>Exercícios</b><span class="small">Trilha, quiz relâmpago, revisão espaçada e flashcards</span>
-      <span class="progress mt"><span style="width:${total ? Math.round(feitas / total * 100) : 0}%"></span></span>
-      <span class="small">${feitas}/${total} lições concluídas</span></span>›</a>
-    <a class="hub-card mp" href="#mapas">
-      <span class="hub-ico" aria-hidden="true">🧠</span>
-      <span class="grow"><b>Mapas mentais</b><span class="small">Mapas em folha A4 com tópicos, fórmulas e significados, escolhendo o que entra. Imprima ou salve em PDF.</span></span>›</a>
-    <a class="hub-card ct" href="#conteudo">
-      <span class="hub-ico" aria-hidden="true">📚</span>
-      <span class="grow"><b>Conteúdo</b><span class="small">${nDisc} disciplinas da grade (por período) e ${nMods} módulos do curso para ler e ouvir</span></span>›</a>`;
+    <div class="seg" role="tablist">${abas.map(([k, t, h]) => `<a role="tab" href="${h}" class="${k === bloco ? "on" : ""}" aria-selected="${k === bloco}">${t}</a>`).join("")}</div>` + corpo;
+  $$("[data-nivel]").forEach(b => b.onclick = () => { S.config.nivel = b.dataset.nivel; salvar(); telaEstudar(sub, param); });
 }
-function voltarEstudar() { return `<p class="small"><a href="#estudar">‹ Estudar</a></p>`; }
-function telaEstudarAssuntos() {
+function estudarAssuntos(nivel) {
   const A = areaEstagio(), daArea = m => A && A.estudo.includes(m.id) ? 1 : 0;
   const mods = MODS.filter(m => !m.grade).sort((a, b) => daArea(b) - daArea(a));
-  app().innerHTML = barraTopo() + voltarEstudar() + `<h1>🎓 Por assunto</h1>
-    <p class="lead">Os módulos do curso, em trilha: cada lição tem os níveis Fácil, Médio e Difícil.</p>
-    ${mods.map(m => {
-      const feitas = m.licoes.filter(l => licaoConcluida(l.id)).length, px = m.licoes.find(l => !licaoConcluida(l.id) && licaoLiberada(l.id));
-      return `<div class="card"><div class="row"><span style="font-size:1.8rem" aria-hidden="true">${m.icone}</span>
-        <div class="grow"><span class="eyebrow">Módulo ${m.numero}${daArea(m) ? " · ⭐ sua área" : ""}</span><b>${esc(m.titulo)}</b></div><span class="small muted">${feitas}/${m.licoes.length}</span></div>
-        <div class="progress mt" style="height:8px"><div style="width:${Math.round(feitas / m.licoes.length * 100)}%"></div></div>
-        <div class="row wrap mt">${px ? `<a class="btn small" href="#licao/${px.id}">▶ ${feitas ? "Continuar" : "Começar"}</a>` : moduloConcluido(m) ? `<span class="small" style="color:var(--ok)">✓ Concluído</span>` : `<span class="small muted">🔒 Libera ao concluir o módulo anterior</span>`}
-          <a class="btn small sec" href="#conteudo/${m.id}">📚 Ler</a><a class="btn small sec" href="#mapa/${m.id}">🧠 Mapa</a></div></div>`;
-    }).join("")}
-    <a class="btn sec" href="#trilha">🗺️ Ver a trilha completa</a>`;
+  return `<div class="lista">` + mods.map(m => {
+    const doNv = m.licoes.filter(l => niveisDaLicao(l).includes(nivel));
+    const feitas = doNv.filter(l => nivelConcluido(l.id, nivel)).length, total = doNv.length || m.licoes.length;
+    const px = doNv.find(l => !nivelConcluido(l.id, nivel) && licaoLiberada(l.id));
+    const fim = doNv.length && feitas === doNv.length;
+    return htmlItem({ href: px ? `#licao/${px.id}/${nivel}` : "#conteudo/" + m.id, icone: m.icone, tipo: `Módulo ${m.numero} · ${feitas}/${total}${daArea(m) ? " · ⭐ sua área" : ""}`, titulo: m.titulo,
+      sub: px ? `▶ ${feitas ? "Continuar" : "Começar"}: ${px.titulo}` : fim ? `✓ Concluído no ${NIVEIS_ESTUDO[nivel].nome}` : "🔒 Libera ao avançar na trilha · toque para ler" });
+  }).join("") + `</div><p class="small center"><a href="#trilha">🗺️ Ver a trilha completa</a> · <a href="#mapas">🧠 Mapas</a></p>`;
 }
-function telaEstudarAreas(areaId) {
+function estudarDisciplinas(p) {
+  const ds = disciplinas(), per = [...new Set(ds.map(m => m.periodo))].sort((a, b) => a - b);
+  const atual = per.includes(+p) ? +p : per[0];
+  return `<div class="pchips mb">${per.map(k => `<a href="#estudar/disciplina/${k}" class="${k === atual ? "on" : ""}">${k}º</a>`).join("")}</div>
+    <div class="lista">${ds.filter(m => m.periodo === atual).map(m => { const feitas = m.licoes.filter(l => licaoConcluida(l.id)).length;
+      return htmlItem({ href: "#conteudo/" + m.id, icone: m.icone, tipo: `${m.periodo}º período`, titulo: m.titulo, sub: `${feitas}/${m.licoes.length} tópicos concluídos` }); }).join("")}</div>
+    <a class="btn small sec" href="#trilha/grade/${atual}">🎮 Exercícios do ${atual}º período</a>`;
+}
+function estudarAreas(areaId) {
   const id = AREAS[areaId] ? areaId : "producao", Ar = AREAS[id];
   const mods = MODS.filter(m => areaDe(m) === id).sort((a, b) => (a.grade ? 1 : 0) - (b.grade ? 1 : 0) || (a.periodo || 0) - (b.periodo || 0));
-  app().innerHTML = barraTopo() + voltarEstudar() + `<h1>📊 Por área</h1>
-    <div class="pchips">${Object.entries(AREAS).map(([k, a]) => `<a href="#estudar/areas/${k}" class="${k === id ? "on" : ""}">${esc(a.nome)}</a>`).join("")}</div>
+  return `<div class="pchips">${Object.entries(AREAS).map(([k, a]) => `<a href="#estudar/area/${k}" class="${k === id ? "on" : ""}">${esc(a.nome)}</a>`).join("")}</div>
     <p class="small muted mt">${mods.length} ${mods.length === 1 ? "item" : "itens"} em ${esc(Ar.nome)}</p>
     <div class="lista">${mods.map(m => { const feitas = m.licoes.filter(l => licaoConcluida(l.id)).length; return htmlItem({ href: "#conteudo/" + m.id, icone: m.icone, tipo: m.grade ? `${m.periodo}º período` : `Módulo ${m.numero} do curso`, titulo: m.titulo, sub: `${feitas}/${m.licoes.length} ${m.grade ? "tópicos" : "lições"} concluídos` }); }).join("")}</div>`;
-}
-function telaEstudarNivel(n) {
-  const nivel = ORDEM_NIVEIS.includes(n) ? n : (ORDEM_NIVEIS.includes(S.config.nivel) ? S.config.nivel : "facil");
-  if (ORDEM_NIVEIS.includes(n) && S.config.nivel !== n) { S.config.nivel = n; salvar(); }
-  const doCurso = LICOES.filter(l => !modulo(l.modulo).grade && niveisDaLicao(l).includes(nivel));
-  const prox = doCurso.filter(l => licaoLiberada(l.id) && !nivelConcluido(l.id, nivel)).slice(0, 8);
-  app().innerHTML = barraTopo() + voltarEstudar() + `<h1>🧠 Por nível</h1>
-    <p class="lead">A profundidade muda, não só o tamanho do texto. O nível escolhido vira o padrão nas lições e no Quiz.</p>
-    <div class="lvl-cards">${ORDEM_NIVEIS.map(k => { const N = NIVEIS_ESTUDO[k], c = LICOES.filter(l => !modulo(l.modulo).grade && niveisDaLicao(l).includes(k)); return `<a class="lvl-card ${k === nivel ? "on" : ""}" href="#estudar/nivel/${k}" style="text-decoration:none;color:inherit;display:block">
-      <span class="st">${c.filter(l => nivelConcluido(l.id, k)).length}/${c.length}</span><div class="t">${N.icone} ${N.nome} — ${N.sub}</div><div class="small muted">${N.desc}</div></a>`; }).join("")}</div>
-    <h2 class="sec-t">Próximas lições no ${NIVEIS_ESTUDO[nivel].nome}</h2>
-    ${prox.length ? `<div class="lista">${prox.map(l => htmlItem({ href: "#licao/" + l.id, icone: l.icone || "⭐", tipo: modulo(l.modulo).titulo, titulo: l.titulo })).join("")}</div>`
-      : `<p class="small muted">Nenhuma lição liberada pendente neste nível. Avance na <a href="#trilha">trilha</a> para liberar mais.</p>`}`;
-}
-function telaEstudarAprofundar() {
-  app().innerHTML = barraTopo() + voltarEstudar() + `<h1>🔬 Aprofundamento</h1>
-    <p class="lead">Para ir além do resumo: conteúdo completo, mapas, glossário e o nível mais exigente.</p>
-    <div class="lista">
-      ${htmlItem({ href: "#conteudo", icone: "📚", titulo: "Conteúdo completo", sub: "Todas as disciplinas e módulos para ler no seu ritmo" })}
-      ${htmlItem({ href: "#mapas", icone: "🧠", titulo: "Mapas mentais A4", sub: "Escolha o que entra e imprima ou salve em PDF" })}
-      ${htmlItem({ href: "#glossario", icone: "📖", titulo: "Glossário", sub: "Termos técnicos de todos os módulos e disciplinas" })}
-      ${htmlItem({ href: "#estudar/nivel/dificil", icone: "🧠", titulo: "Nível Difícil", sub: "Hipóteses, limitações, modelagem e decisões justificadas" })}
-      ${htmlItem({ href: "#ouvir", icone: "🎧", titulo: "Modo ônibus", sub: "Ouça resumos e lições" })}
-      ${htmlItem({ href: "#quiz", icone: "⚡", titulo: "Quiz Relâmpago", sub: "Teste rápido, sozinho ou em grupo" })}
-    </div>`;
 }
 
 /* =====================================================================
@@ -1978,7 +1983,7 @@ function desenharMapaA4_(a4, D0, op, marcados, nivel) {
       <div class="col">${dir.map(caixa).join("")}</div>
     </div>
     ${glos.length ? `<div class="glos"><div class="glos-t">📖 Significados</div><div class="glos-g">${glos.map(([t, g]) => `<div><b>${esc(t)}:</b> ${fmt(limpar(g))}</div>`).join("")}</div></div>` : ""}
-    <div class="a4-foot">Problema · Engenharia de Produção · ${esc(D.titulo)}</div>`;
+    <div class="a4-foot">ProdLean · Engenharia de Produção · ${esc(D.titulo)}</div>`;
   // Ajusta a fonte para caber exatamente numa folha A4 (794 × 1123 px a 96 dpi)
   const aviso = $("#aviso-mapa");
   let fs = 13;
@@ -2368,7 +2373,6 @@ function telaLicao(id, nivel) {
   if (!l) { ir("trilha"); return; }
   if (!licaoLiberada(id)) { toast("🔒 Lição bloqueada"); ir("trilha"); return; }
   if (!nivel || !niveisDaLicao(l).includes(nivel)) { telaCapa(l); return; }
-  if (S.vidas <= 0) { semVidas(); return; }
   const m = modulo(l.modulo);
   const NV = NIVEIS_ESTUDO[nivel];
   const blocos = doNivel(l.blocos, nivel);
@@ -2384,7 +2388,7 @@ function telaLicao(id, nivel) {
     return `<div class="lesson-top">
       <button class="iconbtn" id="sair" aria-label="Sair">✕</button>
       <div class="progress"><div style="width:${Math.round(passo / totalPassos * 100)}%"></div></div>
-      <span class="hearts">❤️ ${S.vidas}</span></div>`;
+      <span class="hearts">${Math.min(passo + 1, totalPassos)}/${totalPassos}</span></div>`;
   }
   function ligarSair() {
     $("#sair").onclick = () => { if (confirm("Sair da lição? O progresso desta lição será perdido.")) { saindo = true; ir(rotaTrilha(m)); } };
@@ -2418,9 +2422,7 @@ function telaLicao(id, nivel) {
       } else {
         if (!jaErrou.has(q.id)) registrarResposta(q, false);
         jaErrou.add(q.id);
-        fila.push(q); // volta para o fim, como no Duolingo
-        perderVida();
-        if (S.vidas <= 0) { semVidas(); return; }
+        fila.push(q); // volta para o fim, como no Duolingo (errar não bloqueia o estudo)
       }
       proximaQuestao();
       window.scrollTo(0, 0);
@@ -2477,14 +2479,6 @@ function telaLicao(id, nivel) {
   }
   mostrarBloco();
 }
-function semVidas() {
-  som("erro");
-  app().innerHTML = `<div class="center" style="padding-top:50px">
-    <div style="font-size:4rem">💔</div><h1>Acabaram as vidas</h1>
-    <p class="muted">Recupere vidas revisando: cada acerto na revisão devolve ❤️ 1 vida. Amanhã elas recarregam sozinhas.</p>
-    <button class="btn" onclick="ir('revisao/vidas')">🔁 Revisar para recuperar vidas</button>
-    <button class="btn sec" onclick="ir('exercicios')">Voltar</button></div>`;
-}
 
 /* =====================================================================
    TELA: REVISAR (central de revisão + flashcards)
@@ -2498,7 +2492,7 @@ function telaRevisar() {
   app().innerHTML = barraTopo() + `<h1>🔁 Revisar</h1>
     <div class="card">
       <h2>Revisão espaçada</h2>
-      <p class="muted small">Perguntas que você errou voltam em D+1, D+3, D+7, D+15 e D+30. Cada acerto: +3 XP e ❤️ +1 vida.</p>
+      <p class="muted small">Perguntas que você errou voltam em D+1, D+3, D+7, D+15 e D+30. Cada acerto: +3 XP.</p>
       <div class="stat-grid mb">
         <div class="stat"><div class="v">${pend.length}</div><div class="l">para hoje</div></div>
         <div class="stat"><div class="v">${S.dominadas}</div><div class="l">dominadas (passaram do D+30)</div></div>
@@ -2508,7 +2502,7 @@ function telaRevisar() {
     </div>
     <div class="card">
       <h2>🏋️ Treino livre</h2>
-      <p class="muted small">Perguntas misturadas dos módulos que você já liberou (intercalação). Bom para recuperar vidas.</p>
+      <p class="muted small">Perguntas misturadas dos módulos que você já liberou (intercalação). Bom para fixar antes de uma prova.</p>
       <button class="btn sec" onclick="ir('revisao/treino')">Treinar 10 perguntas</button>
       ${fracas.length ? `<button class="btn sec" onclick="ir('revisao/fracos')">🎯 Treinar meus pontos fracos</button>` : ""}
     </div>
@@ -2525,7 +2519,7 @@ function pontosFracos(n) {
     .sort((a, b) => (b[1].erros - b[1].acertos) - (a[1].erros - a[1].acertos)).slice(0, n).map(([id]) => Q[id]);
 }
 
-/* Sessão de revisão (pendentes, treino livre, pontos fracos ou para recuperar vidas) */
+/* Sessão de revisão (pendentes, treino livre ou pontos fracos; "vidas" = endereço antigo das pendentes) */
 function telaSessaoRevisao(modo) {
   let lista;
   if (modo === "pendentes") lista = revisoesPendentes().map(id => Q[id]);
@@ -2540,18 +2534,18 @@ function telaSessaoRevisao(modo) {
   const ehRevisao = (modo === "pendentes" || modo === "vidas") && revisoesPendentes().length > 0;
   lista = embaralhar(lista).slice(0, 15);
   if (!lista.length) { toast("Conclua uma lição primeiro 🙂"); ir("trilha"); return; }
-  let i = 0, acertos = 0, vidasGanhas = 0;
+  let i = 0, acertos = 0;
   function mostrar() {
     if (i >= lista.length) return fim();
     const q = lista[i];
     const r = S.revisao[q.id];
     app().innerHTML = `<div class="lesson-top"><button class="iconbtn" onclick="ir('revisar')" aria-label="Sair">✕</button>
-      <div class="progress"><div style="width:${Math.round(i / lista.length * 100)}%"></div></div><span class="hearts">❤️ ${S.vidas}</span></div>
+      <div class="progress"><div style="width:${Math.round(i / lista.length * 100)}%"></div></div><span class="hearts">${i + 1}/${lista.length}</span></div>
       <div class="small muted mb">${modulo(q.modulo).icone} ${esc(modulo(q.modulo).titulo)}${r ? ` · etapa ${NOMES_REVISAO[r.etapa] || ""}` : ""}</div>
       <div id="qarea" class="lesson-pad"></div>`;
     renderQuestao(q, $("#qarea"), acertou => {
       if (ehRevisao || S.revisao[q.id]) registrarRevisao(q, acertou); else registrarResposta(q, acertou);
-      if (acertou) { acertos++; if (recuperarVida()) vidasGanhas++; }
+      if (acertou) acertos++;
       i++; mostrar(); window.scrollTo(0, 0);
     });
   }
@@ -2562,7 +2556,7 @@ function telaSessaoRevisao(modo) {
     app().innerHTML = `<div class="center" style="padding-top:40px"><div style="font-size:4rem">🔁</div><h1>Revisão feita!</h1>
       <div class="stat-grid mt mb">
         <div class="stat"><div class="v">${acertos}/${lista.length}</div><div class="l">acertos</div></div>
-        <div class="stat"><div class="v">+${xp}</div><div class="l">XP · ❤️ +${vidasGanhas}</div></div>
+        <div class="stat"><div class="v">+${xp}</div><div class="l">XP</div></div>
       </div>
       <button class="btn" onclick="ir('inicio')">Voltar ao início</button>
       <button class="btn sec" onclick="ir('revisar')">Revisar mais</button></div>`;
@@ -2856,6 +2850,7 @@ function telaPerfil() {
   const diasEstudo = Object.keys(S.xpPorDia).filter(d => S.xpPorDia[d] > 0).length;
 
   app().innerHTML = barraTopo() + `<h1>👤 Perfil</h1>
+    <div class="chips-sug chips-row"><a href="#config">⚙️ Configurações</a><a href="#conquistas">🏅 Conquistas</a><a href="#estagio">🎯 Modo Estágio${areaEstagio() ? ": " + esc(areaEstagio().nome) : ""}</a><a href="#salvos">⭐ Salvos</a><a href="#desafio/historico">⚡ Desafios</a></div>
     <div class="card level-card">
       <div style="font-size:2.4rem">${NIVEIS[nv].icone}</div><h2 style="color:#fff">${NIVEIS[nv].nome}</h2>
       <div class="progress mt"><div style="width:${prox ? Math.round((S.xpTotal - NIVEIS[nv].xp) / (prox.xp - NIVEIS[nv].xp) * 100) : 100}%"></div></div>
@@ -2973,7 +2968,7 @@ function telaConfig() {
       ${errosConteudo.length ? `<div class="errbox">${errosConteudo.map(esc).join("\n")}</div>` : `<p class="small" style="color:var(--ok)">✓ Nenhum problema encontrado.</p>`}
     </div>
     <div class="card"><h3>🧨 Zona de perigo</h3><button class="btn danger" id="zerar">Apagar todo o progresso</button></div>
-    <p class="small muted center">Problema · Engenharia de Produção · funciona offline depois do 1º acesso</p>`;
+    <p class="small muted center">ProdLean · Engenharia de Produção descomplicada · funciona offline depois do 1º acesso</p>`;
   $$("[data-seg]").forEach(g => $$("button", g).forEach(b => b.onclick = () => {
     const nome = g.dataset.seg; let v = b.dataset.v;
     if (nome === "meta" || nome === "porSessao") v = +v;

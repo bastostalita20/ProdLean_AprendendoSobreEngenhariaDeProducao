@@ -125,13 +125,14 @@ async function recuperarVidas(p) {
     for (const nv of l.niveis) {
       const erros = nv === l.niveis[0] ? (errosPorLicao[l.id] || []) : [];
       let r = await fazerLicao(p, l.id, erros, nv);
-      if (r.includes('Acabaram as vidas')) { vidasZeradas++; await recuperarVidas(p); r = await fazerLicao(p, l.id, [], nv); }
+      if (r.includes('Acabaram as vidas')) vidasZeradas++;
       if (!r.includes('Lição concluída')) throw new Error(`lição não concluiu: ${l.id}/${nv} → ${r}`);
     }
   }
   const st = await p.evaluate(() => ({ xp: S.xpTotal, revisao: Object.keys(S.revisao).length, conq: Object.keys(S.conquistas),
     m02niveis: LICOES.filter(l => l.modulo === 'm02').every(l => ['facil', 'medio', 'dificil'].every(n => nivelConcluido(l.id, n))) }));
-  log(`após todas as lições e níveis: XP ${st.xp} · revisões pendentes ${st.revisao} · vidas zeraram ${vidasZeradas}x e foram recuperadas`);
+  log(`após todas as lições e níveis: XP ${st.xp} · revisões pendentes ${st.revisao}`);
+  checar(vidasZeradas === 0, 'errar não bloqueia o estudo (sem tela de vidas)');
   log('   conquistas:', st.conq.join(', '));
   checar(st.m02niveis, 'M2: todos os níveis de todas as lições concluídos');
   checar(st.conq.includes('mod-m02') && st.conq.includes('dificil-5'), 'conquistas do M2 e do nível Difícil');
@@ -231,8 +232,16 @@ async function recuperarVidas(p) {
   log(`grade: ${g.n} disciplinas em ${g.periodos} períodos; 1º tópico concluído em ${g.feitas}`);
   checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
   await p.evaluate(() => ir('estudar')); await p.waitForTimeout(150);
-  checar((await p.$$('.hub-card')).length === 3, 'Estudar mantém Exercícios, Mapas mentais e Conteúdo');
-  await p.click('.hub-card.ex'); await p.waitForTimeout(150);
+  checar(JSON.stringify(await p.$$eval('.seg a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['📖 Estudar', '🎮 Praticar', '📚 Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
+  await p.click('.seg a:has-text("Praticar")'); await p.waitForTimeout(150);
+  checar(await p.evaluate(() => ['#exercicios', '#quiz', '#revisar', '#flashcards'].every(h => document.querySelector(`a[href="${h}"]`))), 'Praticar: exercícios, quiz, revisão espaçada e flashcards');
+  await p.click('.nivel-filtro [data-nivel="dificil"]'); await p.waitForTimeout(100);
+  checar(await p.evaluate(() => S.config.nivel) === 'dificil' && await p.$('.nivel-filtro .on[data-nivel="dificil"]'), 'filtro de nível no Praticar');
+  await p.evaluate(() => { S.config.nivel = 'facil'; salvar(); ir('estudar/materiais'); }); await p.waitForTimeout(150);
+  checar(await p.evaluate(() => ['#mapas', '#conteudo', '#glossario'].every(h => document.querySelector(`a[href="${h}"]`))), 'Materiais: mapas, conteúdo completo e glossário');
+  await p.evaluate(() => ir('estudar/disciplina/3')); await p.waitForTimeout(150);
+  checar((await p.textContent('body')).includes('Equações Diferenciais Ordinárias'), 'Estudar por disciplina (período)');
+  await p.evaluate(() => ir('exercicios')); await p.waitForTimeout(150);
   checar((await p.textContent('h1')).includes('Exercícios') && await p.$('a[href="#trilha/grade/1"]'), 'Exercícios abre a interface de estudo (com acesso à grade)');
   await p.evaluate(() => ir('trilha/grade/3')); await p.waitForTimeout(150);
   checar((await p.$$('.pchips a')).length === 10 && (await p.textContent('body')).includes('Equações Diferenciais Ordinárias'), 'trilha da grade por período');
@@ -256,9 +265,14 @@ async function recuperarVidas(p) {
 
   // ===== Nova experiência: Início, Consultar, Problemas, Desafio, Estudar, Modo Estágio =====
   await p.evaluate(() => ir('inicio')); await p.waitForTimeout(150);
-  checar((await p.$$('.path-card')).length === 4 && await p.$('#busca-home'), 'início com pesquisa e os 4 caminhos');
-  checar(JSON.stringify(await p.$$eval('#nav a', a => a.map(x => x.dataset.tab))) === JSON.stringify(['inicio', 'consultar', 'problemas', 'desafio', 'estudar']), 'navegação: Início + 4 caminhos');
-  checar((await p.textContent('body')).includes('Continue de onde parou') && (await p.textContent('body')).includes('Seu progresso'), 'início mostra continuar e progresso reais');
+  const ti = await p.textContent('body');
+  checar(!(await p.$('.path-card')) && await p.$('#busca-home') && ti.includes('Continuar de onde parei') && ti.includes('Revisão de hoje') && ti.includes('Mais consultados') && (await p.$$('.chips-sug a')).length >= 6, 'início enxuto: continuar, desafio, revisão e mais consultados');
+  checar(await p.$('#home-desafio #qarea') || (await p.textContent('#home-desafio')).includes('Resposta'), 'desafio do dia embutido no início');
+  checar(JSON.stringify(await p.$$eval('#nav a', a => a.map(x => x.dataset.tab))) === JSON.stringify(['inicio', 'consultar', 'problemas', 'estudar', 'perfil']), 'navegação: Início · Consultar · Problemas · Estudar · Perfil');
+  checar(!(await p.$('.topbar a[href="#config"]')) && await p.$('.topbar a.avatar[href="#perfil"]') && !(await p.textContent('.topbar')).includes('❤️'), 'barra superior só com ofensiva, XP e avatar');
+  await p.evaluate(() => ir('perfil')); await p.waitForTimeout(100);
+  checar(await p.$('a[href="#config"]') && await p.$('#nav a.active[data-tab="perfil"]'), 'Configurações dentro do Perfil');
+  await p.evaluate(() => ir('inicio')); await p.waitForTimeout(100);
   await p.fill('#busca-home', 'estoque de segurança'); await p.waitForTimeout(100);
   checar(await p.$eval('#res-home .mini', a => a.getAttribute('href')) === '#ferramenta/estoque-seguranca', 'pesquisa do início acha a ferramenta primeiro');
   await p.press('#busca-home', 'Enter'); await p.waitForTimeout(150);
@@ -317,6 +331,11 @@ async function recuperarVidas(p) {
   checar(enderecos.size === 5 && (await p.textContent('body')).includes('Por quê?'), `5 desafios extras seguidos sem travar (${enderecos.size} endereços)`);
   await p.evaluate(() => ir('desafio/historico')); await p.waitForTimeout(100);
   checar((await p.$$('.mini')).length === 6, 'histórico de desafios');
+  // Desafio respondido no próprio Início
+  const idHome = await p.evaluate(() => { const d = DESAFIOS.find(x => !S.desafios[x.id]); S.desafioDia = { data: hoje(), id: d.id }; salvar(); return d.id; });
+  await p.evaluate(() => ir('inicio')); await p.waitForTimeout(150);
+  await responder(p, true); await p.waitForTimeout(100);
+  checar(await p.evaluate(id => !!S.desafios[id], idHome) && (await p.textContent('#home-desafio')).includes('Você acertou'), 'desafio do dia respondido no início');
   // Modo Estágio (opcional) prioriza a área
   await p.evaluate(() => ir('estagio')); await p.click('[data-a="pcp"]'); await p.waitForTimeout(100);
   checar(await p.evaluate(() => S.config.estagio) === 'pcp', 'ativar Modo Estágio');
@@ -328,7 +347,7 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => S.config.estagio) === null, 'desativar Modo Estágio');
   // Estudar: por assunto, área e nível
   await p.evaluate(() => ir('estudar/assuntos')); await p.waitForTimeout(100);
-  checar((await p.$$('.card')).length === 7, 'Estudar por assunto: 7 módulos');
+  checar((await p.$$('.mini')).length === 7, 'Estudar por assunto: 7 módulos');
   await p.evaluate(() => ir('estudar/areas/exatas')); await p.waitForTimeout(100);
   checar((await p.textContent('body')).includes('Cálculo a Uma Variável') && (await p.textContent('body')).includes('Estatística Aplicada'), 'Estudar por área');
   await p.evaluate(() => ir('estudar/nivel/medio')); await p.waitForTimeout(100);
@@ -354,7 +373,7 @@ async function recuperarVidas(p) {
     siglasBloqueadas = bloqueioDaQuestao({ pergunta: 'Ligue', pares: [['EAP', 'Estrutura analítica do projeto']] }); r.push(expandirSiglas('A EAP')); siglasBloqueadas = null; return r; });
   checar(sg[0].includes('EV (valor agregado)') && sg[0].includes('AC (custo real)') && sg[0].includes('CPI (índice de desempenho de custo)') && sg[1] === 'Plano mestre (PMP) e o PMP' && sg[2] === 'A EAP', 'siglas explicadas entre parênteses, sem repetir e sem entregar a resposta');
   // Todas as telas
-  for (const r of ['inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'problema/demanda-sazonal', 'ferramenta/estrutura-produto', 'desafio/extra/d56', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
+  for (const r of ['estudar/praticar', 'estudar/materiais', 'estudar/disciplina/5', 'estudar/area/gestao', 'inicio', 'consultar', 'ferramentas', 'ferramenta/oee', 'problemas', 'problemas/qualidade', 'problema/maquina-para', 'problema/demanda-sazonal', 'ferramenta/estrutura-produto', 'desafio/extra/d56', 'desafio', 'estudar', 'estudar/aprofundar', 'estagio', 'salvos', 'exercicios', 'trilha', 'trilha/grade/5', 'conteudo', 'mapas', 'mapa/g-po1', 'revisar', 'ouvir', 'perfil', 'conquistas', 'config', 'glossario/m02']) {
     await p.evaluate(x => ir(x), r); await p.waitForTimeout(150);
     await p.screenshot({ path: `${SP}/n-${r.replace(/\//g, '-')}.png`, fullPage: true });
   }
