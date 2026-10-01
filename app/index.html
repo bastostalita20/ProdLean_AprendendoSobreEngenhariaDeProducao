@@ -9,6 +9,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone-192.png">
+<!-- Os 4 arquivos da primeira tela começam a baixar junto com a página (carregamento sob demanda).
+     Pelo arquivo (file://) o navegador não deixa: lá o app carrega tudo pelo modo antigo. -->
+<script>if (location.protocol !== "file:") ["catalogo", "problemas", "desafios", "siglas"].forEach(n => { const l = document.createElement("link"); l.rel = "preload"; l.as = "fetch"; l.crossOrigin = "anonymous"; l.href = "conteudo/" + n + ".js"; document.head.appendChild(l); });</script>
 <style>
 /* =====================================================================
    1. CORES E TEMA (claro/escuro)
@@ -23,6 +26,7 @@
   --border: #d9dfd9;
   --primary: #1f8a4c;       /* verde "engenharia" (botões principais) */
   --primary-dark: #166a39;
+  --primary-texto: #166a39;  /* verde para texto pequeno (contraste AA) */
   --primary-soft: #dcf2e4;
   --gold: #e3a008;
   --locked: #c3cac5;
@@ -49,7 +53,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #121715; --surface: #1b2220; --surface-2: #242d2a; --text: #e8eeea; --muted: #9aa8a1;
-    --border: #2f3a36; --primary: #2fae66; --primary-dark: #238a50; --primary-soft: #1d3a2a;
+    --border: #2f3a36; --primary: #2fae66; --primary-dark: #238a50; --primary-soft: #1d3a2a; --primary-texto: #3fc77a;
     --locked: #3a4642; --c-conceito: #ff5a6e; --c-atencao: #f0b429; --c-dica: #3fc47a;
     --c-formula: #5aa2ff; --c-conexao: #b28bff; --ok: #3fc47a; --ok-soft: #1d3a2a;
     --err: #ff6b7a; --err-soft: #3d2227; --shadow: 0 2px 0 rgba(0,0,0,.4); color-scheme: dark;
@@ -58,7 +62,7 @@
 /* Tema escuro escolhido manualmente nas configurações */
 :root[data-theme="dark"] {
   --bg: #121715; --surface: #1b2220; --surface-2: #242d2a; --text: #e8eeea; --muted: #9aa8a1;
-  --border: #2f3a36; --primary: #2fae66; --primary-dark: #238a50; --primary-soft: #1d3a2a;
+  --border: #2f3a36; --primary: #2fae66; --primary-dark: #238a50; --primary-soft: #1d3a2a; --primary-texto: #3fc77a;
   --locked: #3a4642; --c-conceito: #ff5a6e; --c-atencao: #f0b429; --c-dica: #3fc47a;
   --c-formula: #5aa2ff; --c-conexao: #b28bff; --ok: #3fc47a; --ok-soft: #1d3a2a;
   --err: #ff6b7a; --err-soft: #3d2227; --shadow: 0 2px 0 rgba(0,0,0,.4); color-scheme: dark;
@@ -97,7 +101,7 @@ p { margin: 0 0 .6rem; }
   padding: calc(10px + env(safe-area-inset-top)) 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px;
 }
 .chip { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: .92rem; white-space: nowrap; }
-.chip.off { opacity: .45; filter: grayscale(1); }
+.chip.off { color: var(--muted); filter: grayscale(1); }
 
 /* Navegação inferior */
 .nav {
@@ -108,7 +112,7 @@ p { margin: 0 0 .6rem; }
 .nav-inner { display: flex; width: 100%; max-width: 560px; }
 .nav a { flex: 1; text-align: center; text-decoration: none; color: var(--muted); padding: 8px 0 10px; font-size: .72rem; font-weight: 600; }
 .nav a .ico { display: block; font-size: 1.45rem; line-height: 1.3; }
-.nav a.active { color: var(--primary); }
+.nav a.active { color: var(--primary-texto); }
 .nav a.active .ico { transform: scale(1.12); }
 
 /* Cartões e botões */
@@ -425,9 +429,9 @@ a.btn { text-decoration: none; text-align: center; }
 .cat-card.on { border: 2px solid var(--primary); background: var(--primary-soft); }
 .cat-card .star { position: absolute; top: 8px; right: 10px; font-size: .8rem; }
 /* Estudar em 3 blocos (abas) e filtro de nível; Início enxuto */
-.seg { display: flex; gap: 4px; padding: 4px; margin: 4px 0 12px; border-radius: 14px; background: var(--surface-2); }
-.seg a { flex: 1; text-align: center; padding: 9px 4px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 800; font-size: .92rem; }
-.seg a.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.abas { display: flex; gap: 4px; padding: 4px; margin: 4px 0 12px; border-radius: 14px; background: var(--surface-2); }
+.abas a { flex: 1; text-align: center; padding: 9px 4px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 800; font-size: .92rem; }
+.abas a.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
 .nivel-filtro { display: flex; gap: 6px; margin-bottom: 4px; }
 .nivel-filtro button { flex: 1; min-height: 40px; border-radius: 999px; border: 2px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; font-size: .85rem; cursor: pointer; }
 .nivel-filtro button.on { border-color: var(--primary); background: var(--primary-soft); }
@@ -437,6 +441,9 @@ a.btn { text-decoration: none; text-align: center; }
 .topbar .avatar { font-size: 1.1rem; }
 .chips-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .chips-row a { flex: 0 0 auto; }
+.carregando { text-align: center; padding: 60px 16px; }
+.carregando .spin { width: 36px; height: 36px; margin: 0 auto 12px; border-radius: 50%; border: 4px solid var(--border); border-top-color: var(--primary); animation: girar .8s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
 .chips-sug { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .chips-sug a { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); text-decoration: none; color: var(--text); font-weight: 600; font-size: .88rem; }
 .ficha-head { margin-bottom: 6px; }
@@ -713,6 +720,7 @@ function prepararConteudo() {
   validarProblemas();
 }
 function validarQuestao(q) {
+  if (q._stub) return; // esboço do catálogo: a questão completa é validada ao carregar o módulo
   const erro = msg => errosConteudo.push(`${q.id}: ${msg}`);
   if (!q.pergunta) erro("falta 'pergunta'");
   if (["multipla", "lacuna", "caso"].includes(q.tipo)) {
@@ -1065,6 +1073,20 @@ function rotear() {
     config: telaConfig, ouvir: telaOuvir, glossario: telaGlossario,
     conteudo: telaConteudo, mapas: telaMapas, mapa: telaMapa
   };
+  // Carregamento sob demanda: baixa antes o que a tela precisa (ver telaPrecisa)
+  const pr = SOB_DEMANDA ? telaPrecisa(nome, param, param2) : null;
+  const faltaMod = pr && (pr.mods === "todos" ? !tudoCarregado() : pr.mods.some(id => modulo(id) && !modulo(id)._completo));
+  if (pr && (faltaMod || (pr.busca && !BUSCA_PRONTA))) {
+    const alvo = location.hash, total = pr.mods === "todos";
+    app().innerHTML = `<div class="carregando" role="status"><div class="spin" aria-hidden="true"></div><p class="muted">Carregando o conteúdo…<span id="prog-carga"></span></p></div>`;
+    Promise.all([carregarModulos(pr.mods, total ? (f, n) => { const e = $("#prog-carga"); if (e) e.textContent = ` ${Math.round(f / n * 100)}%`; } : null), pr.busca ? garantirBusca() : null])
+      .then(() => { if (location.hash === alvo) rotear(); })
+      .catch(e => { console.warn("Falha ao carregar o conteúdo:", e && e.message); if (location.hash === alvo) app().innerHTML = barraTopo() + `<div class="card mt"><h2>📶 Sem conexão</h2>
+        <p>Este conteúdo ainda não foi baixado para usar offline. Conecte-se à internet e tente de novo.</p>
+        <p class="small muted">Dica: em 👤 Perfil → ⚙️ Configurações → <b>Baixar tudo para offline</b>, o app guarda todo o conteúdo no aparelho.</p>
+        <button class="btn" onclick="rotear()">Tentar de novo</button></div>`; });
+    return;
+  }
   const semNav = ["licao", "revisao", "quizjogo"].includes(nome);
   document.getElementById("nav").classList.toggle("hidden", semNav);
   // Aba destacada: as telas antigas de estudo ficam dentro de "Estudar"
@@ -1075,6 +1097,30 @@ function rotear() {
   $$("#nav a").forEach(a => { const on = a.dataset.tab === aba; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   (telas[nome] || telaHub)(param, param2);
   window.scrollTo(0, 0);
+}
+// O que cada tela precisa além do catálogo: módulos completos (ids ou "todos") e/ou a busca (glossário, flashcards, fórmulas)
+function telaPrecisa(nome, param) {
+  const modDe = lid => (LICOES.find(l => l.id === lid) || {}).modulo;
+  const daQuestao = ids => ids.map(id => Q[id] && Q[id].modulo).filter(Boolean);
+  switch (nome) {
+    case "licao": return { mods: [modDe(param)] };
+    case "conteudo": case "mapa": return { mods: param ? [param] : [] };
+    case "consulta": {
+      const k = dec(param || "");
+      return { mods: k.startsWith("l:") ? [modDe(k.slice(2))] : k.startsWith("g:") ? [k.split(":")[1]] : [], busca: true };
+    }
+    case "ferramenta": {
+      const f = FERR(param), temDesafio = (window.DESAFIOS || []).some(d => d.ferramenta === param);
+      return { mods: f && !temDesafio ? (f.ver || []).slice(0, 2).map(modDe) : [] };
+    }
+    case "consultar": case "glossario": case "flashcards": return { mods: [], busca: true };
+    case "perfil": return { mods: daQuestao(pontosFracos(5).map(q => q.id)) };
+    case "revisao": return { mods: [...new Set(daQuestao(revisoesPendentes().concat(pontosFracos(10).map(q => q.id)))
+      .concat(LICOES.filter(l => licaoConcluida(l.id)).map(l => l.modulo)))] };
+    case "ouvir": return { mods: MODS.filter(m => !m.grade && moduloLiberado(m)).map(m => m.id) };
+    case "quiz": case "quizjogo": return { mods: "todos" };
+    default: return { mods: [] };
+  }
 }
 window.addEventListener("hashchange", rotear);
 document.addEventListener("click", ev => {
@@ -1295,6 +1341,7 @@ function telaHub() {
   if (d) desenharDesafioHome(d, feitoHoje ? reg : null);
   const inp = $("#busca-home");
   inp.oninput = () => {
+    if (!BUSCA_PRONTA) garantirBusca().then(() => { if (document.body.contains(inp)) inp.oninput(); }).catch(() => {}); // completa com glossário e fórmulas
     const q = inp.value.trim(), r = buscar(q, 41);
     $("#res-home").innerHTML = q.length < 2 ? "" : r.length
       ? `<div class="lista">${r.slice(0, 5).map(e => htmlItem(e)).join("")}</div>${r.length > 5 ? `<p class="small"><a href="#consultar/${enc(q)}">Ver todos os resultados (${r.length > 40 ? "40+" : r.length}) ›</a></p>` : ""}`
@@ -1684,7 +1731,7 @@ function telaEstudar(sub, param) {
     </div>`;
   }
   app().innerHTML = barraTopo() + `<h1>🎓 Estudar</h1>
-    <div class="seg" role="tablist">${abas.map(([k, t, h]) => `<a role="tab" href="${h}" class="${k === bloco ? "on" : ""}" aria-selected="${k === bloco}">${t}</a>`).join("")}</div>` + corpo;
+    <div class="abas" role="tablist">${abas.map(([k, t, h]) => `<a role="tab" href="${h}" class="${k === bloco ? "on" : ""}" aria-selected="${k === bloco}">${t}</a>`).join("")}</div>` + corpo;
   $$("[data-nivel]").forEach(b => b.onclick = () => { S.config.nivel = b.dataset.nivel; salvar(); telaEstudar(sub, param); });
 }
 function estudarAssuntos(nivel) {
@@ -2953,6 +3000,9 @@ function telaConfig() {
     <div class="card"><h3>🔊 Sons</h3>${seg("som", [["true", "Ligado"], ["false", "Desligado"]], c.som)}</div>
     <div class="card"><h3>🌗 Tema</h3>${seg("tema", [["auto", "Automático"], ["light", "Claro"], ["dark", "Escuro"]], c.tema)}</div>
     <div class="card"><h3>🙋 Seu nome no ranking</h3><input type="text" id="nome" maxlength="16" value="${esc(c.nome)}"></div>
+    <div class="card"><h3>📥 Usar offline</h3>
+      <p class="small muted">O app guarda no aparelho cada assunto que você abre. Para estudar sem internet (ônibus, metrô), baixe tudo de uma vez (cerca de 2 MB).</p>
+      ${tudoCarregado() ? `<p class="small" style="color:var(--ok)">✓ Todo o conteúdo está neste aparelho.</p>` : `<button class="btn sec" id="baixar-tudo">📥 Baixar tudo para offline</button><p class="small muted" id="baixar-status"></p>`}</div>
     <div class="card"><h3>💾 Backup do progresso</h3>
       <p class="small muted">O progresso fica só neste navegador. Antes de trocar de celular ou limpar dados, exporte!</p>
       <button class="btn" id="exp-arq">⬇️ Exportar arquivo</button>
@@ -2964,11 +3014,19 @@ function telaConfig() {
       <button class="btn sec mt" id="imp-btn">Importar código</button>
     </div>
     <div class="card"><h3>🧪 Verificador de conteúdo</h3>
+      ${tudoCarregado() ? "" : `<p class="small muted">O verificador confere só os assuntos já baixados. Baixe tudo (acima) para verificar o conteúdo inteiro.</p>`}
       <p class="small muted">${MODS.length} módulo(s), ${LICOES.length} lições, ${Object.keys(Q).length} questões (${Object.values(Q).filter(q => q.variaveis).length} com números sorteados), ${Object.keys(CARTAS).length} flashcards carregados.</p>
       ${errosConteudo.length ? `<div class="errbox">${errosConteudo.map(esc).join("\n")}</div>` : `<p class="small" style="color:var(--ok)">✓ Nenhum problema encontrado.</p>`}
     </div>
     <div class="card"><h3>🧨 Zona de perigo</h3><button class="btn danger" id="zerar">Apagar todo o progresso</button></div>
     <p class="small muted center">ProdLean · Engenharia de Produção descomplicada · funciona offline depois do 1º acesso</p>`;
+  const bt = $("#baixar-tudo");
+  if (bt) bt.onclick = () => {
+    bt.disabled = true; const st = $("#baixar-status");
+    Promise.all([carregarModulos("todos", (f, n) => { st.textContent = `Baixando… ${Math.round(f / n * 100)}%`; }), garantirBusca()])
+      .then(() => { st.textContent = "✓ Pronto! Todo o conteúdo funciona offline neste aparelho."; st.style.color = "var(--ok)"; bt.remove(); })
+      .catch(() => { st.textContent = "Não consegui baixar agora. Confira a conexão e tente de novo."; bt.disabled = false; });
+  };
   $$("[data-seg]").forEach(g => $$("button", g).forEach(b => b.onclick = () => {
     const nome = g.dataset.seg; let v = b.dataset.v;
     if (nome === "meta" || nome === "porSessao") v = +v;
@@ -3015,22 +3073,148 @@ window.addEventListener("error", e => {
     errosConteudo.push(`Erro de sintaxe em ${e.filename.split("/conteudo/")[1]} (linha ${e.lineno}): ${e.message}`);
   }
 });
-function carregarScript(src) {
+/* ---------------------------------------------------------------------
+   CARREGAMENTO SOB DEMANDA
+   O app abre com o catálogo (conteudo/catalogo.js): a estrutura de todos os módulos e
+   disciplinas, os títulos das lições e só o id/tipo/nível de cada questão ("esboços").
+   O texto completo de um módulo é baixado quando ele é aberto (rotear → telaPrecisa) e
+   "hidrata" os esboços no lugar, mantendo os mesmos objetos. Sem catálogo (ex.: arquivo
+   apagado), o app volta ao modo antigo e carrega tudo de uma vez.
+   --------------------------------------------------------------------- */
+let SOB_DEMANDA = false, BUSCA_PRONTA = false;
+const CARREGADOS = new Set(), BANCO_COMPLETO = {};
+let filaCarga = Promise.resolve(), promessaBusca = null;
+async function buscarTexto(arq) {
+  // a impressão digital do arquivo no endereço evita misturar um módulo antigo (em cache) com um catálogo novo
+  const C = window.CATALOGO, v = C && (C.hashes[arq] || (arq === self.ARQUIVO_BUSCA ? C.versao : ""));
+  const r = await fetch("conteudo/" + arq + (v ? "?v=" + v : ""));
+  if (!r.ok) throw new Error(`conteudo/${arq}: ${r.status}`);
+  return r.text();
+}
+function executarScript(arq, codigo) {
+  const s = document.createElement("script");
+  s.text = codigo + "\n//# sourceURL=conteudo/" + arq;
+  document.head.appendChild(s); s.remove();
+}
+// Baixa em paralelo e executa na ordem da lista
+async function carregarEmOrdem(arqs) {
+  const textos = await Promise.all(arqs.map(buscarTexto));
+  arqs.forEach((a, i) => executarScript(a, textos[i]));
+}
+function carregarScriptTag(src) {
   return new Promise(ok => {
     const s = document.createElement("script");
-    s.src = src;
-    s.onload = ok;
-    s.onerror = () => { errosConteudo.push(`Não consegui abrir o arquivo conteudo/${src.split("/").pop()}`); ok(); };
+    s.src = src; s.onload = ok;
+    s.onerror = () => { errosConteudo.push(`Não consegui abrir o arquivo ${src}`); ok(); };
     document.body.appendChild(s);
   });
 }
+function expQ(txt) {
+  return txt ? txt.split(";").map(x => {
+    const [id, tipo, nivel, v, t, licao] = x.split("|"), q = { id, tipo, _stub: 1 };
+    if (nivel) q.nivel = nivel; if (v) q.variaveis = 1; if (t) q.t = +t; if (licao) q.licao = licao;
+    return q;
+  }) : [];
+}
+function expandirCatalogo() {
+  const C = window.CATALOGO;
+  window.MODULOS = C.modulos.map(m => Object.assign({}, m, {
+    glossario: [], flashcards: (m.cartas ? m.cartas.split(";") : []).map(id => ({ id, _stub: 1 })),
+    licoes: m.licoes.map(l => ({ id: l.id, titulo: l.titulo, icone: l.icone, blocos: l.bn.map(n => ({ tipo: "_stub", nivel: n })), questoes: expQ(l.q) }))
+  }));
+  window.DISCIPLINAS = C.disciplinas.map(d => Object.assign({}, d, { questoes: expQ(d.q), glossario: [] }));
+  window.BANCO = expQ(C.banco);
+}
+// Glossário, flashcards e fórmulas de todos os módulos (para a busca, o glossário e os flashcards)
+function garantirBusca() {
+  if (BUSCA_PRONTA || !SOB_DEMANDA) return Promise.resolve();
+  if (!promessaBusca) promessaBusca = buscarTexto(self.ARQUIVO_BUSCA).then(txt => {
+    executarScript(self.ARQUIVO_BUSCA, txt);
+    const B = (window.CATALOGO_BUSCA || {}).modulos || {};
+    MODS.forEach(m => {
+      const b = B[m.id];
+      if (!b || m._completo) return;
+      if (m.grade) {
+        m.glossario = (b.glossario || []).map(([termo, definicao]) => ({ termo, definicao }));
+        m.objetivo = b.intro;
+        m.licoes.forEach((l, i) => { if ((b.formulas[i] || []).length) l.blocos.push({ tipo: "formula", titulo: "Fórmulas e significados", texto: "", legenda: b.formulas[i] }); });
+      } else {
+        m.glossario = b.glossario || [];
+        m.flashcards = b.flashcards || [];
+        m.flashcards.forEach(c => { c.modulo = m.id; CARTAS[c.id] = c; });
+        m.licoes.forEach(l => (b.formulas[l.id] || []).forEach(f => l.blocos.push(Object.assign({ tipo: "formula" }, f))));
+      }
+    });
+    BUSCA_PRONTA = true; INDICE = null;
+  }).catch(e => { promessaBusca = null; throw e; });
+  return promessaBusca;
+}
+// Troca os esboços de um módulo pelo conteúdo completo (mesmos objetos de módulo e lição)
+function hidratar(F) {
+  const m = modulo(F.id);
+  if (!m || m._completo) return;
+  F.licoes.forEach(lf => {
+    const l = m.licoes.find(x => x.id === lf.id);
+    if (!l) { errosConteudo.push(`${F.id}: lição ${lf.id} não está no catálogo (rode o build)`); return; }
+    (l.questoes || []).forEach(q => { if (Q[q.id] === q) delete Q[q.id]; });
+    const extras = (BANCO_COMPLETO[l.id] || []).map(it => { const q = Object.assign({}, it); delete q.licao; return q; });
+    const questoes = (lf.questoes || []).concat(extras);
+    Object.assign(l, lf, { questoes, modulo: m.id });
+    questoes.forEach(q => { q.modulo = m.id; q.licao = l.id; validarQuestao(q); Q[q.id] = q; });
+  });
+  Object.keys(F).forEach(k => { if (k !== "licoes" && k !== "ordem") m[k] = F[k]; });
+  (m.flashcards || []).forEach(c => { c.modulo = m.id; CARTAS[c.id] = c; });
+  m._completo = true;
+  INDICE = null;
+}
+function executarConteudo(arq, codigo) {
+  const salvo = [window.MODULOS, window.DISCIPLINAS, window.BANCO];
+  window.MODULOS = []; window.DISCIPLINAS = []; window.BANCO = [];
+  let M, D, B;
+  try { executarScript(arq, codigo); M = window.MODULOS; D = window.DISCIPLINAS; B = window.BANCO; }
+  finally { [window.MODULOS, window.DISCIPLINAS, window.BANCO] = salvo; }
+  B.forEach(q => (BANCO_COMPLETO[q.licao] = BANCO_COMPLETO[q.licao] || []).push(q));
+  M.forEach(hidratar);
+  D.forEach(d => { try { hidratar(disciplinaParaModulo(d, 0)); } catch (e) { errosConteudo.push(`Disciplina "${d.nome || d.id}": ${e.message}`); } });
+  CARREGADOS.add(arq);
+}
+// Garante o conteúdo completo dos módulos pedidos ("todos" = tudo, para offline)
+async function carregarModulos(ids, aoProgresso) {
+  if (!SOB_DEMANDA) return;
+  if (ids === "todos") ids = MODS.map(m => m.id);
+  const faltam = [...new Set(ids)].map(modulo).filter(m => m && !m._completo);
+  if (!faltam.length) return;
+  const C = window.CATALOGO, arqs = [];
+  if (faltam.some(m => C.bancoMods.includes(m.id))) arqs.push("banco-questoes.js");
+  faltam.forEach(m => { const a = C.arquivos[m.id]; if (a && !arqs.includes(a)) arqs.push(a); });
+  const novos = arqs.filter(a => !CARREGADOS.has(a));
+  let feitos = 0;
+  const textos = await Promise.all(novos.map(a => buscarTexto(a).then(t => { feitos++; if (aoProgresso) aoProgresso(feitos, novos.length); return t; })));
+  filaCarga = filaCarga.then(() => novos.forEach((a, i) => { if (!CARREGADOS.has(a)) executarConteudo(a, textos[i]); }));
+  await filaCarga;
+  const ainda = faltam.filter(m => !m._completo);
+  if (ainda.length) throw new Error("conteúdo incompleto: " + ainda.map(m => m.id).join(", "));
+}
+const tudoCarregado = () => !SOB_DEMANDA || MODS.every(m => m._completo);
 async function iniciar() {
   aplicarTema();
-  const arquivos = self.ARQUIVOS_MODULOS || [];
-  for (const arq of arquivos) await carregarScript("conteudo/" + arq);
+  // Aberto pelo arquivo (dois cliques, file://) o navegador não deixa usar fetch: carrega tudo pelo modo antigo
+  const porArquivo = location.protocol === "file:";
+  try {
+    if (self.ARQUIVOS_INICIAIS && !porArquivo) { await carregarEmOrdem(self.ARQUIVOS_INICIAIS); SOB_DEMANDA = !!window.CATALOGO; }
+  } catch (e) { console.warn("Catálogo indisponível; carregando tudo:", e); }
+  if (SOB_DEMANDA) expandirCatalogo();
+  else {
+    const resto = (self.ARQUIVOS_MODULOS || []).filter(a => !window.PROBLEMAS || !(self.ARQUIVOS_INICIAIS || []).includes(a));
+    if (porArquivo) for (const a of resto) await carregarScriptTag("conteudo/" + a);
+    else try { await carregarEmOrdem(resto); } catch (e) { errosConteudo.push("Não consegui abrir o conteúdo: " + e.message); }
+  }
   prepararConteudo();
+  if (!SOB_DEMANDA) { MODS.forEach(m => m._completo = true); BUSCA_PRONTA = true; }
   if (errosConteudo.length) console.warn("Problemas no conteúdo:\n" + errosConteudo.join("\n"));
   rotear();
+  // Depois da 1ª tela: glossário, flashcards e fórmulas (para a busca ficar completa)
+  if (SOB_DEMANDA) (window.requestIdleCallback || (f => setTimeout(f, 1200)))(() => garantirBusca().catch(() => {}));
   // PWA: funciona offline (só quando aberto por http/https, não por arquivo local)
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("sw.js").catch(err => console.warn("Service worker não registrado:", err));

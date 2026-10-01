@@ -34,7 +34,10 @@ app/
 ├── sw.js               ← service worker: guarda os arquivos para funcionar offline
 ├── icone.svg / icone-192.png / icone-512.png
 └── conteudo/
-    ├── indice.js       ← LISTA dos arquivos de módulo que o app deve carregar
+    ├── indice.js       ← LISTA dos arquivos de conteúdo + os que abrem o app (ARQUIVOS_INICIAIS)
+    ├── catalogo.js     ← GERADO pelo build: estrutura leve de todo o conteúdo (abre o app)
+    ├── catalogo-busca.js ← GERADO: glossário, flashcards e fórmulas (busca; logo após a 1ª tela)
+    ├── siglas.js       ← significado das siglas
     ├── modulo-01.js    ← Módulo 1 — Fundamentos (9 lições, 3 níveis)
     ├── modulo-13.js    ← Módulo 13 — Estatística (12 lições, 3 níveis)
     ├── modulo-02.js    ← Módulo 2 — Gestão de Projetos (10 lições, 3 níveis)
@@ -47,7 +50,21 @@ app/
     ├── desafios.js     ← ⚡ desafios do dia (seção 11)
     └── banco-questoes.js ← questões extras e modelos com números sorteados (sempre por último)
 parametros.js           ← motor das questões com números sorteados
+scripts/build.js        ← build da Netlify: gera os catálogos e copia app/ → dist/ minificado
+package.json            ← "npm run build" (usa o esbuild só no build; o app não tem bibliotecas)
 ```
+
+### Carregamento sob demanda e build (Fase 2)
+
+- **Abertura:** o app baixa só `index.html` (com `parametros.js` e `indice.js` embutidos no build), `catalogo.js`, `problemas.js`, `desafios.js` e `siglas.js` — ~125 KB comprimidos, em paralelo (`<link rel="preload">`). Antes eram ~580 KB em 26 arquivos, um depois do outro.
+- **Catálogo:** `scripts/build.js` lê todo o conteúdo e gera os esboços (módulos, disciplinas, lições, id/tipo/nível de cada questão, ids dos flashcards). O app monta MODS/LICOES/Q a partir deles com o mesmo código de sempre (`prepararConteudo`), então trilha, revisão espaçada, contagens e progresso funcionam sem baixar o texto.
+- **Sob demanda:** `rotear()` pergunta a `telaPrecisa()` o que a tela precisa (ex.: `licao/…` → o módulo da lição; `conteudo/<id>` → aquele módulo; `quiz` → tudo) e `carregarModulos()` baixa só os arquivos que faltam e **hidrata** os esboços no lugar (mesmos objetos). `catalogo-busca.js` chega logo depois da 1ª tela (busca, glossário e flashcards).
+- **Offline:** o service worker guarda o núcleo na instalação e cada módulo conforme é aberto, num cache que não é apagado nas atualizações. Em ⚙️ Configurações → **📥 Baixar tudo para offline** guarda o resto de uma vez. Sem conexão e sem o módulo baixado, a tela avisa e oferece tentar de novo.
+- **Versões:** cada arquivo de módulo é pedido com a impressão digital dele (`?v=…`, do catálogo), para nunca misturar módulo antigo em cache com catálogo novo. O build também acrescenta uma impressão digital à `VERSAO` do `sw.js`.
+- **Sem build:** aberto pelo arquivo (`file://`) ou sem `catalogo.js`, o app volta ao modo antigo e carrega tudo.
+- **Ao editar conteúdo:** rode `node scripts/build.js --catalogo` (ou `npm run catalogo`) para atualizar os catálogos; `npm run checar` acusa catálogo desatualizado. Na Netlify o build roda sozinho (`netlify.toml`: `npm run build`, publica `dist/`).
+- **Medição (Lighthouse na versão minificada):** celular (4G lento simulado) Performance 99, Acessibilidade 100, Boas práticas 100, SEO 100 — primeira pintura 1,0 s, maior elemento 1,7 s, bloqueio 70 ms; desktop 100 em tudo.
+- **Testes:** `node testes/teste-app.js` roda contra `app/`; com `APP_DIR=dist` e o servidor da porta 8765 servindo `dist/`, testa a versão minificada. O teste offline sobe um servidor próprio (porta 8767) e o desliga de verdade, porque o "offline" do Playwright não vale para o service worker.
 
 ---
 
@@ -211,7 +228,7 @@ O **Quiz Relâmpago** usa automaticamente as questões `multipla`, `vf` e `lacun
 ## 6. Como adicionar um módulo novo (2 passos)
 
 1. Crie `conteudo/modulo-13.js` copiando o modelo de `modulo-01.js` (ou cole o que o Claude gerar ao pedir *"converta este módulo para o formato de dados do app"*).
-2. Em `conteudo/indice.js`, acrescente o nome do arquivo na lista:
+2. Em `conteudo/indice.js`, acrescente o nome do arquivo na lista `ARQUIVOS_MODULOS` e rode `node scripts/build.js --catalogo` (o catálogo precisa conhecer o módulo novo):
    ```js
    self.ARQUIVOS_MODULOS = [
      "modulo-01.js",
@@ -221,7 +238,7 @@ O **Quiz Relâmpago** usa automaticamente as questões `multipla`, `vf` e `lacun
 
 Abra o app → ⚙️ Configurações → **🧪 Verificador de conteúdo**: ele avisa sobre IDs repetidos, `correta` fora da lista, tipo desconhecido e até erro de digitação (vírgula faltando) com o número da linha.
 
-> 🟡 Depois de publicar uma versão nova, se o celular continuar mostrando a antiga, feche e abra o app de novo (o service worker atualiza em segundo plano). Módulos listados no `indice.js` já ficam guardados para uso offline no 1º acesso. Ao mudar o **código** (`index.html`), aumente `VERSAO` no `sw.js`.
+> 🟡 Depois de publicar uma versão nova, se o celular continuar mostrando a antiga, feche e abra o app de novo (o service worker atualiza em segundo plano). Cada módulo fica guardado para uso offline quando é aberto (ou todos, pelo botão **Baixar tudo para offline**). Ao mudar o **código** (`index.html`), aumente `VERSAO` no `sw.js` (o build também acrescenta uma impressão digital).
 
 ---
 

@@ -1,4 +1,4 @@
-# 🚀 Como abrir, testar e publicar o EngProd Play (para quem nunca programou)
+# 🚀 Como abrir, testar e publicar o ProdLean (para quem nunca programou)
 
 ## Opção A — Testar no computador (2 minutos)
 
@@ -52,8 +52,8 @@ O app fica direto no link (não precisa de `/app/` no final).
 
 1. Pegue o texto do módulo convertido (arquivo `modulo-XX.js`).
 2. No GitHub, abra a pasta `app/conteudo/` → **Add file → Create new file** → nome `modulo-13.js` → cole → **Commit changes**.
-3. Abra `app/conteudo/indice.js` → ✏️ (editar) → acrescente `"modulo-13.js"` na lista → **Commit changes**.
-4. **Netlify:** o site prodlean está ligado ao repositório **ProdLean_AprendendoSobreEngenhariaDeProducao** (branch `main`): cada commit publica sozinho em segundos (o `netlify.toml` na raiz manda publicar a pasta `app`). Se usar o Netlify Drop, arraste a pasta `app` de novo em **Deploys**.
+3. Abra `app/conteudo/indice.js` → ✏️ (editar) → acrescente `"modulo-13.js"` na lista → **Commit changes**. O build da Netlify gera o catálogo sozinho.
+4. **Netlify:** o site prodlean está ligado ao repositório **ProdLean_AprendendoSobreEngenhariaDeProducao** (branch `main`): cada commit publica sozinho em segundos (o `netlify.toml` na raiz roda `npm run build` e publica a pasta `dist`). Se usar o Netlify Drop, rode `npm run build` no computador e arraste a pasta `dist`.
 5. Abra o app, feche e abra de novo. Confira em ⚙️ → **Verificador de conteúdo** se está tudo ✓.
 
 🟢 Mais fácil ainda: me peça *"adicione o módulo X no app"* e eu faço os passos 1 a 3 e testo tudo; você só repete o passo 4.

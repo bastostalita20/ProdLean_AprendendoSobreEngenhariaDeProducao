@@ -1,26 +1,31 @@
 /* =====================================================================
-   SERVICE WORKER — faz o app funcionar OFFLINE depois do 1º acesso.
-   Estratégia "stale-while-revalidate": responde com o que está salvo
-   (rápido e offline) e, se houver internet, atualiza o cache por trás.
-   Ao mudar o código do app, aumente o número da VERSAO abaixo.
+   SERVICE WORKER — faz o app funcionar OFFLINE.
+   - "Núcleo" (app + catálogo + problemas/desafios/siglas + busca): guardado na instalação,
+     num cache com a VERSAO (trocado a cada atualização).
+   - Conteúdo dos módulos (conteudo/modulo-*.js, conteudo/grade/*, banco): guardado aos poucos,
+     conforme o aluno abre cada assunto, num cache que NÃO é apagado nas atualizações
+     (assim o que já foi baixado continua offline). "Baixar tudo para offline", em
+     Configurações, baixa o resto de uma vez.
+   Estratégia "stale-while-revalidate": responde com o que está salvo e atualiza por trás.
+   Ao mudar o código do app, aumente o número da VERSAO (o build acrescenta uma impressão digital).
    ===================================================================== */
-const VERSAO = "engprod-v18";
-// Lê a lista de módulos (conteudo/indice.js) para já guardar todos no 1º acesso.
-// Quando você edita o indice.js, o navegador percebe e atualiza o cache sozinho.
+const VERSAO = "engprod-v19";
+const CACHE_CONTEUDO = "engprod-conteudo";
 importScripts("conteudo/indice.js");
-const ARQUIVOS_BASE = [
+const NUCLEO = [
   "./", "./index.html", "./manifest.json", "./icone.svg", "./icone-192.png", "./icone-512.png",
   "./conteudo/indice.js", "./parametros.js"
-].concat((self.ARQUIVOS_MODULOS || []).map(arq => "./conteudo/" + arq));
+].concat((self.ARQUIVOS_INICIAIS || self.ARQUIVOS_MODULOS || []).concat(self.ARQUIVO_BUSCA || []).map(arq => "./conteudo/" + arq));
+const ehModulo = url => /\/conteudo\/(modulo-|grade\/|banco-questoes)/.test(url);
 
 self.addEventListener("install", evento => {
-  evento.waitUntil(caches.open(VERSAO).then(c => c.addAll(ARQUIVOS_BASE)).then(() => self.skipWaiting()));
+  evento.waitUntil(caches.open(VERSAO).then(c => c.addAll(NUCLEO)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", evento => {
-  // apaga caches de versões antigas
+  // apaga os núcleos de versões antigas (o cache de conteúdo fica)
   evento.waitUntil(
-    caches.keys().then(chaves => Promise.all(chaves.filter(k => k !== VERSAO).map(k => caches.delete(k))))
+    caches.keys().then(chaves => Promise.all(chaves.filter(k => k !== VERSAO && k !== CACHE_CONTEUDO).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -28,14 +33,36 @@ self.addEventListener("activate", evento => {
 self.addEventListener("fetch", evento => {
   const req = evento.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
+  if (ehModulo(req.url)) return evento.respondWith(conteudo(req));
+  const nome = VERSAO;
   evento.respondWith(
-    caches.open(VERSAO).then(async cache => {
+    caches.open(nome).then(async cache => {
       const salvo = await cache.match(req, { ignoreSearch: true });
       const daRede = fetch(req).then(resp => {
-        if (resp && resp.ok) cache.put(req, resp.clone()); // guarda também os módulos novos
+        if (resp && resp.ok) cache.put(req, resp.clone());
         return resp;
-      }).catch(() => salvo);
+      }).catch(() => salvo || Response.error());
       return salvo || daRede;
     })
   );
 });
+
+// Módulos: o endereço traz a impressão digital do arquivo (?v=…). Se já está guardado, responde do cache;
+// senão baixa, guarda e apaga as versões antigas do mesmo arquivo. Offline e sem a versão exata: usa a que houver.
+async function conteudo(req) {
+  const cache = await caches.open(CACHE_CONTEUDO);
+  const exato = await cache.match(req);
+  if (exato) return exato;
+  try {
+    const resp = await fetch(req);
+    if (resp && resp.ok) {
+      const caminho = new URL(req.url).pathname;
+      const velhos = (await cache.keys()).filter(k => new URL(k.url).pathname === caminho);
+      await Promise.all(velhos.map(k => cache.delete(k)));
+      await cache.put(req, resp.clone());
+    }
+    return resp;
+  } catch (e) {
+    return (await cache.match(req, { ignoreSearch: true })) || Response.error();
+  }
+}

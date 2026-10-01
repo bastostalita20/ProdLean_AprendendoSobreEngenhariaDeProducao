@@ -1,0 +1,14 @@
+{
+  "name": "prodlean",
+  "private": true,
+  "description": "ProdLean — Engenharia de Produção descomplicada (PWA em JavaScript puro; o build só gera o catálogo e minifica).",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "catalogo": "node scripts/build.js --catalogo",
+    "checar": "node scripts/build.js --checar && node testes/validar-grade.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "engines": { "node": ">=18" }
+}

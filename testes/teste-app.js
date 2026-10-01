@@ -17,9 +17,10 @@ const log = (...a) => console.log(...a);
 const falhas = [];
 const checar = (cond, msg) => { if (!cond) { falhas.push(msg); log('   ❌ ' + msg); } };
 
-async function novaPagina(b, url, extra = {}) {
+async function novaPagina(b, url, extra = {}, antes = null) {
   const ctx = await b.newContext({ ...devices['Pixel 7'], ...extra });
   const p = await ctx.newPage();
+  if (antes) await antes(p);
   p.erros = [];
   p.on('pageerror', e => p.erros.push('pageerror: ' + e.message));
   p.on('console', m => { if (m.type() === 'error') p.erros.push('console: ' + m.text()); });
@@ -27,6 +28,11 @@ async function novaPagina(b, url, extra = {}) {
   await p.goto(url);
   await p.waitForSelector('.topbar');
   return { ctx, p };
+}
+function servidor(porta, dir) { return require('child_process').spawn('python3', ['-m', 'http.server', String(porta), '--directory', dir], { stdio: 'ignore' }); }
+async function esperarServidor(url) {
+  for (let i = 0; i < 60; i++) { try { if ((await fetch(url)).ok) return; } catch (e) { } await new Promise(r => setTimeout(r, 100)); }
+  throw new Error('servidor não subiu: ' + url);
 }
 async function qAtual(p) {
   // a questão exibida (já com os números sorteados, se for modelo)
@@ -86,7 +92,16 @@ async function recuperarVidas(p) {
   const b = await chromium.launch();
 
   // ===== 1) Fluxo completo via http =====
-  const { ctx, p } = await novaPagina(b, 'http://localhost:8765/index.html');
+  const pedidos = [];
+  const { ctx, p } = await novaPagina(b, 'http://localhost:8765/index.html', {}, pg => pg.on('request', r => { if (r.url().includes('/conteudo/')) pedidos.push(new URL(r.url()).pathname.split('/conteudo/')[1]); }));
+  // Carregamento sob demanda: a abertura não baixa módulos; abrir um assunto baixa só o arquivo dele
+  await p.waitForTimeout(1500);
+  const abertura = pedidos.slice();
+  checar(await p.evaluate(() => SOB_DEMANDA && LICOES.length > 300 && !MODS.some(m => m._completo)) && !abertura.some(a => /modulo-|grade\/|banco/.test(a)) && abertura.includes('catalogo.js'), 'abertura só com catálogo, problemas, desafios e siglas: ' + abertura.join(' '));
+  pedidos.length = 0;
+  await p.evaluate(() => ir('conteudo/g-pcp1')); await p.waitForFunction(() => !document.querySelector('.carregando'));
+  checar(JSON.stringify(pedidos) === JSON.stringify(['grade/p08.js']) && (await p.textContent('body')).includes('Previsão de demanda'), 'abrir uma disciplina baixa só o arquivo do período: ' + pedidos.join(' '));
+  await p.evaluate(() => carregarModulos('todos'));
   const info = await p.evaluate(() => ({ mods: MODS.map(m => m.id), licoes: LICOES.length, q: Object.keys(Q).length, erros: errosConteudo }));
   log('módulos:', info.mods.join(', '), '| lições:', info.licoes, '| questões:', info.q, '| erros de conteúdo:', info.erros.length ? info.erros : 'nenhum');
   checar(!info.erros.length, 'conteúdo com erros de validação');
@@ -232,8 +247,8 @@ async function recuperarVidas(p) {
   log(`grade: ${g.n} disciplinas em ${g.periodos} períodos; 1º tópico concluído em ${g.feitas}`);
   checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
   await p.evaluate(() => ir('estudar')); await p.waitForTimeout(150);
-  checar(JSON.stringify(await p.$$eval('.seg a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['📖 Estudar', '🎮 Praticar', '📚 Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
-  await p.click('.seg a:has-text("Praticar")'); await p.waitForTimeout(150);
+  checar(JSON.stringify(await p.$$eval('.abas a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['📖 Estudar', '🎮 Praticar', '📚 Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
+  await p.click('.abas a:has-text("Praticar")'); await p.waitForTimeout(150);
   checar(await p.evaluate(() => ['#exercicios', '#quiz', '#revisar', '#flashcards'].every(h => document.querySelector(`a[href="${h}"]`))), 'Praticar: exercícios, quiz, revisão espaçada e flashcards');
   await p.click('.nivel-filtro [data-nivel="dificil"]'); await p.waitForTimeout(100);
   checar(await p.evaluate(() => S.config.nivel) === 'dificil' && await p.$('.nivel-filtro .on[data-nivel="dificil"]'), 'filtro de nível no Praticar');
@@ -354,6 +369,7 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => S.config.nivel) === 'medio', 'Estudar por nível define o nível padrão');
   // Persistência: recarregar mantém favoritos, histórico e desafios
   await p.reload(); await p.waitForSelector('.topbar');
+  await p.evaluate(() => carregarModulos('todos'));
   checar(await p.evaluate(() => S.favoritos.length === 1 && S.historico.length >= 3 && Object.keys(S.desafios).length >= 6), 'favoritos, histórico e desafios persistem após recarregar');
   await p.evaluate(() => ir('salvos')); await p.waitForTimeout(100);
   checar((await p.$$('.mini')).length >= 4, 'tela de favoritos e histórico');
@@ -384,14 +400,46 @@ async function recuperarVidas(p) {
   checar(!p.erros.length, 'sem erros de JavaScript');
   await ctx.close();
 
+  // ===== 1b) Progresso de quem já usava o app (salvo antes do carregamento sob demanda) =====
+  {
+    const antigo = JSON.stringify({ versao: 1, xpTotal: 320, xpPorDia: {}, ofensiva: { atual: 3, recorde: 5, ultimoDia: null }, vidas: 0, diaVidas: '2026-09-01',
+      licoes: { 'm01-l1': { data: '2026-09-01', acertos: 4, total: 5, vezes: 1 }, 'm03-l1': { data: '2026-09-02', acertos: 3, total: 4, vezes: 1 } },
+      questoes: { 'm03-q001': { acertos: 0, erros: 2 } }, revisao: { 'm03-q001': { etapa: 0, proxima: '2026-09-02' } }, revisadas: 0, dominadas: 0,
+      cartas: {}, cartasVistas: 0, conquistas: {}, ranking: [], favoritos: [], historico: [], desafios: {}, config: { meta: 50, nome: 'Antiga', nivel: 'medio' } });
+    const pa = await novaPagina(b, 'http://localhost:8765/index.html', {}, pg => pg.addInitScript(e => { if (!localStorage.getItem('engprod_play_v1')) localStorage.setItem('engprod_play_v1', e); }, antigo));
+    const st = await pa.p.evaluate(() => ({ xp: S.xpTotal, nome: S.config.nome, pend: revisoesPendentes().length, sob: SOB_DEMANDA }));
+    checar(st.xp === 320 && st.nome === 'Antiga' && st.pend === 1 && st.sob && (await pa.p.textContent('#app')).includes('para revisar'), 'progresso antigo: XP, nome e revisão vencida aparecem no início');
+    await pa.p.evaluate(() => ir('revisao/pendentes')); await pa.p.waitForSelector('#qarea');
+    checar(await pa.p.evaluate(() => { const q = document.querySelector('#qarea')._q; return q && q.id === 'm03-q001' && !q._stub && !!q.pergunta; }), 'progresso antigo: a revisão abre a questão completa (módulo baixado na hora)');
+    await pa.p.evaluate(() => ir('licao/m01-l2')); await pa.p.waitForFunction(() => !document.querySelector('.carregando'));
+    checar(await pa.p.$('#comecar'), 'progresso antigo: a próxima lição continua liberada');
+    await pa.ctx.close();
+  }
+
   // ===== 2) Primeiro acesso e depois offline =====
-  const o = await novaPagina(b, 'http://localhost:8765/index.html');
-  await o.p.evaluate(() => navigator.serviceWorker.ready); await o.p.waitForTimeout(1200);
-  await o.ctx.setOffline(true);
+  // O "offline" do Playwright não vale para o service worker; aqui um servidor próprio é desligado de verdade.
+  const DIR_OFF = path.resolve(__dirname, '..', process.env.APP_DIR || 'app'), URL_OFF = 'http://localhost:8767/index.html';
+  let srv = servidor(8767, DIR_OFF); await esperarServidor(URL_OFF);
+  const o = await novaPagina(b, URL_OFF);
+  await o.p.evaluate(() => navigator.serviceWorker.ready); await o.p.waitForTimeout(1500);
+  srv.kill(); await new Promise(r => setTimeout(r, 300));
   await o.p.reload(); await o.p.waitForSelector('.topbar');
   const off = await o.p.evaluate(() => ({ m: MODS.length, l: LICOES.length }));
   log('offline no 1º acesso → módulos:', off.m, '| lições:', off.l);
-  checar(off.m === info.mods.length, 'offline carrega todos os módulos');
+  checar(off.m === info.mods.length, 'offline: o catálogo abre com todos os módulos');
+  await o.p.evaluate(() => ir('conteudo/g-pcp1')); await o.p.waitForFunction(() => !document.querySelector('.carregando'), null, { timeout: 15000 });
+  checar((await o.p.textContent('#app')).includes('Sem conexão'), 'offline: assunto ainda não baixado avisa em vez de travar');
+  srv = servidor(8767, DIR_OFF); await esperarServidor(URL_OFF);
+  await o.p.evaluate(() => ir('config')); await o.p.click('#baixar-tudo');
+  await o.p.waitForFunction(() => /Pronto/.test((document.querySelector('#baixar-status') || {}).textContent || ''), null, { timeout: 30000 });
+  srv.kill(); await new Promise(r => setTimeout(r, 300));
+  await o.p.reload(); await o.p.waitForSelector('.topbar', { timeout: 60000 }).catch(async e => { log('   tela após recarregar offline:', (await o.p.textContent('#app').catch(() => '?')).slice(0, 200), o.p.erros); throw e; });
+  let offOk = true;
+  for (const r of ['conteudo/g-pcp1', 'licao/m01-l1', 'conteudo/m06', 'quiz', 'glossario', 'consultar/kanban']) {
+    await o.p.evaluate(x => ir(x), r); await o.p.waitForFunction(() => !document.querySelector('.carregando'), null, { timeout: 15000 });
+    if ((await o.p.textContent('#app')).includes('Sem conexão')) { offOk = false; log('   offline falhou em', r); }
+  }
+  checar(offOk, 'offline: depois de "Baixar tudo", todo o conteúdo abre sem internet');
   await o.ctx.close();
 
   // ===== 3) Abrindo pelo arquivo (dois cliques) =====
@@ -405,7 +453,7 @@ async function recuperarVidas(p) {
     const cx = await b.newContext({ viewport: vp });
     const pg = await cx.newPage(); let larg = true;
     for (const r of ['licao/m01-l1', 'inicio', 'ferramenta/mrp', 'problemas', 'desafio', 'estudar', 'conteudo/g-logist', 'conteudo/g-calc1', 'conteudo/m03', 'consulta/l%3Ag-logist-l2']) {
-      await pg.goto('http://localhost:8765/index.html#' + r); await pg.waitForTimeout(400);
+      await pg.goto('http://localhost:8765/index.html#' + r); await pg.waitForFunction(() => typeof MODS !== 'undefined' && MODS.length && !document.querySelector('.carregando') && !/^\s*Carregando…\s*$/.test(document.querySelector('#app').textContent)); await pg.waitForTimeout(150);
       if (!(await pg.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))) { larg = false; log('   rolagem horizontal em', nome, r); }
     }
     checar(larg, `sem rolagem horizontal em ${nome}`);
@@ -421,7 +469,7 @@ async function recuperarVidas(p) {
     ['conteudo/m03', '#ouvir-mod', 'Planejamento'], ['conteudo/m03/m03-l6', '[data-ouvir-l="m03-l6"]', 'Capacidade'],
     ['conteudo/g-logist', '#ouvir-tudo', 'Curva ABC'], ['conteudo/g-logist', '[data-ouvir-tp="1"]', 'Gestão de estoques'], ['conteudo/g-logist', '#ouvir', 'Logística'],
     ['ferramenta/lec', '#ouvir-ficha', 'O que é'], ['consulta/l%3Am04-l5', '#ouvir-ficha', 'Takt'], ['problema/estoque-demais', '#ouvir-prob', 'Por onde começar']]) {
-    await po.evaluate(r => ir(r), rota); await po.waitForTimeout(150);
+    await po.evaluate(r => ir(r), rota); await po.waitForFunction(() => !document.querySelector('.carregando')); await po.waitForTimeout(150);
     await po.evaluate(() => { window.__falas = []; }); await po.click(sel); await po.waitForTimeout(50);
     const r = await po.evaluate(() => ({ n: __falas.length, txt: __falas.join(' '), barra: !document.querySelector('#listenbar').classList.contains('hidden') }));
     checar(r.n > 0 && r.barra && r.txt.includes(deveTer) && !r.txt.includes('|'), `ouvir: ${rota} ${sel} (${r.n} frases)`);

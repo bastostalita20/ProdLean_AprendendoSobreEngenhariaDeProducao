@@ -1,10 +1,14 @@
 # Configuração do Netlify (lida automaticamente quando o site está ligado ao GitHub)
-# O app é estático: não há build; publica-se a pasta "app".
+# O build gera o catálogo do conteúdo (carregamento sob demanda) e copia app/ para dist/
+# minificado. Sem bibliotecas no app: o esbuild é usado só aqui, no build.
 [build]
-  publish = "app"
-  command = ""
+  publish = "dist"
+  command = "npm run build"
 
-# Sempre revalidar o código e o conteúdo, para as atualizações chegarem rápido.
+[build.environment]
+  NODE_VERSION = "20"
+
+# Código e catálogo: sempre revalidar, para as atualizações chegarem rápido.
 # (O modo offline continua funcionando pelo service worker.)
 [[headers]]
   for = "/sw.js"
@@ -20,3 +24,8 @@
   for = "/conteudo/*"
   [headers.values]
     Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
