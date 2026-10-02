@@ -54,6 +54,24 @@ scripts/build.js        ← build da Netlify: gera os catálogos e copia app/ �
 package.json            ← "npm run build" (usa o esbuild só no build; o app não tem bibliotecas)
 ```
 
+### Páginas públicas para o Google (Fase 3) — `scripts/seo.js`
+
+O build gera, a partir dos mesmos arquivos de conteúdo, páginas HTML estáticas e indexáveis (o app não muda):
+
+| Endereço | Conteúdo | Dados estruturados |
+|---|---|---|
+| `/ferramentas/` e `/ferramentas/<id>/` | 80 fichas: o que é, para que serve, quando usar, dados, fórmulas, exemplo resolvido, erros comuns, teste rápido com resposta, problemas em que ajuda, ferramentas relacionadas e onde estudar | `DefinedTerm`, `FAQPage`, `BreadcrumbList` |
+| `/problemas/` e `/problemas/<id>/` | 52 situações por categoria, por onde começar e ferramentas | `FAQPage`, `BreadcrumbList` |
+| `/disciplinas/` e `/disciplinas/<nome>/` | 56 disciplinas por período: introdução, tópicos, fórmulas, exemplos, glossário e bibliografia (sem as questões) | `Course`, `BreadcrumbList` |
+| `/glossario/` e `/glossario/<letra>/` | 827 termos (repetidos entre disciplinas aparecem uma vez) | `DefinedTermSet` |
+
+- Cada página: `title` e `description` próprios, um H1, `canonical`, Open Graph com **imagem gerada** (`/og/*.png`, 1200×630, fonte DejaVu em `scripts/fontes/`, desenhada com `@resvg/resvg-js`), links internos e o botão **“Praticar isso no app”**, que abre o ponto certo (`/#ferramenta/<id>`, `/#problema/<id>`, `/#conteudo/<id>`, `/#licao/<id>`).
+- Também: `sitemap.xml`, `robots.txt` e `404.html`. A página do app (`index.html`) ganhou `canonical`, Open Graph e `WebApplication` em JSON-LD.
+- Endereço do site: variável `URL` da Netlify (padrão `https://prodlean.netlify.app`). Ao trocar de domínio, tudo se ajusta no próximo build.
+- **Anúncios** (opcional, só nas páginas públicas, nunca nas lições): desligados. Para ligar, defina `ANUNCIOS_HTML` nas variáveis de ambiente da Netlify.
+- **Teste:** `npm run testar-seo` confere title, description, canonical, H1, JSON-LD, imagem de prévia, links internos quebrados, sitemap e ausência de códigos/menção à instituição.
+- **Lighthouse:** páginas de ferramenta, problema e glossário com 100 em Performance, Acessibilidade, Boas práticas e SEO.
+
 ### Carregamento sob demanda e build (Fase 2)
 
 - **Abertura:** o app baixa só `index.html` (com `parametros.js` e `indice.js` embutidos no build), `catalogo.js`, `problemas.js`, `desafios.js` e `siglas.js` — ~125 KB comprimidos, em paralelo (`<link rel="preload">`). Antes eram ~580 KB em 26 arquivos, um depois do outro.
@@ -324,9 +342,9 @@ Um módulo com `liberaApos: ["m13"]` fica no fim da trilha, mas a sua primeira l
 As disciplinas da grade curricular do Bacharelado em Engenharia de Produção (fluxograma enviado pela aluna) ficam em `conteudo/grade/p01.js` a `p09.js` (o 10º período está em `p09.js`). Cada disciplina é um objeto em `window.DISCIPLINAS`:
 
 ```js
-{ id: "g-calc1", codigo: "GEXT-7301", nome: "Cálculo a Uma Variável", periodo: 1,
+{ id: "g-calc1", nome: "Cálculo a Uma Variável", periodo: 1,
   area: "exatas",            // exatas | engenharia | producao | gestao | humanas (define a cor)
-  icone: "📈", creditos: "(5-0-0) 5 créditos",
+  icone: "📈",
   prereq: ["g-..."],         // ids de outras disciplinas (opcional)
   relacionado: ["m03"],      // módulos do curso que aprofundam o tema (opcional)
   intro: "Para que serve na Engenharia de Produção…",

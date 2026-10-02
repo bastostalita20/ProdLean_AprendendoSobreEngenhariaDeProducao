@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#1f8a4c">
 <meta name="description" content="ProdLean: Engenharia de Produção descomplicada. Consulta rápida de ferramentas e fórmulas, problemas reais de empresa, desafio do dia e estudo completo da graduação, grátis e offline.">
 <title>ProdLean — Engenharia de Produção descomplicada</title>
+<link rel="canonical" href="https://prodlean.netlify.app/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="ProdLean"><meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="ProdLean — Engenharia de Produção descomplicada">
+<meta property="og:description" content="Consulta rápida de ferramentas e fórmulas, problemas reais de empresa, desafio do dia e a graduação inteira no celular. Grátis e offline.">
+<meta property="og:url" content="https://prodlean.netlify.app/"><meta property="og:image" content="https://prodlean.netlify.app/og/inicio.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"ProdLean","alternateName":"ProdLean — Engenharia de Produção descomplicada","url":"https://prodlean.netlify.app/","applicationCategory":"EducationalApplication","operatingSystem":"Web, Android, iOS","inLanguage":"pt-BR","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"BRL"},"description":"App de estudo de Engenharia de Produção: ferramentas com fórmula e exemplo, problemas reais, desafio do dia, exercícios e mapas mentais."}</script>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icone-192.png">
@@ -467,6 +474,7 @@ a.btn { text-decoration: none; text-align: center; }
 </style>
 </head>
 <body>
+<noscript><p>O ProdLean precisa de JavaScript para o app. Sem ele, veja as páginas de consulta: <a href="/ferramentas/">ferramentas</a>, <a href="/problemas/">problemas</a>, <a href="/disciplinas/">disciplinas</a> e <a href="/glossario/">glossário</a>.</p></noscript>
 <div class="app" id="app"><p class="center muted" style="padding-top:40vh">Carregando…</p></div>
 <nav class="nav" id="nav" aria-label="Navegação principal">
   <div class="nav-inner">
@@ -1154,7 +1162,7 @@ function disciplinaParaModulo(d, k) {
   if (!d.id || !d.nome || !Array.isArray(d.topicos) || !d.topicos.length) throw new Error("precisa de id, nome e topicos");
   const qs = d.questoes || [];
   return {
-    id: d.id, numero: d.codigo, titulo: d.nome, icone: d.icone || "📘", grade: true, periodo: d.periodo, fonte: d,
+    id: d.id, numero: "", titulo: d.nome, icone: d.icone || "📘", grade: true, periodo: d.periodo, fonte: d,
     ordem: 1000 + d.periodo * 100 + k,
     objetivo: d.intro,
     resumoAudio: [d.intro].concat(d.topicos.map(tp => tp.t + ". " + (tp.pontos || []).join(" "))).join(" "),
@@ -1804,11 +1812,11 @@ function listaPorPeriodo(link, filtro) {
   const f = norm(filtro || "");
   let html = "";
   for (let p = 1; p <= 10; p++) {
-    const ds = disciplinas().filter(m => m.periodo === p && (!f || norm(m.titulo + " " + m.numero).includes(f)));
+    const ds = disciplinas().filter(m => m.periodo === p && (!f || norm(m.titulo).includes(f)));
     if (!ds.length) continue;
     html += `<details class="periodo" ${f ? "open" : ""}><summary><b>${p}º período</b> <span class="small muted">· ${ds.length} disciplina${ds.length > 1 ? "s" : ""}</span></summary>
       ${ds.map(m => { const A = AREAS[m.fonte.area] || AREAS.producao; return `<a class="card link disc" href="${link(m)}" style="border-left:6px solid ${A.cor}">
-        <span class="big">${m.icone}</span><span class="grow"><b>${esc(m.titulo)}</b><br><span class="small muted">${esc(m.numero || "")} · ${A.nome}</span></span>›</a>`; }).join("")}
+        <span class="big">${m.icone}</span><span class="grow"><b>${esc(m.titulo)}</b><br><span class="small muted">${A.nome}</span></span>›</a>`; }).join("")}
     </details>`;
   }
   return html;
@@ -1842,7 +1850,7 @@ function telaDisciplina(m, alvo) {
   app().innerHTML = barraTopo() + `
     <p class="small"><a href="#conteudo">‹ Conteúdo</a></p>
     <div class="disc-head" style="background:${A.cor}">
-      <div class="small">${d.periodo}º PERÍODO · ${esc(d.codigo || "")} · ${esc(d.creditos || "")}</div>
+      <div class="small">${d.periodo}º PERÍODO</div>
       <h1>${d.icone || "📘"} ${esc(d.nome)}</h1><div class="small">${A.nome}</div></div>
     ${pre.length ? `<p class="small muted">🧩 Pré-requisitos: ${pre.join(", ")}</p>` : ""}
     <div class="bloco contexto"><div class="tag">🏭 Para que serve na Engenharia de Produção</div>${fmt(d.intro)}</div>
@@ -1914,7 +1922,7 @@ const primeiraFrase = t => {
 function dadosMapa(m) {
   if (m.grade) {
     const d = m.fonte;
-    return { titulo: d.nome, sub: `${d.periodo}º período · ${d.codigo || ""}`, icone: d.icone,
+    return { titulo: d.nome, sub: `${d.periodo}º período`, icone: d.icone,
       topicos: d.topicos.map(tp => ({ titulo: tp.t, pontos: tp.pontos || [], formulas: tp.formulas || [], producao: tp.producao ? [tp.producao] : [], exemplos: tp.exemplo ? [tp.exemplo] : [], mnemonicos: [] })),
       glossario: d.glossario || [] };
   }
@@ -2156,7 +2164,7 @@ function telaTrilha(visao, per) {
     ds.forEach(m => {
       const A = AREAS[m.fonte.area] || AREAS.producao, feitas = m.licoes.filter(l => licaoConcluida(l.id)).length;
       html += `<div class="mod-banner" style="background:${A.cor};box-shadow:0 4px 0 rgba(0,0,0,.25)">
-        <div class="row"><div><div class="small" style="opacity:.85">${esc(m.numero || "")} · ${A.nome}</div><b>${m.icone} ${esc(m.titulo)}</b></div>
+        <div class="row"><div><div class="small" style="opacity:.85">${m.periodo}º período · ${A.nome}</div><b>${m.icone} ${esc(m.titulo)}</b></div>
         <div class="small" style="text-align:right"><b>${feitas}/${m.licoes.length}</b></div></div>
         <div class="row wrap mt"><a class="minilink" href="#conteudo/${m.id}">📚 Conteúdo</a><a class="minilink" href="#mapa/${m.id}">🧠 Mapa</a></div>
       </div>` + caminho(m);

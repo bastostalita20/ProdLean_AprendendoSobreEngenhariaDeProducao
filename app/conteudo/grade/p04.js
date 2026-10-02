@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-edp", codigo: "GEXT-7304", nome: "Equações Diferenciais Parciais", periodo: 4, area: "exatas", icone: "🌡️", creditos: "(3-0-0) 3 créditos", prereq: ["g-edo"],
+    id: "g-edp", nome: "Equações Diferenciais Parciais", periodo: 4, area: "exatas", icone: "🌡️", prereq: ["g-edo"],
     intro: "Quando uma grandeza varia no **tempo e no espaço** ao mesmo tempo, surge uma EDP. Na produção, ela descreve como o **calor se espalha** numa placa de chocolate, numa peça em tratamento térmico ou na parede de uma câmara fria, como substâncias se **difundem** (secagem, contaminação) e como **ondas** percorrem cabos e estruturas. É a base das simulações por computador.",
     topicos: [
       { t: "O que são EDPs e classificação", icone: "🗂️",
@@ -49,7 +49,7 @@
   },
 
   {
-    id: "g-destec", codigo: "GDES-7002", nome: "Desenho Técnico I", periodo: 4, area: "engenharia", icone: "📐", creditos: "(3-0-0) 3 créditos", prereq: ["g-desenho"],
+    id: "g-destec", nome: "Desenho Técnico I", periodo: 4, area: "engenharia", icone: "📐", prereq: ["g-desenho"],
     intro: "Aprofunda o desenho para **fabricação**: cortes, cotagem funcional, **tolerâncias dimensionais e geométricas**, rugosidade, roscas e **desenho de conjunto com lista de peças**. O engenheiro de produção usa isso para analisar a fabricabilidade, conversar com fornecedores e montar a estrutura de produto (BOM).",
     topicos: [
       { t: "Cortes, seções e vistas auxiliares", icone: "🔪",
@@ -93,7 +93,7 @@
   },
 
   {
-    id: "g-fister", codigo: "GEXT-7002", nome: "Física Térmica", periodo: 4, area: "exatas", icone: "♨️", creditos: "(2-2-0) 3 créditos", prereq: ["g-mecbas"],
+    id: "g-fister", nome: "Física Térmica", periodo: 4, area: "exatas", icone: "♨️", prereq: ["g-mecbas"],
     intro: "Calor e energia térmica estão em toda fábrica: **caldeiras**, fornos, câmaras frias, **dilatação** de tubulações e trilhos, **refrigeração** e o custo de energia para aquecer e resfriar. A termodinâmica mostra também os **limites de rendimento** de máquinas térmicas.",
     topicos: [
       { t: "Temperatura, calor e dilatação", icone: "🌡️",
@@ -139,7 +139,7 @@
   },
 
   {
-    id: "g-resmat", codigo: "GMEC-7006", nome: "Resistência dos Materiais III", periodo: 4, area: "engenharia", icone: "🧱", creditos: "(3-0-0) 3 créditos", prereq: ["g-mecger"],
+    id: "g-resmat", nome: "Resistência dos Materiais III", periodo: 4, area: "engenharia", icone: "🧱", prereq: ["g-mecger"],
     intro: "Estuda como peças e estruturas **resistem e se deformam** sob cargas: tensão, deformação, flexão, cisalhamento, torção e flambagem. O engenheiro de produção usa esses conceitos para avaliar **prateleiras, mezaninos, dispositivos e eixos**, entender especificações e coeficientes de segurança e dialogar com a engenharia de projeto.",
     topicos: [
       { t: "Tensão, deformação e Lei de Hooke", icone: "📏",
@@ -186,7 +186,7 @@
   },
 
   {
-    id: "g-eletron", codigo: "GELE-7178", nome: "Eletricidade/Eletrônica", periodo: 4, area: "engenharia", icone: "🔋", creditos: "(3-2-0) 4 créditos", prereq: ["g-eletbas"],
+    id: "g-eletron", nome: "Eletricidade/Eletrônica", periodo: 4, area: "engenharia", icone: "🔋", prereq: ["g-eletbas"],
     intro: "Aplica a eletricidade à fábrica: **motores elétricos**, formas de **partida e acionamento** (incluindo inversores de frequência, que economizam energia), componentes eletrônicos, **sensores** e **CLPs** que automatizam máquinas e linhas.",
     topicos: [
       { t: "Motores elétricos", icone: "⚙️",
@@ -231,7 +231,7 @@
   },
 
   {
-    id: "g-metest", codigo: "GEXT-7712", nome: "Métodos Estatísticos", periodo: 4, area: "exatas", icone: "🧪", creditos: "(3-0-0) 3 créditos", prereq: ["g-edo", "g-estat"], relacionado: ["m13"],
+    id: "g-metest", nome: "Métodos Estatísticos", periodo: 4, area: "exatas", icone: "🧪", prereq: ["g-edo", "g-estat"], relacionado: ["m13"],
     intro: "Ferramentas para **decidir com dados**: testar se uma melhoria funcionou, comparar máquinas e fornecedores, modelar relações com **regressão** e planejar **experimentos (DOE)** para descobrir quais fatores do processo importam. É a base estatística do Seis Sigma.",
     topicos: [
       { t: "Testes de hipóteses", icone: "⚖️",

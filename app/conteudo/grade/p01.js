@@ -10,7 +10,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-calc1", codigo: "GEXT-7301", nome: "Cálculo a Uma Variável", periodo: 1, area: "exatas", icone: "📈", creditos: "(5-0-0) 5 créditos",
+    id: "g-calc1", nome: "Cálculo a Uma Variável", periodo: 1, area: "exatas", icone: "📈",
     intro: "Cálculo é a matemática da **variação**. Na Engenharia de Produção, a **derivada** mede quanto o custo ou o lucro muda quando se produz uma unidade a mais (custo marginal) e encontra o lote ou a produção ótima; o **limite** mostra para onde tende o custo médio em grande escala; a **integral** soma o que se acumula ao longo do tempo, como produção, consumo de energia e custo total.",
     topicos: [
       { t: "Funções que modelam a produção", icone: "📐",
@@ -128,7 +128,7 @@
   },
 
   {
-    id: "g-alg1", codigo: "GEXT-7501", nome: "Álgebra Linear I", periodo: 1, area: "exatas", icone: "🧮", creditos: "(2-0-0) 2 créditos",
+    id: "g-alg1", nome: "Álgebra Linear I", periodo: 1, area: "exatas", icone: "🧮",
     intro: "Álgebra linear organiza muitos números ao mesmo tempo em **vetores e matrizes** e resolve **sistemas de equações**. Na produção, ela calcula o mix de produtos que usa exatamente os recursos disponíveis, explode listas de materiais, organiza dados de várias máquinas e é a base da Pesquisa Operacional (programação linear).",
     topicos: [
       { t: "Vetores e matrizes", icone: "🔢",
@@ -176,7 +176,7 @@
   },
 
   {
-    id: "g-desenho", codigo: "GDES-7001", nome: "Desenho", periodo: 1, area: "engenharia", icone: "✏️", creditos: "(4-0-0) 4 créditos",
+    id: "g-desenho", nome: "Desenho", periodo: 1, area: "engenharia", icone: "✏️",
     intro: "O desenho é a **linguagem gráfica da engenharia**. O engenheiro de produção lê e faz desenhos de peças, plantas de fábrica (layout), fluxos e dispositivos; precisa entender vistas, escalas e cotas para conversar com projeto, fornecedores e chão de fábrica.",
     topicos: [
       { t: "Instrumentos, formatos e normas", icone: "📏",
@@ -219,7 +219,7 @@
   },
 
   {
-    id: "g-quimica", codigo: "GEXT-7702", nome: "Química", periodo: 1, area: "exatas", icone: "⚗️", creditos: "(2-2-0) 3 créditos",
+    id: "g-quimica", nome: "Química", periodo: 1, area: "exatas", icone: "⚗️",
     intro: "A química explica do que os materiais são feitos e como reagem. Na produção, ela aparece em **balanços de massa** (quanto de cada insumo), em processos químicos e alimentícios, em **corrosão** e escolha de materiais, em **tratamento de efluentes** e na segurança com produtos perigosos.",
     topicos: [
       { t: "Matéria, átomos e ligações", icone: "⚛️",
@@ -263,7 +263,7 @@
   },
 
   {
-    id: "g-intadm", codigo: "GPRO-7826", nome: "Introdução à Administração", periodo: 1, area: "gestao", icone: "🏢", creditos: "(3-0-0) 3 créditos",
+    id: "g-intadm", nome: "Introdução à Administração", periodo: 1, area: "gestao", icone: "🏢",
     intro: "Administrar é **planejar, organizar, dirigir e controlar** recursos para atingir objetivos. O engenheiro de produção é, na prática, um gestor: coordena pessoas, processos e recursos, e precisa entender as escolas da administração que moldaram as fábricas de hoje.",
     topicos: [
       { t: "Funções administrativas (PODC)", icone: "🧭",
@@ -305,7 +305,7 @@
   },
 
   {
-    id: "g-intep", codigo: "GPRO-7860", nome: "Introdução à Engenharia de Produção", periodo: 1, area: "producao", icone: "🏭", creditos: "(2-0-0) 2 créditos", relacionado: ["m01"],
+    id: "g-intep", nome: "Introdução à Engenharia de Produção", periodo: 1, area: "producao", icone: "🏭", relacionado: ["m01"],
     intro: "Apresenta a profissão: o que faz o engenheiro de produção, as **10 áreas da ABEPRO**, a visão da empresa como **sistema de produção** e os indicadores básicos de desempenho. O Módulo 1 do curso aprofunda cada ponto.",
     topicos: [
       { t: "A profissão e as áreas da ABEPRO", icone: "🎓",

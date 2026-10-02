@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-edo", codigo: "GEXT-7303", nome: "Equações Diferenciais Ordinárias", periodo: 3, area: "exatas", icone: "〰️", creditos: "(4-0-0) 4 créditos", prereq: ["g-calc2", "g-alg2"],
+    id: "g-edo", nome: "Equações Diferenciais Ordinárias", periodo: 3, area: "exatas", icone: "〰️", prereq: ["g-calc2", "g-alg2"],
     intro: "Uma **equação diferencial** relaciona uma grandeza com a sua taxa de variação. Na produção, ela modela o **resfriamento** de produtos num túnel, a **confiabilidade** de equipamentos, a concentração num **tanque de mistura**, a adoção de um **produto novo** e a **vibração** de máquinas.",
     topicos: [
       { t: "EDOs de 1ª ordem separáveis", icone: "📉",
@@ -49,7 +49,7 @@
   },
 
   {
-    id: "g-calcvet", codigo: "GEXT-7503", nome: "Cálculo Vetorial", periodo: 3, area: "exatas", icone: "🧲", creditos: "(2-0-0) 2 créditos", prereq: ["g-calc2"],
+    id: "g-calcvet", nome: "Cálculo Vetorial", periodo: 3, area: "exatas", icone: "🧲", prereq: ["g-calc2"],
     intro: "Estende o cálculo a **campos vetoriais**: grandezas com direção em cada ponto, como velocidade de um fluido, forças e fluxo de calor. Na produção, aparece em **escoamento** (vazão em tubulações, ventilação), **trabalho** de forças ao longo de trajetos (robôs, AGVs) e **transferência de calor** — base de Fenômenos de Transporte.",
     topicos: [
       { t: "Curvas e movimento no espaço", icone: "🤖",
@@ -94,7 +94,7 @@
   },
 
   {
-    id: "g-calcnum", codigo: "GEXT-7402", nome: "Cálculo Numérico", periodo: 3, area: "exatas", icone: "🔢", creditos: "(2-2-0) 3 créditos", prereq: ["g-calc1", "g-alg1", "g-comp"],
+    id: "g-calcnum", nome: "Cálculo Numérico", periodo: 3, area: "exatas", icone: "🔢", prereq: ["g-calc1", "g-alg1", "g-comp"],
     intro: "Muitos problemas não têm solução exata fácil; o **cálculo numérico** encontra aproximações confiáveis com o computador. Na produção: calcular a **TIR** de um investimento (raiz de uma equação), interpolar tabelas, integrar dados medidos (energia, vazão) e simular sistemas passo a passo.",
     topicos: [
       { t: "Erros e zeros de funções", icone: "🎯",
@@ -140,7 +140,7 @@
   },
 
   {
-    id: "g-mecger", codigo: "GMEC-7003", nome: "Mecânica Geral", periodo: 3, area: "engenharia", icone: "🏗️", creditos: "(3-0-0) 3 créditos", prereq: ["g-alg2", "g-mecbas"],
+    id: "g-mecger", nome: "Mecânica Geral", periodo: 3, area: "engenharia", icone: "🏗️", prereq: ["g-alg2", "g-mecbas"],
     intro: "Estuda **forças em equilíbrio** (estática). O engenheiro de produção usa esses conceitos para entender cargas em **porta-paletes**, **içamento** com cabos e cintas, **estabilidade de empilhadeiras** (centro de gravidade da carga) e reações em vigas e estruturas do layout.",
     topicos: [
       { t: "Forças, resultante e momento", icone: "➡️",
@@ -185,7 +185,7 @@
   },
 
   {
-    id: "g-eletbas", codigo: "GEXT-7003", nome: "Eletricidade Básica", periodo: 3, area: "exatas", icone: "💡", creditos: "(3-2-0) 4 créditos", prereq: ["g-calc2", "g-mecbas"],
+    id: "g-eletbas", nome: "Eletricidade Básica", periodo: 3, area: "exatas", icone: "💡", prereq: ["g-calc2", "g-mecbas"],
     intro: "A energia elétrica move a fábrica. O engenheiro de produção usa eletricidade para estimar o **consumo e o custo de energia**, entender **fator de potência** e multas na conta, dimensionar cargas e conversar com a manutenção elétrica com segurança (**NR-10**).",
     topicos: [
       { t: "Grandezas elétricas e Lei de Ohm", icone: "🔌",
@@ -231,7 +231,7 @@
   },
 
   {
-    id: "g-estat", codigo: "GEXT-7601", nome: "Estatística", periodo: 3, area: "exatas", icone: "📊", creditos: "(3-0-0) 3 créditos", prereq: ["g-calc1"], relacionado: ["m13"],
+    id: "g-estat", nome: "Estatística", periodo: 3, area: "exatas", icone: "📊", prereq: ["g-calc1"], relacionado: ["m13"],
     intro: "Estatística transforma dados em decisão. Na produção, descreve a **variabilidade** dos processos, calcula **probabilidades** de defeito e de falha e estima parâmetros com **amostras**. O Módulo 13 do curso aprofunda os temas com muitos exercícios.",
     topicos: [
       { t: "Estatística descritiva", icone: "📋",
@@ -277,7 +277,7 @@
   },
 
   {
-    id: "g-engmet", codigo: "GPRO-7202", nome: "Engenharia de Métodos", periodo: 3, area: "producao", icone: "⏱️", creditos: "(2-2-0) 3 créditos", relacionado: ["m04"],
+    id: "g-engmet", nome: "Engenharia de Métodos", periodo: 3, area: "producao", icone: "⏱️", relacionado: ["m04"],
     intro: "Como fazer melhor e quanto tempo leva: **estudo de métodos**, **cronoanálise**, **tempo padrão**, **takt time** e **balanceamento de linha**. É a disciplina que mais conversa com o Módulo 4 do curso (em 3 níveis, com muito mais exercícios).",
     topicos: [
       { t: "Estudo de métodos", icone: "🔍",

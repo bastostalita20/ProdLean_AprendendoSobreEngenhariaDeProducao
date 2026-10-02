@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-cienamb", codigo: "GEXT-7201", nome: "Ciências do Ambiente", periodo: 5, area: "engenharia", icone: "🌱", creditos: "(2-0-0) 2 créditos", prereq: ["g-quimica"],
+    id: "g-cienamb", nome: "Ciências do Ambiente", periodo: 5, area: "engenharia", icone: "🌱", prereq: ["g-quimica"],
     intro: "Toda produção retira recursos da natureza e devolve resíduos, efluentes e emissões. Esta disciplina dá a base científica — ecossistemas, ciclos, poluição, clima e legislação — para o engenheiro de produção **reduzir impactos**, cumprir a lei e enxergar oportunidades (menos desperdício de água, energia e material).",
     topicos: [
       { t: "Ecossistemas e ciclos", icone: "♻️",
@@ -49,7 +49,7 @@
   },
 
   {
-    id: "g-ondas", codigo: "GEXT-7004", nome: "Ondas", periodo: 5, area: "exatas", icone: "🔊", creditos: "(2-2-0) 3 créditos", prereq: ["g-eletbas", "g-fister"],
+    id: "g-ondas", nome: "Ondas", periodo: 5, area: "exatas", icone: "🔊", prereq: ["g-eletbas", "g-fister"],
     intro: "Oscilações e ondas aparecem na fábrica como **vibração de máquinas**, **ruído** (que afeta a saúde e é regulado pela NR-15), **ultrassom** para inspeção e medição e **luz** (iluminação dos postos). Esta disciplina dá a base física para entender e medir esses fenômenos.",
     topicos: [
       { t: "Oscilações (MHS)", icone: "⏱️",
@@ -96,7 +96,7 @@
   },
 
   {
-    id: "g-fentran", codigo: "GMEC-7007", nome: "Fenômenos de Transporte", periodo: 5, area: "engenharia", icone: "🚰", creditos: "(2-2-0) 3 créditos", prereq: ["g-fister"],
+    id: "g-fentran", nome: "Fenômenos de Transporte", periodo: 5, area: "engenharia", icone: "🚰", prereq: ["g-fister"],
     intro: "Estuda o transporte de **quantidade de movimento (fluidos), calor e massa**. Na produção: dimensionar **bombas e tubulações**, reduzir **perdas de carga**, controlar **vazamentos de ar comprimido** (energia cara), ventilação e processos de aquecimento e resfriamento.",
     topicos: [
       { t: "Propriedades e estática dos fluidos", icone: "💧",
@@ -143,7 +143,7 @@
   },
 
   {
-    id: "g-ginf", codigo: "GPRO-7804", nome: "Gestão da Informação I", periodo: 5, area: "producao", icone: "🗄️", creditos: "(3-0-0) 3 créditos", prereq: ["g-intadm"], relacionado: ["m14"],
+    id: "g-ginf", nome: "Gestão da Informação I", periodo: 5, area: "producao", icone: "🗄️", prereq: ["g-intadm"], relacionado: ["m14"],
     intro: "Decisões boas precisam de **informação certa, no tempo certo**. A disciplina trata de dados e informação, **sistemas de informação** (ERP, MES, WMS, BI), **bancos de dados**, qualidade de dados, **LGPD** e segurança da informação. O Módulo 14 aprofunda a parte de dados e analytics.",
     topicos: [
       { t: "Dados, informação e conhecimento", icone: "🔺",
@@ -186,7 +186,7 @@
   },
 
   {
-    id: "g-tecmat", codigo: "GMEC-7308", nome: "Tecnologia dos Materiais", periodo: 5, area: "engenharia", icone: "🔩", creditos: "(2-0-0) 2 créditos", prereq: ["g-quimica"],
+    id: "g-tecmat", nome: "Tecnologia dos Materiais", periodo: 5, area: "engenharia", icone: "🔩", prereq: ["g-quimica"],
     intro: "Conhecer os materiais — metais, polímeros, cerâmicos e compósitos — permite **escolher o material certo** para produtos, embalagens, ferramentas e instalações, entender **ensaios** e **tratamentos térmicos** e prever o comportamento em serviço. É a base de Processos de Fabricação.",
     topicos: [
       { t: "Classes de materiais e propriedades", icone: "🧪",
@@ -229,7 +229,7 @@
   },
 
   {
-    id: "g-estqual", codigo: "GPRO-7502", nome: "Estatística da Qualidade e Confiabilidade", periodo: 5, area: "producao", icone: "📉", creditos: "(3-0-0) 3 créditos", prereq: ["g-metest"],
+    id: "g-estqual", nome: "Estatística da Qualidade e Confiabilidade", periodo: 5, area: "producao", icone: "📉", prereq: ["g-metest"],
     intro: "Aplica a estatística ao controle da qualidade e da confiabilidade: **controle estatístico de processo (CEP)**, **capacidade de processo (Cp, Cpk)**, **amostragem de aceitação** e **confiabilidade** de equipamentos (MTBF, MTTR, disponibilidade). É o coração da Engenharia da Qualidade e da Manutenção.",
     topicos: [
       { t: "Controle estatístico de processo (CEP)", icone: "📈",
@@ -277,7 +277,7 @@
   },
 
   {
-    id: "g-segtrab", codigo: "GPRO-7810", nome: "Fundamentos de Engenharia de Segurança", periodo: 5, area: "producao", icone: "🦺", creditos: "(3-0-0) 3 créditos",
+    id: "g-segtrab", nome: "Fundamentos de Engenharia de Segurança", periodo: 5, area: "producao", icone: "🦺",
     intro: "Segurança não é custo nem burocracia: é condição para produzir. O engenheiro de produção identifica **perigos e riscos**, aplica a **hierarquia de controles**, conhece as principais **Normas Regulamentadoras (NRs)**, investiga acidentes e acompanha **indicadores** de segurança.",
     topicos: [
       { t: "Conceitos: perigo, risco e acidente", icone: "⚠️",

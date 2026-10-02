@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-planinst", codigo: "GPRO-7813", nome: "Planejamento das Instalações", periodo: 7, area: "producao", icone: "🗺️", creditos: "(1-2-0) 2 créditos", prereq: ["g-desenho"],
+    id: "g-planinst", nome: "Planejamento das Instalações", periodo: 7, area: "producao", icone: "🗺️", prereq: ["g-desenho"],
     intro: "Onde construir a fábrica, como arranjar máquinas e pessoas e quanto espaço e equipamento são necessários. O **layout** define distâncias, fluxos, estoques e segurança por muitos anos — é uma das decisões de maior impacto do engenheiro de produção.",
     topicos: [
       { t: "Localização de instalações", icone: "📍",
@@ -49,7 +49,7 @@
   },
 
   {
-    id: "g-projorg", codigo: "GPRO-7205", nome: "Projeto Organizacional", periodo: 7, area: "gestao", icone: "🏛️", creditos: "(3-0-0) 3 créditos",
+    id: "g-projorg", nome: "Projeto Organizacional", periodo: 7, area: "gestao", icone: "🏛️",
     intro: "Como organizar pessoas, cargos e áreas para que a estratégia aconteça: **estruturas organizacionais**, **departamentalização**, **amplitude de controle**, **desenho de cargos** e **gestão por processos**. O engenheiro de produção participa de reorganizações e define papéis e responsabilidades.",
     topicos: [
       { t: "Elementos da estrutura", icone: "🧱",
@@ -92,7 +92,7 @@
   },
 
   {
-    id: "g-po2", codigo: "GPRO-7710", nome: "Pesquisa Operacional II", periodo: 7, area: "producao", icone: "🎰", creditos: "(3-0-0) 3 créditos", prereq: ["g-po1"],
+    id: "g-po2", nome: "Pesquisa Operacional II", periodo: 7, area: "producao", icone: "🎰", prereq: ["g-po1"],
     intro: "Amplia a caixa de ferramentas da PO: **programação inteira** (decisões sim/não), **redes**, **teoria das filas** (dimensionar atendimentos e recursos), **simulação** (sistemas com incerteza) e **teoria da decisão** (escolher sob risco).",
     topicos: [
       { t: "Programação inteira e redes", icone: "🔗",
@@ -138,7 +138,7 @@
   },
 
   {
-    id: "g-gamb", codigo: "GPRO-7825", nome: "Gestão Ambiental", periodo: 7, area: "producao", icone: "🌿", creditos: "(3-0-0) 3 créditos", prereq: ["g-cienamb", "g-gqual"],
+    id: "g-gamb", nome: "Gestão Ambiental", periodo: 7, area: "producao", icone: "🌿", prereq: ["g-cienamb", "g-gqual"],
     intro: "Transforma a preocupação ambiental em **gestão**: sistema de gestão ambiental (**ISO 14001**), **aspectos e impactos**, **produção mais limpa**, **avaliação do ciclo de vida**, gestão de **resíduos** e **economia circular**. Reduzir desperdício de material, água e energia é bom para o ambiente e para o custo.",
     topicos: [
       { t: "Sistema de gestão ambiental — ISO 14001", icone: "📜",
@@ -183,7 +183,7 @@
   },
 
   {
-    id: "g-engeco", codigo: "GPRO-7702", nome: "Engenharia Econômica", periodo: 7, area: "producao", icone: "💰", creditos: "(3-0-0) 3 créditos",
+    id: "g-engeco", nome: "Engenharia Econômica", periodo: 7, area: "producao", icone: "💰",
     intro: "Toda melhoria, máquina ou projeto precisa se pagar. A engenharia econômica leva em conta o **valor do dinheiro no tempo** para comparar alternativas: **juros compostos, séries, VPL, TIR, payback**, depreciação, impostos e substituição de equipamentos.",
     topicos: [
       { t: "Juros e equivalência", icone: "📈",
@@ -230,7 +230,7 @@
   },
 
   {
-    id: "g-custos", codigo: "GPRO-7806", nome: "Custos Industriais", periodo: 7, area: "producao", icone: "🧾", creditos: "(3-0-0) 3 créditos",
+    id: "g-custos", nome: "Custos Industriais", periodo: 7, area: "producao", icone: "🧾",
     intro: "Quanto custa, de verdade, cada produto? A disciplina apresenta a **classificação de custos**, os métodos de **custeio por absorção, variável e ABC**, o **custo-padrão** com análise de variações e a **formação de preço**. É indispensável para decidir mix, preço, terceirização e melhorias.",
     topicos: [
       { t: "Classificação de custos", icone: "🗂️",
@@ -277,7 +277,7 @@
   },
 
   {
-    id: "g-gmanut", codigo: "GPRO-7812", nome: "Gestão da Manutenção", periodo: 7, area: "producao", icone: "🔧", creditos: "(3-0-0) 3 créditos", prereq: ["g-gqual"],
+    id: "g-gmanut", nome: "Gestão da Manutenção", periodo: 7, area: "producao", icone: "🔧", prereq: ["g-gqual"],
     intro: "Máquina parada é produção perdida. A gestão da manutenção escolhe a **estratégia certa** para cada equipamento (corretiva, preventiva, preditiva), usa **indicadores** (MTBF, MTTR, disponibilidade, backlog), aplica **TPM** e **RCM/FMEA** e organiza o **planejamento e controle da manutenção (PCM)**.",
     topicos: [
       { t: "Tipos de manutenção", icone: "🧰",

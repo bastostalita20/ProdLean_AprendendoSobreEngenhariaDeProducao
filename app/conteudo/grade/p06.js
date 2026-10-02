@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-procfab", codigo: "GMEC-7309", nome: "Processos de Fabricação", periodo: 6, area: "engenharia", icone: "🏭", creditos: "(3-2-0) 4 créditos", prereq: ["g-tecmat"],
+    id: "g-procfab", nome: "Processos de Fabricação", periodo: 6, area: "engenharia", icone: "🏭", prereq: ["g-tecmat"],
     intro: "Como as peças são feitas: **fundição, conformação, usinagem, soldagem**, processos de **plásticos** e **manufatura aditiva**. O engenheiro de produção escolhe o processo pelo **volume, custo, tolerância e prazo**, calcula tempos de fabricação e planeja a produção considerando setups e ferramental.",
     topicos: [
       { t: "Fundição e conformação", icone: "🔨",
@@ -50,7 +50,7 @@
   },
 
   {
-    id: "g-contab", codigo: "GPRO-7811", nome: "Contabilidade Gerencial", periodo: 6, area: "gestao", icone: "📒", creditos: "(3-0-0) 3 créditos",
+    id: "g-contab", nome: "Contabilidade Gerencial", periodo: 6, area: "gestao", icone: "📒",
     intro: "A contabilidade gerencial traduz a operação em **números para decidir**: ler **balanço e DRE**, calcular **margem de contribuição e ponto de equilíbrio**, analisar índices e montar **orçamentos**. O engenheiro de produção usa isso para justificar melhorias, escolher o mix e decidir entre fazer ou comprar.",
     topicos: [
       { t: "Balanço patrimonial e DRE", icone: "⚖️",
@@ -96,7 +96,7 @@
   },
 
   {
-    id: "g-po1", codigo: "GPRO-7709", nome: "Pesquisa Operacional I", periodo: 6, area: "producao", icone: "🎲", creditos: "(3-0-0) 3 créditos", prereq: ["g-calcnum"],
+    id: "g-po1", nome: "Pesquisa Operacional I", periodo: 6, area: "producao", icone: "🎲", prereq: ["g-calcnum"],
     intro: "A Pesquisa Operacional usa **modelos matemáticos para encontrar a melhor decisão** com recursos limitados. Com **programação linear**, o engenheiro de produção define o **mix de produção** que maximiza o lucro, a **mistura** de menor custo, o plano de **transporte** mais barato e a **designação** de pessoas a tarefas.",
     topicos: [
       { t: "Modelagem em programação linear", icone: "📝",
@@ -141,7 +141,7 @@
   },
 
   {
-    id: "g-ergo", codigo: "GPRO-7203", nome: "Ergonomia", periodo: 6, area: "producao", icone: "🧍", creditos: "(3-0-0) 3 créditos", prereq: ["g-engmet"],
+    id: "g-ergo", nome: "Ergonomia", periodo: 6, area: "producao", icone: "🧍", prereq: ["g-engmet"],
     intro: "Ergonomia adapta o trabalho às pessoas — e não o contrário — para unir **saúde, segurança, conforto e desempenho**. O engenheiro de produção projeta postos, métodos e a organização do trabalho considerando **antropometria, biomecânica, carga mental e turnos**, cumprindo a **NR-17**.",
     topicos: [
       { t: "Conceitos e domínios da ergonomia", icone: "🧠",
@@ -185,7 +185,7 @@
   },
 
   {
-    id: "g-gqual", codigo: "GPRO-7757", nome: "Gestão da Qualidade", periodo: 6, area: "producao", icone: "✅", creditos: "(3-0-0) 3 créditos", prereq: ["g-estqual"],
+    id: "g-gqual", nome: "Gestão da Qualidade", periodo: 6, area: "producao", icone: "✅", prereq: ["g-estqual"],
     intro: "Qualidade é atender e superar o que o cliente precisa, de forma consistente e ao menor custo. A disciplina apresenta os **gurus** e a evolução da qualidade, as **7 ferramentas**, o **PDCA**, a **ISO 9001**, os **custos da qualidade** e uma introdução ao **Seis Sigma**.",
     topicos: [
       { t: "Conceitos e evolução da qualidade", icone: "🏆",
@@ -229,7 +229,7 @@
   },
 
   {
-    id: "g-confest", codigo: "GPRO-7831", nome: "Confiabilidade Estrutural", periodo: 6, area: "engenharia", icone: "🏛️", creditos: "(3-0-0) 3 créditos", prereq: ["g-estqual"],
+    id: "g-confest", nome: "Confiabilidade Estrutural", periodo: 6, area: "engenharia", icone: "🏛️", prereq: ["g-estqual"],
     intro: "Cargas e resistências não são números exatos: variam. A confiabilidade estrutural trata essas **incertezas com probabilidade** para calcular a **probabilidade de falha** e o **índice de confiabilidade β**, e explica a lógica dos **coeficientes de segurança** das normas. O engenheiro de produção usa isso em decisões de **risco** sobre estruturas, equipamentos e cargas.",
     topicos: [
       { t: "Incertezas em cargas e resistências", icone: "🎲",
@@ -274,7 +274,7 @@
   },
 
   {
-    id: "g-psico", codigo: "GEDA-7004", nome: "Psicologia e Sociologia do Trabalho", periodo: 6, area: "humanas", icone: "🧑‍🤝‍🧑", creditos: "(3-0-0) 3 créditos",
+    id: "g-psico", nome: "Psicologia e Sociologia do Trabalho", periodo: 6, area: "humanas", icone: "🧑‍🤝‍🧑",
     intro: "Processos são feitos por **pessoas**. Entender **motivação, grupos, liderança, cultura e saúde mental** ajuda o engenheiro de produção a implantar mudanças com adesão, formar equipes eficazes e prevenir adoecimento — condições para que as melhorias se sustentem.",
     topicos: [
       { t: "Motivação", icone: "🔥",

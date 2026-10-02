@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-calc2", codigo: "GEXT-7302", nome: "Cálculo a Várias Variáveis", periodo: 2, area: "exatas", icone: "🗻", creditos: "(4-0-0) 4 créditos", prereq: ["g-calc1", "g-alg1"],
+    id: "g-calc2", nome: "Cálculo a Várias Variáveis", periodo: 2, area: "exatas", icone: "🗻", prereq: ["g-calc1", "g-alg1"],
     intro: "Na vida real, a produção depende de **várias variáveis ao mesmo tempo**: capital e trabalho, preço de dois produtos, temperatura e tempo. As **derivadas parciais** medem o efeito de cada uma isoladamente; o **gradiente** e os **multiplicadores de Lagrange** encontram o melhor mix respeitando restrições (orçamento, capacidade); as **integrais duplas** somam grandezas espalhadas numa área.",
     topicos: [
       { t: "Funções de várias variáveis", icone: "🗺️",
@@ -50,7 +50,7 @@
   },
 
   {
-    id: "g-alg2", codigo: "GEXT-7502", nome: "Álgebra Linear II", periodo: 2, area: "exatas", icone: "🧭", creditos: "(3-0-0) 3 créditos", prereq: ["g-alg1"],
+    id: "g-alg2", nome: "Álgebra Linear II", periodo: 2, area: "exatas", icone: "🧭", prereq: ["g-alg1"],
     intro: "Aprofunda a álgebra linear: espaços vetoriais, transformações, **autovalores e autovetores** e **mínimos quadrados**. Na produção, isso aparece em **cadeias de Markov** (estado de máquinas, fidelidade de clientes), em **regressão** para previsão de demanda e em técnicas de análise de dados como a **PCA**.",
     topicos: [
       { t: "Espaços vetoriais, base e dimensão", icone: "📦",
@@ -94,7 +94,7 @@
   },
 
   {
-    id: "g-comp", codigo: "GEXT-7401", nome: "Computação", periodo: 2, area: "exatas", icone: "💻", creditos: "(2-2-0) 3 créditos", relacionado: ["m14"],
+    id: "g-comp", nome: "Computação", periodo: 2, area: "exatas", icone: "💻", relacionado: ["m14"],
     intro: "Programar é dar instruções precisas ao computador. O engenheiro de produção usa lógica de programação para **automatizar planilhas e relatórios**, tratar dados de produção, montar simulações e modelos de otimização (Python, VBA, SQL). O Módulo 14 aprofunda dados e analytics.",
     topicos: [
       { t: "Algoritmos e lógica", icone: "🧩",
@@ -137,7 +137,7 @@
   },
 
   {
-    id: "g-mecbas", codigo: "GEXT-7001", nome: "Mecânica Básica", periodo: 2, area: "exatas", icone: "🚚", creditos: "(3-2-0) 4 créditos", prereq: ["g-calc1", "g-alg1"],
+    id: "g-mecbas", nome: "Mecânica Básica", periodo: 2, area: "exatas", icone: "🚚", prereq: ["g-calc1", "g-alg1"],
     intro: "Física do movimento e das forças (Física I). Na produção, explica **esteiras e transportadores**, frenagem de **empilhadeiras**, força para empurrar carrinhos (ergonomia), **potência de motores** de elevação e energia gasta em movimentação de materiais.",
     topicos: [
       { t: "Cinemática", icone: "🏃",
@@ -183,7 +183,7 @@
   },
 
   {
-    id: "g-human", codigo: "GEDA-7301", nome: "Humanidades e Ciências Sociais", periodo: 2, area: "humanas", icone: "🌎", creditos: "(2-0-0) 2 créditos",
+    id: "g-human", nome: "Humanidades e Ciências Sociais", periodo: 2, area: "humanas", icone: "🌎",
     intro: "Engenharia transforma a sociedade e é transformada por ela. Esta disciplina traz conceitos das ciências sociais para entender o **trabalho**, a **tecnologia**, a **ética**, a **diversidade** e a **cidadania**, que aparecem nas decisões do engenheiro de produção sobre pessoas, processos e comunidade.",
     topicos: [
       { t: "Sociologia do trabalho", icone: "👷",
@@ -225,7 +225,7 @@
   },
 
   {
-    id: "g-metcie", codigo: "GEDA-7401", nome: "Metodologia Científica", periodo: 2, area: "humanas", icone: "🔎", creditos: "(2-0-0) 2 créditos",
+    id: "g-metcie", nome: "Metodologia Científica", periodo: 2, area: "humanas", icone: "🔎",
     intro: "Ensina a **pesquisar e escrever** com rigor: formular problemas, escolher métodos, buscar fontes confiáveis, citar e referenciar pelas normas ABNT. É a base do **projeto final (TCC)**, de relatórios técnicos e de qualquer estudo de melhoria baseado em dados.",
     topicos: [
       { t: "Ciência e método científico", icone: "🧪",
@@ -267,7 +267,7 @@
   },
 
   {
-    id: "g-inteco", codigo: "GPRO-7802", nome: "Introdução à Economia", periodo: 2, area: "gestao", icone: "💹", creditos: "(3-0-0) 3 créditos",
+    id: "g-inteco", nome: "Introdução à Economia", periodo: 2, area: "gestao", icone: "💹",
     intro: "Economia estuda como pessoas, empresas e países decidem usar recursos escassos. O engenheiro de produção usa **oferta e demanda** para entender preços, **elasticidade** para prever o efeito de promoções, **custos de produção** para decidir volumes e acompanha **juros, inflação e câmbio**, que afetam investimentos e compras.",
     topicos: [
       { t: "Oferta, demanda e equilíbrio", icone: "⚖️",

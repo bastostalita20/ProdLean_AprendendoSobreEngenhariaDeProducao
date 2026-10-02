@@ -123,5 +123,13 @@ async function substituirAsync(txt, re, fn) {
   fs.writeFileSync(ARQ_CATALOGO, novo.catalogo);
   fs.writeFileSync(ARQ_BUSCA, novo.busca);
   console.log(`catalogo.js: ${(novo.catalogo.length / 1024).toFixed(0)} KB · catalogo-busca.js: ${(novo.busca.length / 1024).toFixed(0)} KB`);
-  if (!process.argv.includes("--catalogo")) await minificarDist();
+  if (!process.argv.includes("--catalogo")) {
+    await minificarDist();
+    const seo = require("./seo");
+    const r = seo.gerar(DIST);
+    // endereço do site (a Netlify informa em URL; o padrão é prodlean.netlify.app)
+    const idx = path.join(DIST, "index.html");
+    fs.writeFileSync(idx, fs.readFileSync(idx, "utf8").split("https://prodlean.netlify.app").join(seo.SITE));
+    console.log(`SEO: ${r.paginas} páginas, ${r.imagens} imagens de prévia, ${r.termos} termos no glossário`);
+  }
 })().catch(e => { console.error(e); process.exit(1); });

@@ -4,7 +4,7 @@
    ===================================================================== */
 (window.DISCIPLINAS = window.DISCIPLINAS || []).push(
   {
-    id: "g-pcp2", codigo: "GPRO-7822", nome: "Planejamento e Controle da Produção II", periodo: 9, area: "producao", icone: "🎛️", creditos: "(4-0-0) 4 créditos", prereq: ["g-pcp1"], relacionado: ["m03", "m06"],
+    id: "g-pcp2", nome: "Planejamento e Controle da Produção II", periodo: 9, area: "producao", icone: "🎛️", prereq: ["g-pcp1"], relacionado: ["m03", "m06"],
     intro: "A segunda parte do PCP vai do plano ao chão de fábrica: **capacidade** (RCCP e CRP), **sequenciamento e programação**, **controle da produção** e os **sistemas de coordenação** (MRP, kanban, CONWIP, tambor-pulmão-corda, APS). Módulos 3 e 6 do curso aprofundam os temas.",
     topicos: [
       { t: "Capacidade: RCCP e CRP", icone: "🏋️",
@@ -50,7 +50,7 @@
   },
 
   {
-    id: "g-gestr", codigo: "GPRO-7741", nome: "Gestão Estratégica", periodo: 9, area: "gestao", icone: "♟️", creditos: "(3-0-0) 3 créditos", prereq: ["g-projorg"],
+    id: "g-gestr", nome: "Gestão Estratégica", periodo: 9, area: "gestao", icone: "♟️", prereq: ["g-projorg"],
     intro: "Estratégia é escolher **onde competir e como vencer**. A disciplina cobre missão e visão, **análise externa** (PESTEL, 5 forças de Porter), **análise interna** (cadeia de valor, VRIO), **SWOT**, **estratégias genéricas**, **estratégia de operações** e a execução com **BSC e OKR**.",
     topicos: [
       { t: "Direção estratégica e análise externa", icone: "🌍",
@@ -93,7 +93,7 @@
   },
 
   {
-    id: "g-logist", codigo: "GPRO-7814", nome: "Logística", periodo: 9, area: "producao", icone: "🚛", creditos: "(4-0-0) 4 créditos", prereq: ["g-po2", "g-pcp1"],
+    id: "g-logist", nome: "Logística", periodo: 9, area: "producao", icone: "🚛", prereq: ["g-po2", "g-pcp1"],
     intro: "Logística leva o produto certo, na quantidade certa, ao lugar certo, no tempo certo, com o menor custo total. A disciplina trata da **cadeia de suprimentos**, **gestão de estoques** (ABC, lote econômico, ponto de pedido, estoque de segurança), **armazenagem**, **transporte** e **nível de serviço**.",
     topicos: [
       { t: "Cadeia de suprimentos", icone: "🔗",
@@ -138,7 +138,7 @@
   },
 
   {
-    id: "g-tcc", codigo: "GPRO-7808 / GPRO-7809", nome: "Projeto Final I e II (TCC)", periodo: 9, area: "producao", icone: "🎓", creditos: "(0-4-0) 2 + (0-4-0) 2 créditos", prereq: ["g-metcie"],
+    id: "g-tcc", nome: "Projeto Final I e II (TCC)", periodo: 9, area: "producao", icone: "🎓", prereq: ["g-metcie"],
     intro: "O projeto final integra o curso num trabalho autoral: um **problema real de Engenharia de Produção**, resolvido com **método**, **dados** e **ferramentas** das disciplinas, documentado e defendido. Projeto Final I costuma focar no problema, na revisão e no método; o II, na execução, nos resultados e na defesa.",
     topicos: [
       { t: "Escolha do tema e do problema", icone: "🎯",
@@ -180,7 +180,7 @@
   },
 
   {
-    id: "g-anorg", codigo: "GPRO-7827", nome: "Análise Organizacional", periodo: 10, area: "gestao", icone: "🔬", creditos: "(3-0-0) 3 créditos",
+    id: "g-anorg", nome: "Análise Organizacional", periodo: 10, area: "gestao", icone: "🔬",
     intro: "Como diagnosticar uma organização e conduzir mudanças: **modelos de diagnóstico**, **teorias organizacionais**, **cultura e poder**, **mudança organizacional** e **aprendizagem**. É a disciplina que fecha a visão de gestão do engenheiro de produção, útil para liderar transformações (Lean, ERP, reestruturações).",
     topicos: [
       { t: "Teorias organizacionais", icone: "📚",

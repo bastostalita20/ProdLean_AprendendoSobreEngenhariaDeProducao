@@ -16,7 +16,8 @@ const idsD = new Set();
 D.forEach(d => {
   const e = m => erros.push(`${d.id}: ${m}`);
   if (idsD.has(d.id)) e('id de disciplina repetido'); idsD.add(d.id);
-  ['codigo', 'nome', 'periodo', 'area', 'intro'].forEach(k => d[k] || e('falta ' + k));
+  ['nome', 'periodo', 'area', 'intro'].forEach(k => d[k] || e('falta ' + k));
+  if (d.codigo || d.creditos) e('não use código nem créditos da instituição');
   (d.prereq || []).forEach(p => D.some(x => x.id === p) || e('pré-requisito inexistente ' + p));
   d.topicos.forEach((t, i) => { const n = d.questoes.filter(q => q.t === i).length; if (n < 2) e(`tópico ${i} com ${n} questões`); (t.formulas || []).forEach(f => Array.isArray(f) && f.length === 2 || e('fórmula mal formada no tópico ' + i)); });
   d.questoes.forEach(q => {
