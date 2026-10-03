@@ -54,6 +54,12 @@ scripts/build.js        ← build da Netlify: gera os catálogos e copia app/ �
 package.json            ← "npm run build" (usa o esbuild só no build; o app não tem bibliotecas)
 ```
 
+### Crescimento (Fase 5, parte sem servidor)
+
+- **📤 Compartilhar resultado:** no desafio do dia (tela e Início), no Quiz (solo e pódio do grupo) e em Conquistas. `compartilhar()` gera uma imagem 1080×1080 no canvas (`imagemResultado`) e usa o compartilhamento do celular (`navigator.share` com arquivo); sem ele, compartilha só o texto ou copia para a área de transferência. O link volta para o app (ex.: `#desafio/extra/<id>`, que mostra o mesmo desafio para quem recebe).
+- **Para professores:** página pública `/professores/` (gerada em `scripts/seo.js`), com link no rodapé das páginas públicas.
+- **Decisão (out/2026):** o app continua **todo gratuito**; assinatura, loja, afiliados e anúncios ficam para depois. Ranking por turma, indicação de amigos e lembrete por notificação dependem de servidor (Supabase + Netlify Functions) e ficam pendentes.
+
 ### Páginas públicas para o Google (Fase 3) — `scripts/seo.js`
 
 O build gera, a partir dos mesmos arquivos de conteúdo, páginas HTML estáticas e indexáveis (o app não muda):

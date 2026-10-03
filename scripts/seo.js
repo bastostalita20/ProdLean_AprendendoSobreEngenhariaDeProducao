@@ -100,7 +100,7 @@ function pagina({ caminho, titulo, desc, migalhas = [], corpo, jsonld = [], og }
 ${migalhas.length ? `<p class="mig"><a href="/">Início</a>${migalhas.map(m => m.url ? ` › <a href="${m.url}">${esc(m.nome)}</a>` : ` › ${esc(m.nome)}`).join("")}</p>` : ""}
 ${corpo}
 <!-- espaço para anúncio (desligado por padrão; ver scripts/seo.js: ANUNCIOS) -->${ANUNCIOS ? `<div class="anuncio">${ANUNCIOS}</div>` : ""}
-</main><footer>${MARCA} · ${SLOGAN}. Conteúdo próprio, escrito para estudo, com a bibliografia indicada em cada disciplina. Grátis e funciona offline no celular: <a href="/">abra o app</a>.</footer></body></html>`;
+</main><footer>${MARCA} · ${SLOGAN}. Conteúdo próprio, escrito para estudo, com a bibliografia indicada em cada disciplina. Grátis e funciona offline no celular: <a href="/">abra o app</a> · <a href="/professores/">Para professores</a>.</footer></body></html>`;
 }
 const ANUNCIOS = process.env.ANUNCIOS_HTML || ""; // anúncios só nas páginas públicas, nunca nas lições (desligado)
 
@@ -270,6 +270,36 @@ ${[...new Set(discs.map(d => d.periodo))].map(p => `<h2>${p}º período</h2><ul 
     desc: resumo(`${termos.length} termos de Engenharia de Produção explicados em linguagem simples: PCP, OEE, MRP, Lean, qualidade, logística, custos, projetos e estatística.`),
     migalhas: [{ nome: "Glossário" }], og: og("glossario", "Glossário", `${termos.length} termos de Engenharia de Produção`, "Explicados em linguagem simples"),
     corpo: `<h1>Glossário de Engenharia de Produção</h1><p class="lead">${termos.length} termos explicados em linguagem simples. Escolha a letra:</p>${navL(null)}`
+  }));
+
+  // --- para professores (canal B2B futuro) ---
+  escrever("/professores/", pagina({
+    caminho: "/professores/", titulo: `${MARCA} para professores de Engenharia de Produção | ${MARCA}`,
+    desc: "Use o ProdLean com sua turma: fichas de ferramentas, desafio do dia, quiz em grupo, mapas mentais A4 e problemas reais. Grátis, sem cadastro e funciona offline.",
+    migalhas: [{ nome: "Para professores" }], og: og("professores", "Para professores", "Use o ProdLean com a sua turma", "Grátis, sem cadastro e funciona offline no celular"),
+    corpo: `<h1>${MARCA} para professores</h1>
+<p class="lead">Um apoio gratuito para as aulas de Engenharia de Produção: os alunos consultam, praticam e revisam no celular, e você ganha tempo de aula para discutir os casos.</p>
+<a class="cta" href="/">▶ Abrir o app</a><a class="cta sec" href="/ferramentas/">Ver as ferramentas</a>
+<h2>Como usar em sala</h2>
+<ul>
+<li><strong>Abra a aula com o desafio do dia:</strong> um problema real de 2 minutos, com a resposta comentada e a ferramenta que resolve.</li>
+<li><strong>Quiz em grupo no mesmo celular:</strong> perguntas com tempo, pontos e pódio. Bom para revisar antes da prova.</li>
+<li><strong>Mapas mentais A4:</strong> escolha os tópicos e imprima ou salve em PDF, um para cada disciplina.</li>
+<li><strong>Estudo de caso:</strong> as páginas de <a href="/problemas/">problemas</a> partem de situações de empresa (estoque alto, máquina parando, pedidos atrasando) e indicam por onde começar.</li>
+<li><strong>Consulta rápida:</strong> mande o link de uma <a href="/ferramentas/">ficha de ferramenta</a> ou de uma <a href="/disciplinas/">disciplina</a> no grupo da turma.</li>
+<li><strong>Revisão espaçada:</strong> o que o aluno erra volta em 1, 3, 7, 15 e 30 dias, para fixar de verdade.</li>
+</ul>
+<h2>Por que é fácil adotar</h2>
+<ul>
+<li>Grátis e sem cadastro: o progresso fica no aparelho do aluno, sem coleta de dados pessoais.</li>
+<li>Funciona offline depois do primeiro acesso: dá para usar no laboratório ou no ônibus.</li>
+<li>${discs.length} disciplinas da graduação, ${idsF.length} ferramentas, ${P.problemas.length} problemas reais e ${termos.length} termos no glossário.</li>
+<li>Conteúdo próprio, com a bibliografia indicada em cada disciplina.</li>
+</ul>
+<h2>Em breve</h2>
+<p>Turmas com código e ranking da turma (opcional, só com apelido, sem dados pessoais obrigatórios).</p>
+<p><a class="cta" href="/">▶ Abrir o app</a></p>`,
+    jsonld: [{ "@context": "https://schema.org", "@type": "WebPage", name: `${MARCA} para professores`, url: `${SITE}/professores/`, inLanguage: "pt-BR", audience: { "@type": "EducationalAudience", educationalRole: "teacher" } }]
   }));
 
   // --- sitemap, robots, 404, imagem da página inicial ---

@@ -416,6 +416,23 @@ async function recuperarVidas(p) {
     await pa.ctx.close();
   }
 
+  // ===== 1c) Compartilhar resultado (o compartilhamento do celular é interceptado) =====
+  {
+    const pc = await novaPagina(b, 'http://localhost:8765/index.html', {}, pg => pg.addInitScript(() => {
+      window.__shares = []; navigator.canShare = () => true; navigator.share = d => { window.__shares.push({ texto: d.text, arquivos: (d.files || []).map(f => f.type + ':' + f.size) }); return Promise.resolve(); };
+    }));
+    await responder(pc.p, true); await pc.p.waitForTimeout(100);
+    await pc.p.click('#compartilhar-desafio'); await pc.p.waitForTimeout(800);
+    const sh = await pc.p.evaluate(() => window.__shares);
+    checar(sh.length === 1 && /desafio do dia do ProdLean/.test(sh[0].texto) && /#desafio\/extra\//.test(sh[0].texto) && /^image\/png:\d{4,}/.test(sh[0].arquivos[0] || ''), 'compartilhar o desafio: imagem gerada + texto com link de volta');
+    await pc.p.evaluate(() => { S.conquistas['primeira-licao'] = hoje(); salvar(); ir('conquistas'); }); await pc.p.waitForTimeout(150);
+    await pc.p.click('#compartilhar-conq'); await pc.p.waitForTimeout(800);
+    checar((await pc.p.evaluate(() => window.__shares.length)) === 2, 'compartilhar conquistas');
+    await pc.p.evaluate(async () => { const b = await imagemResultado({ icone: '⚡', titulo: '1.234 pontos no Quiz Relâmpago', linhas: ['9/10 acertos · maior combo x5'] }); const r = new FileReader(); return new Promise(ok => { r.onload = () => { window.__img = r.result; ok(); }; r.readAsDataURL(b); }); });
+    fs.writeFileSync(SP + '/compartilhar.png', Buffer.from((await pc.p.evaluate(() => window.__img)).split(',')[1], 'base64'));
+    await pc.ctx.close();
+  }
+
   // ===== 2) Primeiro acesso e depois offline =====
   // O "offline" do Playwright não vale para o service worker; aqui um servidor próprio é desligado de verdade.
   const DIR_OFF = path.resolve(__dirname, '..', process.env.APP_DIR || 'app'), URL_OFF = 'http://localhost:8767/index.html';

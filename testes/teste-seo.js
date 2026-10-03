@@ -4,8 +4,8 @@
 const fs = require('fs'), path = require('path');
 const DIST = path.resolve(__dirname, '../dist'), erros = [];
 const paginas = [];
-const andar = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory()) andar(p); else if (e.name === 'index.html' && d !== DIST) paginas.push(p); });
-['ferramentas', 'problemas', 'disciplinas', 'glossario'].forEach(s => andar(path.join(DIST, s)));
+const andar = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => { const p = path.join(d, e.name); if (e.isDirectory()) andar(p); else if (e.name === 'index.html' && d !== DIST && !paginas.includes(p)) paginas.push(p); });
+['ferramentas', 'problemas', 'disciplinas', 'glossario', 'professores'].forEach(s => andar(path.join(DIST, s)));
 const existe = href => { const u = href.split('#')[0].split('?')[0]; if (!u || u === '/') return true; const f = path.join(DIST, u, u.endsWith('/') ? 'index.html' : ''); return fs.existsSync(f); };
 const titulos = new Set();
 for (const f of paginas) {

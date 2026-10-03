@@ -975,6 +975,49 @@ function confete() {
    --------------------------------------------------------------------- */
 const filaToast = [];
 let toastAtivo = false;
+/* ---------------------------------------------------------------------
+   COMPARTILHAR RESULTADO (desafio, quiz, conquistas): imagem gerada no canvas
+   + link de volta para o app. Usa o compartilhamento do celular (WhatsApp etc.);
+   sem ele, copia o texto.
+   --------------------------------------------------------------------- */
+function urlApp(hash) { return location.origin + location.pathname.replace(/index\.html$/, "") + (hash ? "#" + hash : ""); }
+function imagemResultado({ icone, titulo, linhas }) {
+  return new Promise(ok => {
+    try {
+      const c = document.createElement("canvas"); c.width = c.height = 1080;
+      const g = c.getContext("2d"), fonte = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+      const grad = g.createLinearGradient(0, 0, 1080, 1080); grad.addColorStop(0, "#1f8a4c"); grad.addColorStop(1, "#166a39");
+      g.fillStyle = grad; g.fillRect(0, 0, 1080, 1080);
+      g.fillStyle = "#fff"; g.beginPath(); g.roundRect ? g.roundRect(70, 150, 940, 760, 48) : g.rect(70, 150, 940, 760); g.fill();
+      g.textAlign = "center"; g.fillStyle = "#fff"; g.font = `800 52px ${fonte}`; g.fillText("ProdLean", 540, 100);
+      g.fillStyle = "#17201c"; g.font = `150px ${fonte}`; g.fillText(icone || "⚡", 540, 360);
+      const quebrar = (txt, max) => { const out = []; let l = ""; String(txt).split(" ").forEach(p => { if (g.measureText((l + " " + p).trim()).width > max && l) { out.push(l); l = p; } else l = (l + " " + p).trim(); }); if (l) out.push(l); return out; };
+      g.fillStyle = "#17201c"; g.font = `800 62px ${fonte}`;
+      let y = 470; quebrar(titulo, 820).slice(0, 3).forEach(l => { g.fillText(l, 540, y); y += 74; });
+      g.fillStyle = "#5c6863"; g.font = `500 40px ${fonte}`; y += 10;
+      (linhas || []).forEach(t => quebrar(t, 840).slice(0, 3).forEach(l => { if (y < 860) { g.fillText(l, 540, y); y += 52; } }));
+      g.fillStyle = "#fff"; g.font = `600 36px ${fonte}`; g.fillText("Engenharia de Produção descomplicada · grátis", 540, 990);
+      g.font = `500 32px ${fonte}`; g.fillText(location.host || "prodlean.netlify.app", 540, 1040);
+      c.toBlob(b => ok(b), "image/png");
+    } catch (e) { ok(null); }
+  });
+}
+async function compartilhar(d) {
+  const url = urlApp(d.hash), texto = d.texto + " " + url;
+  try {
+    const blob = await imagemResultado(d);
+    const arq = blob && typeof File === "function" ? new File([blob], "prodlean-resultado.png", { type: "image/png" }) : null;
+    if (arq && navigator.canShare && navigator.canShare({ files: [arq] })) { await navigator.share({ files: [arq], title: "ProdLean", text: texto }); return "imagem"; }
+    if (navigator.share) { await navigator.share({ title: "ProdLean", text: d.texto, url }); return "texto"; }
+  } catch (e) { if (e && e.name === "AbortError") return "cancelado"; }
+  try { await navigator.clipboard.writeText(texto); toast("📋 Copiado! Cole no WhatsApp ou onde quiser."); return "copiado"; }
+  catch (e) { window.prompt("Copie e compartilhe:", texto); return "manual"; }
+}
+function ligarCompartilhar(id, dados) { const b = document.getElementById(id); if (b) b.onclick = () => compartilhar(typeof dados === "function" ? dados() : dados); }
+const dadosDesafio = (d, acertou) => ({ icone: acertou ? "🎯" : "💡", titulo: acertou ? "Acertei o desafio do dia!" : "Fiz o desafio do dia",
+  linhas: [d.pergunta.length > 150 ? d.pergunta.slice(0, 147) + "…" : d.pergunta],
+  texto: acertou ? "Acertei o desafio do dia do ProdLean ⚡ Consegue também?" : "Fiz o desafio do dia do ProdLean ⚡ Tenta aí:", hash: "desafio/extra/" + d.id });
+
 function toast(msg) { filaToast.push(msg); if (!toastAtivo) proximoToast(); }
 function proximoToast() {
   const msg = filaToast.shift();
@@ -1366,7 +1409,9 @@ function desenharDesafioHome(d, reg) {
     box.innerHTML = `<div class="small muted mb">${fmt(d.pergunta)}</div>
       <div class="bloco ${reg.acertou ? "dica" : "atencao"}" style="margin:0 0 10px"><div class="tag">${reg.acertou ? "✅ Você acertou" : "❌ Não foi dessa vez"}</div><b>Resposta:</b> ${fmt(d.opcoes[d.correta])}</div>
       <div class="row wrap"><a class="btn small sec" href="#desafio/ver/${d.id}">🤔 Ver o porquê${f ? " e a ferramenta" : ""}</a>
-        <a class="btn small" href="#desafio/extra/${sortearExtra(d.id)}">⚡ Mais um desafio</a></div>`;
+        <a class="btn small" href="#desafio/extra/${sortearExtra(d.id)}">⚡ Mais um desafio</a>
+        <button class="btn small sec" id="compartilhar-desafio">📤 Compartilhar</button></div>`;
+    ligarCompartilhar("compartilhar-desafio", () => dadosDesafio(d, reg.acertou));
     return;
   }
   box.innerHTML = `<div id="qarea"></div>`;
@@ -1668,10 +1713,14 @@ function telaDesafio(modo, param) {
     <div class="bloco serio"><div class="tag">🏭 Na prática</div>${fmt(d.pratica)}</div>
     <button class="btn small sec mb" id="ouvir-desafio">🔊 Ouvir a explicação</button>
     ${f ? `<h2 class="sec-t">Quer entender melhor?</h2><div class="lista">${htmlItem({ href: "#ferramenta/" + d.ferramenta, icone: f.icone, tipo: "Ferramenta", titulo: f.nome, sub: f.oque })}</div>` : ""}
+    <button class="btn sec" id="compartilhar-desafio">📤 Compartilhar resultado</button>
     <a class="btn" href="#desafio/extra/${sortearExtra(d.id)}">⚡ Mais um desafio</a>
     <a class="btn sec" href="#desafio/historico">🕘 Desafios feitos (${Object.keys(S.desafios).length})</a>`;
   const jaFeito = reg && (modo === "ver" || reg.data === hoje());
-  const ligarOuvir = () => { $("#ouvir-desafio").onclick = () => falar(["Resposta: " + d.opcoes[d.correta] + ".", "Por quê? " + d.porque, "Na prática: " + d.pratica], "Desafio"); };
+  const ligarOuvir = () => {
+    $("#ouvir-desafio").onclick = () => falar(["Resposta: " + d.opcoes[d.correta] + ".", "Por quê? " + d.porque, "Na prática: " + d.pratica], "Desafio");
+    ligarCompartilhar("compartilhar-desafio", () => dadosDesafio(d, S.desafios[d.id] && S.desafios[d.id].acertou));
+  };
   if (jaFeito) { app().innerHTML = cab + resultado(reg.acertou); ligarOuvir(); return; }
   app().innerHTML = cab + `<div id="qarea" class="lesson-pad"></div>`;
   const q = { id: "desafio-" + d.id, tipo: "multipla", pergunta: d.pergunta, opcoes: d.opcoes, correta: d.correta, explicacao: d.porque };
@@ -2823,7 +2872,9 @@ function jogarQuiz(jogadores) {
       const ord = placar.slice().sort((a, b) => b.pontos - a.pontos);
       app().innerHTML = `<div class="center" style="padding-top:30px"><div style="font-size:4rem">🏆</div><h1>Pódio</h1>
         <ol class="rank" style="text-align:left">${ord.map((j, i) => `<li><span>${["🥇", "🥈", "🥉"][i] || (i + 1) + "º"} ${esc(j.nome)}</span><span>${j.pontos.toLocaleString("pt-BR")} · ${j.acertos}/${perguntas.length}</span></li>`).join("")}</ol>
-        <button class="btn mt" onclick="ir('quiz')">Jogar de novo</button><button class="btn sec" onclick="ir('inicio')">Início</button></div>`;
+        <button class="btn mt" onclick="ir('quiz')">Jogar de novo</button><button class="btn sec" id="compartilhar-quiz">📤 Compartilhar o pódio</button><button class="btn sec" onclick="ir('inicio')">Início</button></div>`;
+      ligarCompartilhar("compartilhar-quiz", { icone: "🏆", titulo: `${ord[0].nome} venceu o Quiz Relâmpago`, linhas: ord.slice(0, 3).map((x, i) => `${i + 1}º ${x.nome}: ${x.pontos.toLocaleString("pt-BR")} pontos`),
+        texto: `Quiz Relâmpago do ProdLean em grupo: ${ord[0].nome} venceu com ${ord[0].pontos.toLocaleString("pt-BR")} pontos 🏆 Joga também:`, hash: "quiz" });
       return;
     }
     const j = placar[0];
@@ -2839,7 +2890,9 @@ function jogarQuiz(jogadores) {
     app().innerHTML = `<div class="center" style="padding-top:30px"><div style="font-size:4rem">⚡</div><h1>${j.pontos.toLocaleString("pt-BR")} pontos</h1>
       <p class="muted">${j.acertos}/${perguntas.length} acertos · maior combo 🔗x${j.maxCombo} · +${xp} XP</p>
       ${pos === 0 ? `<p><b>🥇 Novo recorde pessoal!</b></p>` : pos > 0 ? `<p>Você ficou em ${pos + 1}º no seu ranking.</p>` : ""}
-      <button class="btn mt" onclick="ir('quiz')">Jogar de novo</button><button class="btn sec" onclick="ir('inicio')">Início</button></div>`;
+      <button class="btn mt" onclick="ir('quiz')">Jogar de novo</button><button class="btn sec" id="compartilhar-quiz">📤 Compartilhar resultado</button><button class="btn sec" onclick="ir('inicio')">Início</button></div>`;
+    ligarCompartilhar("compartilhar-quiz", { icone: "⚡", titulo: `${j.pontos.toLocaleString("pt-BR")} pontos no Quiz Relâmpago`, linhas: [`${j.acertos}/${perguntas.length} acertos · maior combo x${j.maxCombo}`],
+      texto: `Fiz ${j.pontos.toLocaleString("pt-BR")} pontos no Quiz Relâmpago do ProdLean ⚡ Bate meu recorde?`, hash: "quiz" });
   }
   grupo ? telaPasse() : mostrarPergunta();
 }
@@ -2973,7 +3026,11 @@ function telaGlossario(modId) {
    ===================================================================== */
 function telaConquistas() {
   const lista = todasConquistas();
+  const minhas = lista.filter(c => S.conquistas[c.id]).sort((a, b) => S.conquistas[b.id].localeCompare(S.conquistas[a.id]));
+  setTimeout(() => ligarCompartilhar("compartilhar-conq", { icone: "🏅", titulo: `${minhas.length} conquista${minhas.length > 1 ? "s" : ""} no ProdLean`, linhas: minhas.slice(0, 3).map(c => `${c.icone} ${c.nome}`),
+    texto: `Já tenho ${minhas.length} conquista${minhas.length > 1 ? "s" : ""} estudando Engenharia de Produção no ProdLean 🏅 Vem também:`, hash: "" }));
   app().innerHTML = barraTopo() + `<h1>🏅 Conquistas</h1><p class="muted small">${Object.keys(S.conquistas).length} de ${lista.length} desbloqueadas</p>` +
+    (minhas.length ? `<button class="btn sec mb" id="compartilhar-conq">📤 Compartilhar minhas conquistas</button>` : "") +
     lista.map(c => {
       const tem = S.conquistas[c.id];
       return `<div class="card ach ${tem ? "" : "locked"}"><div class="ico">${c.icone}</div>
