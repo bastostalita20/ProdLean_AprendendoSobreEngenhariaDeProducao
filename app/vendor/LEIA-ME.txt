@@ -1,0 +1,1 @@
+Gerado por scripts/vendor.js. KaTeX (MIT), Inter e JetBrains Mono (SIL OFL 1.1), ícones Lucide (ISC). Não edite à mão.

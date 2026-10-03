@@ -142,6 +142,8 @@ async function substituirAsync(txt, re, fn) {
   fs.writeFileSync(ARQ_BUSCA, novo.busca);
   console.log(`catalogo.js: ${(novo.catalogo.length / 1024).toFixed(0)} KB · catalogo-busca.js: ${(novo.busca.length / 1024).toFixed(0)} KB`);
   if (!process.argv.includes("--catalogo")) {
+    const fx = require("./formulas-tex").gerar(); // fórmulas em texto → LaTeX (KaTeX)
+    if (fx.falhas.length) throw new Error("fórmulas sem conversão para LaTeX: veja a lista acima");
     await minificarDist();
     const seo = require("./seo");
     const r = seo.gerar(DIST);

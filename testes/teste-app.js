@@ -247,7 +247,7 @@ async function recuperarVidas(p) {
   log(`grade: ${g.n} disciplinas em ${g.periodos} períodos; 1º tópico concluído em ${g.feitas}`);
   checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
   await p.evaluate(() => ir('estudar')); await p.waitForTimeout(150);
-  checar(JSON.stringify(await p.$$eval('.abas a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['📖 Estudar', '🎮 Praticar', '📚 Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
+  checar(JSON.stringify(await p.$$eval('.abas a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['Estudar', 'Praticar', 'Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
   await p.click('.abas a:has-text("Praticar")'); await p.waitForTimeout(150);
   checar(await p.evaluate(() => ['#exercicios', '#quiz', '#revisar', '#flashcards'].every(h => document.querySelector(`a[href="${h}"]`))), 'Praticar: exercícios, quiz, revisão espaçada e flashcards');
   await p.click('.nivel-filtro [data-nivel="dificil"]'); await p.waitForTimeout(100);
@@ -283,7 +283,10 @@ async function recuperarVidas(p) {
   const ti = await p.textContent('body');
   checar(!(await p.$('.path-card')) && await p.$('#busca-home') && ti.includes('Continuar de onde parei') && ti.includes('Revisão de hoje') && ti.includes('Mais consultados') && (await p.$$('.chips-sug a')).length >= 6, 'início enxuto: continuar, desafio, revisão e mais consultados');
   checar(await p.$('#home-desafio #qarea') || (await p.textContent('#home-desafio')).includes('Resposta'), 'desafio do dia embutido no início');
-  checar(JSON.stringify(await p.$$eval('#nav a', a => a.map(x => x.dataset.tab))) === JSON.stringify(['inicio', 'consultar', 'problemas', 'estudar', 'perfil']), 'navegação: Início · Consultar · Problemas · Estudar · Perfil');
+  checar(JSON.stringify(await p.$$eval('#nav a', a => a.map(x => x.dataset.tab))) === JSON.stringify(['inicio', 'consultar', 'trilha', 'exercicios', 'perfil']), 'navegação: Início · Buscar · Trilha · Exercícios · Perfil');
+  checar((await p.$$('#nav a svg.ic use')).length === 5 && (await p.$$('.topbar svg.ic')).length >= 2, 'ícones de linha na navegação e na barra superior');
+  const reEmoji = /\p{Extended_Pictographic}/u;
+  checar(!reEmoji.test(await p.textContent('#app')) && !reEmoji.test(await p.textContent('#nav')), 'sem emojis no início (visual sóbrio)');
   checar(!(await p.$('.topbar a[href="#config"]')) && await p.$('.topbar a.avatar[href="#perfil"]') && !(await p.textContent('.topbar')).includes('❤️'), 'barra superior só com ofensiva, XP e avatar');
   await p.evaluate(() => ir('perfil')); await p.waitForTimeout(100);
   checar(await p.$('a[href="#config"]') && await p.$('#nav a.active[data-tab="perfil"]'), 'Configurações dentro do Perfil');
@@ -298,6 +301,8 @@ async function recuperarVidas(p) {
   }
   // Ficha de ferramenta: 30 s → 3 min → prática → teste → aprofunde
   await p.evaluate(() => ir('ferramenta/estoque-seguranca')); await p.waitForTimeout(150);
+  await p.waitForSelector('.fx[data-k="1"] .katex', { timeout: 8000 }).catch(() => {});
+  checar((await p.$$('.fx[data-k="1"] .katex')).length >= 1 && !reEmoji.test(await p.textContent('#app')), 'fórmulas da ficha em KaTeX e sem emojis');
   const fic = await p.evaluate(() => ({ s: [...document.querySelectorAll('.csec')].map(x => x.id), links: [...document.querySelectorAll('#c-aprofunde a')].map(a => a.getAttribute('href')), txt: document.body.textContent }));
   checar(['c-30s', 'c-3min', 'c-pratica', 'c-teste', 'c-aprofunde'].every(x => fic.s.includes(x)), 'ficha com os 5 níveis de consulta');
   checar(['O que é', 'Para que serve', 'Quando usar', 'Quais dados preciso', 'Erros comuns', 'Exemplo prático'].every(t => fic.txt.includes(t)), 'ficha: o que é, para que serve, quando usar, dados, exemplo e erros');
@@ -356,8 +361,8 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => S.config.estagio) === 'pcp', 'ativar Modo Estágio');
   await p.evaluate(() => ir('problemas')); await p.waitForTimeout(100);
   checar(await p.$eval('.cat-card', a => a.classList.contains('fav')), 'Modo Estágio: categorias da área primeiro');
-  await p.evaluate(() => ir('desafio/extra')); await p.waitForTimeout(100);
-  checar((await p.textContent('body')).includes('📅 PCP'), 'Modo Estágio: desafio da área');
+  await p.evaluate(() => ir('desafio/extra')); await p.waitForTimeout(300);
+  checar((await p.textContent('body')).replace(/\p{Extended_Pictographic}\uFE0F?/gu, '').includes('PCP'), 'Modo Estágio: desafio da área');
   await p.evaluate(() => ir('estagio')); await p.click('#desligar');
   checar(await p.evaluate(() => S.config.estagio) === null, 'desativar Modo Estágio');
   // Estudar: por assunto, área e nível

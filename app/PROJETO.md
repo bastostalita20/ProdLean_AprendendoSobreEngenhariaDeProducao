@@ -407,3 +407,13 @@ window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergun
 - O **Verificador de conteúdo** (⚙️) aponta ferramenta, lição, categoria, módulo ou desafio que não existe.
 - A **busca** indexa ferramentas, problemas (com `termos`), disciplinas e módulos, termos de todos os glossários, lições/tópicos e fórmulas; ignora acentos, palavras curtas comuns e plural simples.
 - Hoje: 12 categorias, 52 problemas, 80 ferramentas, 62 desafios e 10 áreas de estágio.
+
+## 12. Identidade visual profissional (Reformulação, Etapa 1)
+
+- **Paleta:** azul petróleo `--primary: #0f4c5c` com acento âmbar `--accent: #c27803`; cores semânticas (ok/erro/aviso/info) e modo escuro. Os tokens ficam no bloco "ESTILO PROFISSIONAL (v2)" no fim do `<style>` do `index.html`.
+- **Fontes:** Inter (texto) e JetBrains Mono (números, tabelas), servidas de `app/vendor/fontes/` (funcionam offline).
+- **Ícones:** Lucide (linha), num sprite SVG embutido no `index.html` entre `<!--ICONES-->` e `<!--/ICONES-->`. Use `ic("nome")` no código. Para incluir um ícone: acrescente em `ICONES` no `scripts/vendor.js` e rode `npm run vendor`.
+- **Emojis:** só no nível Fácil e no modo jogo (Trilha, quiz). Nas demais telas um filtro (`semEmoji`, `MutationObserver`) tira os emojis do texto exibido; o conteúdo continua com eles. A flag `EMOJI_OK` é definida em `rotear()`.
+- **Fórmulas (KaTeX):** `npm run formulas` (ou o build) lê todas as fórmulas em texto do conteúdo, converte para LaTeX e grava `conteudo/formulas-tex.js`, conferindo cada uma com o KaTeX. O relatório visual sai em `dist-relatorio/formulas.html`. Conversões erradas são corrigidas em `conteudo/formulas-tex-manual.js` (valor "" = mostrar como texto). No app, `htmlFx(f)` gera `<span class="fx" data-f="…">texto</span>`; o KaTeX (`vendor/katex/`) é carregado sob demanda e troca o texto pela fórmula. Sem KaTeX (offline sem cache), o texto original continua visível.
+- **Tabelas:** tabelas Markdown viram `.tabela` com cabeçalho fixo, primeira coluna fixa e números alinhados à direita (`td.n`, detectados por `ehNum`).
+- **Navegação:** Início · Buscar · Trilha · Exercícios · Perfil. Problemas, ferramentas, disciplinas e mapas ficam dentro de Buscar.

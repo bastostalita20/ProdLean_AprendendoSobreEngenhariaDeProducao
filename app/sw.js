@@ -9,12 +9,14 @@
    Estratégia "stale-while-revalidate": responde com o que está salvo e atualiza por trás.
    Ao mudar o código do app, aumente o número da VERSAO (o build acrescenta uma impressão digital).
    ===================================================================== */
-const VERSAO = "engprod-v19";
+const VERSAO = "engprod-v20";
 const CACHE_CONTEUDO = "engprod-conteudo";
 importScripts("conteudo/indice.js");
 const NUCLEO = [
   "./", "./index.html", "./manifest.json", "./icone.svg", "./icone-192.png", "./icone-512.png",
-  "./conteudo/indice.js", "./parametros.js"
+  "./conteudo/indice.js", "./parametros.js", "./conteudo/formulas-tex.js",
+  "./vendor/katex/katex.min.js", "./vendor/katex/katex.min.css",
+  "./vendor/fontes/inter-latin-400-normal.woff2", "./vendor/fontes/inter-latin-600-normal.woff2", "./vendor/fontes/jetbrains-mono-latin-400-normal.woff2"
 ].concat((self.ARQUIVOS_INICIAIS || self.ARQUIVOS_MODULOS || []).concat(self.ARQUIVO_BUSCA || []).map(arq => "./conteudo/" + arq));
 const ehModulo = url => /\/conteudo\/(modulo-|grade\/|banco-questoes)/.test(url);
 
