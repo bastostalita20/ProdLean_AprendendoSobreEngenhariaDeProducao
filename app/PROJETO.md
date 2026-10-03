@@ -54,6 +54,19 @@ scripts/build.js        ← build da Netlify: gera os catálogos e copia app/ �
 package.json            ← "npm run build" (usa o esbuild só no build; o app não tem bibliotecas)
 ```
 
+### Métricas: Cloudflare Web Analytics (sem cookies, grátis)
+
+O build (`instalarAnalytics` em `scripts/build.js`) coloca o script do Cloudflare em **todas** as páginas (app + páginas públicas) só se existir a variável de ambiente `CF_ANALYTICS_TOKEN` na Netlify. Sem ela, nada é instalado. Token mal copiado faz o build falhar com a mensagem explicando (o site continua na versão anterior).
+
+**Como ligar (uma vez):**
+1. Crie uma conta grátis em **dash.cloudflare.com** → menu **Analytics & Logs → Web Analytics** → **Add a site** → digite `prodlean.netlify.app` → escolha a opção **sem mudar o DNS** (“JS snippet”).
+2. O Cloudflare mostra um código com `"token": "…"`. Copie **só o token** (32 letras e números).
+3. Na Netlify: **Project configuration → Environment variables → Add a variable** → nome `CF_ANALYTICS_TOKEN`, valor = o token → salve.
+4. Em **Deploys → Trigger deploy → Deploy site**. Pronto: em algumas horas os acessos aparecem no painel do Cloudflare.
+
+**O que dá para ver:** visitas por página (quais fichas, problemas e disciplinas o Google mais traz), de onde vêm (Google, WhatsApp…), país, aparelho e velocidade real do site. **Conversão para o app:** visitas a `/` vindas das páginas públicas (botão “Praticar isso no app”) aparecem com essas páginas como origem. As telas internas do app usam `#` no endereço e não são contadas uma a uma.
+**Privacidade:** não usa cookies nem guarda dados pessoais (não precisa de aviso de cookies).
+
 ### Crescimento (Fase 5, parte sem servidor)
 
 - **📤 Compartilhar resultado:** no desafio do dia (tela e Início), no Quiz (solo e pódio do grupo) e em Conquistas. `compartilhar()` gera uma imagem 1080×1080 no canvas (`imagemResultado`) e usa o compartilhamento do celular (`navigator.share` com arquivo); sem ele, compartilha só o texto ou copia para a área de transferência. O link volta para o app (ex.: `#desafio/extra/<id>`, que mostra o mesmo desafio para quem recebe).

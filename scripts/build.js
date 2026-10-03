@@ -105,6 +105,24 @@ async function minificarDist() {
   const tam = arquivos.reduce((t, f) => t + fs.statSync(f).size, 0);
   console.log(`dist/: ${arquivos.length} arquivos, ${(tam / 1024).toFixed(0)} KB`);
 }
+// Cloudflare Web Analytics (sem cookies): só entra se a variável CF_ANALYTICS_TOKEN existir na Netlify.
+// O token é público (aparece no HTML), mas fica fora do repositório para poder trocar sem mexer no código.
+function instalarAnalytics() {
+  const token = (process.env.CF_ANALYTICS_TOKEN || "").trim();
+  if (!token) { console.log("Analytics: desligado (defina CF_ANALYTICS_TOKEN para ligar)"); return; }
+  if (!/^[a-f0-9]{32}$/i.test(token)) throw new Error("CF_ANALYTICS_TOKEN inválido: copie só o token (32 caracteres) do painel do Cloudflare");
+  const tag = `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${token}", "spa": true}'></script>`;
+  let n = 0;
+  const andar = d => fs.readdirSync(d, { withFileTypes: true }).forEach(e => {
+    const p = path.join(d, e.name);
+    if (e.isDirectory()) return andar(p);
+    if (!e.name.endsWith(".html")) return;
+    const h = fs.readFileSync(p, "utf8");
+    if (h.includes("</body>") && !h.includes("cloudflareinsights")) { fs.writeFileSync(p, h.replace("</body>", tag + "</body>")); n++; }
+  });
+  andar(DIST);
+  console.log(`Analytics: Cloudflare instalado em ${n} páginas`);
+}
 async function substituirAsync(txt, re, fn) {
   const partes = [], ms = [...txt.matchAll(re)];
   let i = 0;
@@ -131,5 +149,6 @@ async function substituirAsync(txt, re, fn) {
     const idx = path.join(DIST, "index.html");
     fs.writeFileSync(idx, fs.readFileSync(idx, "utf8").split("https://prodlean.netlify.app").join(seo.SITE));
     console.log(`SEO: ${r.paginas} páginas, ${r.imagens} imagens de prévia, ${r.termos} termos no glossário`);
+    instalarAnalytics();
   }
 })().catch(e => { console.error(e); process.exit(1); });
