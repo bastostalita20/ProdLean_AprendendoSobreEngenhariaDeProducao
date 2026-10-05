@@ -1107,7 +1107,7 @@ function imagemResultado({ icone, titulo, linhas }) {
       g.fillStyle = "#5c6863"; g.font = `500 40px ${fonte}`; y += 10;
       (linhas || []).forEach(t => quebrar(t, 840).slice(0, 3).forEach(l => { if (y < 860) { g.fillText(l, 540, y); y += 52; } }));
       g.fillStyle = "#fff"; g.font = `600 36px ${fonte}`; g.fillText("Engenharia de Produção descomplicada · grátis", 540, 990);
-      g.font = `500 32px ${fonte}`; g.fillText(location.host || "prodlean.netlify.app", 540, 1040);
+      g.font = `500 32px ${fonte}`; g.fillText(location.host || "prodlean.vercel.app", 540, 1040);
       c.toBlob(b => ok(b), "image/png");
     } catch (e) { ok(null); }
   });

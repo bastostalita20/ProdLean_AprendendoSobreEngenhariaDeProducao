@@ -13,7 +13,8 @@
 "use strict";
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const RAIZ = path.resolve(__dirname, ".."), CONT = path.join(RAIZ, "app", "conteudo");
-const SITE = (process.env.URL || "https://prodlean.netlify.app").replace(/\/$/, "");
+// Endereço público: SITE_URL (manual) → domínio de produção da Vercel → URL da Netlify → padrão
+const SITE = (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL && "https://" + process.env.VERCEL_PROJECT_PRODUCTION_URL) || process.env.URL || "https://prodlean.vercel.app").replace(/\/$/, "");
 const MARCA = "ProdLean", SLOGAN = "Engenharia de Produção descomplicada";
 
 // ---------- conteúdo ----------

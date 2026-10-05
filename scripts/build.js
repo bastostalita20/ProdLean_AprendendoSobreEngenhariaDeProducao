@@ -147,7 +147,7 @@ async function substituirAsync(txt, re, fn) {
     await minificarDist();
     const seo = require("./seo");
     const r = seo.gerar(DIST);
-    // endereço do site (a Netlify informa em URL; o padrão é prodlean.netlify.app)
+    // endereço do site (Vercel: VERCEL_PROJECT_PRODUCTION_URL; Netlify: URL; padrão prodlean.vercel.app)
     const idx = path.join(DIST, "index.html");
     fs.writeFileSync(idx, fs.readFileSync(idx, "utf8").split("https://prodlean.netlify.app").join(seo.SITE));
     console.log(`SEO: ${r.paginas} páginas, ${r.imagens} imagens de prévia, ${r.termos} termos no glossário`);
