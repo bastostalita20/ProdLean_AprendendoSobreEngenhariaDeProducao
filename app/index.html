@@ -674,6 +674,19 @@ button.link { background: none; border: 0; color: var(--primary); font: inherit;
 .bom-n { fill: var(--surface); stroke: var(--primary); stroke-width: 1.5; } .bom-l { fill: none; stroke: var(--muted); stroke-width: 1.5; }
 .bom-t { font: 600 15px var(--fonte); fill: var(--text); } .bom-s { font: 400 11px var(--fonte); fill: var(--muted); }
 .bom-q { fill: var(--accent); } .bom-qt { font: 600 11px var(--mono); fill: #fff; }
+.rede-n { fill: var(--surface); stroke: var(--muted); stroke-width: 1.4; } .rede-n.crit { stroke: var(--accent); stroke-width: 2.4; }
+.rede-g { stroke: var(--border); stroke-width: 1; fill: none; } .rede-id { font: 700 15px var(--fonte); fill: var(--text); } .rede-d, .rede-v { font: 500 11px var(--mono); fill: var(--muted); }
+.rede-l { fill: none; stroke: var(--muted); stroke-width: 1.5; } .rede-l.crit { stroke: var(--accent); stroke-width: 2.6; } .rede-ponta { fill: var(--muted); } .rede-ponta.crit { fill: var(--accent); }
+.fig-curva { margin: 8px 0; --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; } .fig-curva svg { display: block; width: 100%; height: auto; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fig-curva { --s1: #3987e5; --s2: #d95926; --s3: #199e70; } }
+:root[data-theme="dark"] .fig-curva { --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
+.cv-g { stroke: var(--border); stroke-width: 1; } .cv-t { font: 400 10px var(--fonte); fill: var(--muted); } .cv-m { stroke: var(--muted); stroke-dasharray: 3 3; }
+.cv-l { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; } .cv-l.s1 { stroke: var(--s1); } .cv-l.s2 { stroke: var(--s2); } .cv-l.s3 { stroke: var(--s3); }
+.cv-p { stroke: var(--surface); stroke-width: 2; } .cv-p.s1 { fill: var(--s1); } .cv-p.s2 { fill: var(--s2); } .cv-p.s3 { fill: var(--s3); }
+.cv-hit { fill: transparent; } .cv-hit:hover { fill: color-mix(in srgb, var(--muted) 18%, transparent); } .cv-lab { font: 600 10.5px var(--fonte); fill: var(--text); }
+.cv-leg { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); justify-content: center; } .cv-leg i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+.cv-leg i.s1 { background: var(--s1); } .cv-leg i.s2 { background: var(--s2); } .cv-leg i.s3 { background: var(--s3); } .cv-leg i.tr { background: repeating-linear-gradient(90deg, var(--s1) 0 5px, transparent 5px 8px); }
+.g-b .fig-curva svg { max-height: 220px; } .g-b figcaption, .g-b .cv-leg { font-size: .85em; }
 .prog-lista { display: grid; gap: 8px; margin-bottom: 8px; }
 .prog-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); text-decoration: none; color: var(--text); }
 .prog-item .grow { display: flex; flex-direction: column; min-width: 0; }
@@ -1586,7 +1599,7 @@ function renderizarFormulas() {
   if (!els.length) return;
   carregarKatex().then(() => els.forEach(el => {
     if (el.dataset.k) return;
-    const tex = el.dataset.tex || texDe(el.dataset.f);
+    const tex = (el.dataset.tex || texDe(el.dataset.f) || "").replace(/(\d),(?=\d)/g, "$1{,}") || null; // vírgula decimal sem espaço
     el.dataset.k = tex && window.katex ? "1" : "0";
     if (el.dataset.k !== "1") return;
     try { katex.render(tex, el, { throwOnError: true, strict: "ignore", output: "htmlAndMathml" }); el.title = el.dataset.f; }
@@ -2279,7 +2292,7 @@ function htmlGuia_(G, embutido) {
   };
   return `<article class="guia${embutido ? " embutido" : ""}" aria-label="Guia visual: ${esc(G.titulo)}">
     <header class="g-head"><span class="g-num num">${String(G.numero).padStart(2, "0")}</span>
-      <div class="g-tit"><span class="g-cat">${esc(G.categoria)} · ${esc(G.disciplina || "")}</span><h2>${esc(G.titulo)}: <span>${esc(G.subtitulo)}</span></h2></div>
+      <div class="g-tit"><span class="g-cat">${esc([G.categoria, G.disciplina].filter((x, i, a) => x && a.indexOf(x) === i).join(" · "))}</span><h2>${esc(G.titulo)}: <span>${esc(G.subtitulo)}</span></h2></div>
       <span class="g-marca">ProdLean · guia visual</span></header>
     <div class="g-grid">${G.blocos.map((b, k) => `<section class="g-b c${b.cor % 6}${b.largo ? " largo" : ""}"><h3>${N(k)}${ic(b.ic || "info")}<span>${esc(b.titulo)}</span></h3><div class="g-c">${corpo(b)}</div></section>`).join("")}</div>
     <footer class="g-foot"><span>Referências: ${(G.referencias || []).map(esc).join(" · ")}</span><span>prodlean · conteúdo original</span></footer></article>`;
@@ -2927,6 +2940,8 @@ function tabelaMd(T) {
 /* Figuras das questões (SVG, sem bibliotecas). tipo "bom": estrutura do produto em árvore.
    { tipo: "bom", raiz: { item: "A", lt: 1, filhos: [{ item: "B", qtd: 2, lt: 2, filhos: [...] }] } } */
 function htmlFigura(f) {
+  if (f.tipo === "rede") return figuraRede(f);
+  if (f.tipo === "curva") return figuraCurva(f);
   if (f.tipo !== "bom") return "";
   const W = 118, H = 46, GX = 18, GY = 40, nos = [];
   const folhas = n => (n.filhos || []).length ? n.filhos.reduce((t, c) => t + folhas(c), 0) : 1;
@@ -2945,6 +2960,51 @@ function htmlFigura(f) {
     ${f.legenda ? `<figcaption class="small muted">${esc(f.legenda)}</figcaption>` : ""}</figure>`;
 }
 
+// Rede de atividades (atividade no nó). mostrar: "duracao" (só durações) ou "completo" (IC, TC, IT, TT, folga e caminho crítico)
+function figuraRede(f) {
+  const A = Object.fromEntries(f.atividades.map(a => [a.id, Object.assign({ pred: [] }, a)])), ids = Object.keys(A);
+  const nivel = id => A[id]._n ?? (A[id]._n = A[id].pred.length ? 1 + Math.max(...A[id].pred.map(nivel)) : 0);
+  ids.forEach(nivel);
+  const ordem = ids.slice().sort((x, y) => A[x]._n - A[y]._n);
+  ordem.forEach(id => { const a = A[id]; a.es = Math.max(0, ...a.pred.map(p => A[p].ef)); a.ef = a.es + a.dur; });
+  const T = Math.max(...ids.map(id => A[id].ef)), suc = id => ids.filter(x => A[x].pred.includes(id));
+  ordem.slice().reverse().forEach(id => { const a = A[id], s = suc(id); a.lf = s.length ? Math.min(...s.map(x => A[x].ls)) : T; a.ls = a.lf - a.dur; a.ft = a.ls - a.es; });
+  const completo = f.mostrar === "completo", W = completo ? 104 : 64, H = completo ? 62 : 44, GX = 46, GY = 22;
+  const porNivel = {}; ordem.forEach(id => (porNivel[A[id]._n] = porNivel[A[id]._n] || []).push(id));
+  const nMax = Math.max(...Object.values(porNivel).map(l => l.length)), alt = nMax * (H + GY) - GY;
+  Object.entries(porNivel).forEach(([n, l]) => l.forEach((id, k) => { A[id].x = +n * (W + GX); A[id].y = (alt - (l.length * (H + GY) - GY)) / 2 + k * (H + GY); }));
+  const LW = (Math.max(...ids.map(id => A[id]._n)) + 1) * (W + GX) - GX;
+  const crit = (p, s) => completo && A[p].ft === 0 && A[s].ft === 0 && A[s].es === A[p].ef;
+  const setas = ids.flatMap(s => A[s].pred.map(p => { const x1 = A[p].x + W, y1 = A[p].y + H / 2, x2 = A[s].x - 3, y2 = A[s].y + H / 2, mx = (x1 + x2) / 2;
+    return `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" class="rede-l${crit(p, s) ? " crit" : ""}" marker-end="url(#seta${crit(p, s) ? "c" : ""})"/>`; })).join("");
+  const t = (x, y, s, c) => `<text x="${x}" y="${y}" text-anchor="middle" class="${c}">${esc(s)}</text>`;
+  const nos = ids.map(id => { const a = A[id], c = completo && a.ft === 0 ? " crit" : "", x = a.x, y = a.y;
+    if (!completo) return `<g><rect x="${x}" y="${y}" width="${W}" height="${H}" rx="8" class="rede-n"/>${t(x + W / 2, y + 19, id, "rede-id")}${t(x + W / 2, y + 35, a.dur + (f.unidade || " d"), "rede-d")}</g>`;
+    const c3 = W / 3;
+    return `<g><rect x="${x}" y="${y}" width="${W}" height="${H}" rx="6" class="rede-n${c}"/><path d="M${x},${y + 18} H${x + W} M${x},${y + H - 18} H${x + W} M${x + c3},${y} V${y + 18} M${x + 2 * c3},${y} V${y + 18} M${x + c3},${y + H - 18} V${y + H} M${x + 2 * c3},${y + H - 18} V${y + H}" class="rede-g"/>
+      ${t(x + c3 / 2, y + 13, a.es, "rede-v")}${t(x + W / 2, y + 13, a.dur, "rede-v")}${t(x + W - c3 / 2, y + 13, a.ef, "rede-v")}${t(x + W / 2, y + 36, id, "rede-id")}
+      ${t(x + c3 / 2, y + H - 5, a.ls, "rede-v")}${t(x + W / 2, y + H - 5, "F " + a.ft, "rede-v")}${t(x + W - c3 / 2, y + H - 5, a.lf, "rede-v")}</g>`; }).join("");
+  const leg = completo ? `<figcaption class="small muted">Em cima: início mais cedo · duração · término mais cedo. Embaixo: início mais tarde · folga total · término mais tarde. Destacado: caminho crítico (${T} d).</figcaption>` : f.legenda ? `<figcaption class="small muted">${esc(f.legenda)}</figcaption>` : "";
+  return `<figure class="fig-bom fig-rede"><svg viewBox="-4 -4 ${LW + 8} ${alt + 8}" style="min-width:${Math.round((LW + 8) * 0.62)}px" role="img" aria-label="Rede de atividades do projeto">
+    <defs><marker id="seta" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="rede-ponta"/></marker>
+    <marker id="setac" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="rede-ponta crit"/></marker></defs>${setas}${nos}</svg>${leg}</figure>`;
+}
+// Gráfico de linhas acumuladas (ex.: curva S do valor agregado): f = { x: [...], series: [{ nome, valores }], marca: índice, rotuloY }
+function figuraCurva(f) {
+  const W = 560, H = 256, ml = 46, mr = 70, mt = 20, mb = 30, pw = W - ml - mr, ph = H - mt - mb;
+  const max = Math.max(...f.series.flatMap(s => s.valores.filter(v => v != null))), passo = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 1 : 0.5);
+  const topo = Math.ceil(max / passo) * passo, X = i => ml + i / (f.x.length - 1) * pw, Y = v => mt + ph - v / topo * ph;
+  const grade = Array.from({ length: Math.round(topo / passo) + 1 }, (_, k) => k * passo).map(v => `<line x1="${ml}" x2="${ml + pw}" y1="${Y(v)}" y2="${Y(v)}" class="cv-g"/><text x="${ml - 6}" y="${Y(v) + 4}" text-anchor="end" class="cv-t">${numeroBR(v)}</text>`).join("");
+  const eixoX = f.x.map((x, i) => i % Math.ceil(f.x.length / 10) === 0 || i === f.x.length - 1 ? `<text x="${X(i)}" y="${H - 10}" text-anchor="middle" class="cv-t">${esc(x)}</text>` : "").join("");
+  const linhas = f.series.map((s, k) => { const pts = s.valores.map((v, i) => v == null ? null : [X(i), Y(v), v, i]).filter(Boolean), ult = pts[pts.length - 1];
+    return `<path d="${pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ")}" class="cv-l s${k + 1}"${s.tracejado ? ' stroke-dasharray="6 4"' : ""}/>
+      ${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="9" class="cv-hit"><title>${esc(s.nome)} · ${esc(f.x[p[3]])}: ${numeroBR(p[2])}</title></circle>`).join("")}
+      <circle cx="${ult[0]}" cy="${ult[1]}" r="4" class="cv-p s${k + 1}"/><text x="${ult[0] + 7}" y="${ult[1] + 4 + (s.dy || 0)}" class="cv-lab">${esc(s.rotulo || s.nome)}</text>`; }).join("");
+  const marca = f.marca != null ? `<line x1="${X(f.marca)}" x2="${X(f.marca)}" y1="${mt}" y2="${mt + ph}" class="cv-m"/><text x="${X(f.marca) + 4}" y="${mt + 10}" class="cv-t">${esc(f.rotuloMarca || "hoje")}</text>` : "";
+  return `<figure class="fig-curva"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(f.legenda || "Gráfico")}">${grade}${eixoX}${marca}${linhas}
+    ${f.rotuloY ? `<text x="4" y="10" class="cv-t">${esc(f.rotuloY)}</text>` : ""}</svg>
+    <figcaption class="cv-leg">${f.series.map((s, k) => `<span><i class="s${k + 1}${s.tracejado ? " tr" : ""}"></i>${esc(s.nome)}</span>`).join("")}</figcaption></figure>`;
+}
 /* =====================================================================
    COMPONENTE: RENDERIZAR UMA QUESTÃO
    Usado na lição e na revisão. Chama aoResponder(acertou) após verificar.

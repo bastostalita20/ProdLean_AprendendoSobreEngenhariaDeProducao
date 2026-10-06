@@ -2,11 +2,12 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Banco de questões do ProdLean (um arquivo por tópico)",
   "type": "object",
-  "required": ["topico", "licao", "questoes"],
+  "required": ["topico", "questoes"],
   "properties": {
     "topico": { "type": "string", "description": "identificador do tópico (ex.: mrp)" },
     "disciplina": { "type": "string" },
     "licao": { "type": "string", "description": "lição do app em que as questões entram (ex.: m03-l5)" },
+    "licoes": { "type": "array", "items": { "type": "string" }, "description": "quando cada questão traz a própria lição" },
     "gerado_por": { "type": "string", "description": "script que gera e confere os gabaritos" },
     "questoes": {
       "type": "array", "minItems": 20,

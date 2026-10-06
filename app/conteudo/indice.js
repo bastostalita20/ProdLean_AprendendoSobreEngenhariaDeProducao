@@ -11,7 +11,7 @@
 // Carregamento sob demanda: o app abre só com estes arquivos (o catálogo é gerado por
 // "node scripts/build.js --catalogo") e baixa o texto de cada módulo quando ele é aberto.
 self.ARQUIVOS_INICIAIS = ["catalogo.js", "problemas.js", "desafios.js", "siglas.js"];
-self.ARQUIVOS_GUIAS = ["guias/mrp.js"]; // guias visuais (uma página por tema), carregados ao abrir
+self.ARQUIVOS_GUIAS = ["guias/mrp.js", "guias/gestao-projetos.js"]; // guias visuais (uma página por tema), carregados ao abrir
 self.ARQUIVO_BUSCA = "catalogo-busca.js"; // glossário, flashcards e fórmulas (logo depois da 1ª tela)
 self.ARQUIVOS_MODULOS = [ // "self" funciona no app e no modo offline (service worker)
   "modulo-01.js",
@@ -26,6 +26,6 @@ self.ARQUIVOS_MODULOS = [ // "self" funciona no app e no modo offline (service w
   "problemas.js",       // 🚨 problemas → ferramentas → conteúdo (e Modo Estágio)
   "desafios.js",        // ⚡ desafio do dia
   "siglas.js",          // 🔤 significado das siglas, mostrado entre parênteses
-  "questoes/pcp/mrp.js", // banco de questões por tópico (gerado por scripts/questoes/)
+  "questoes/pcp/mrp.js", "questoes/gp/gestao-projetos.js", // banco de questões por tópico (gerado por scripts/questoes/)
   "banco-questoes.js"   // questões extras e com números sorteados (sempre por último)
 ];

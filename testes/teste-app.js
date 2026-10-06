@@ -300,6 +300,14 @@ async function recuperarVidas(p) {
   await p.fill('#num', '150'); await p.click('#verificar'); await p.waitForSelector('.sheet .katex', { timeout: 8000 }).catch(() => {});
   checar(await p.$('.fig-bom svg .bom-n') && await p.$('.sheet .katex'), 'figura da estrutura (BOM) e resolução com fórmulas em KaTeX');
   await p.click('#continuar-q');
+  // Gestão de Projetos: 23 questões em 7 lições do Módulo 2, rede CPM e 3 guias visuais
+  const gp = await p.evaluate(async () => { await carregarModulos(['m02']); await garantirGuias(); const qs = Object.values(Q).filter(q => q.id.startsWith('gp-') && !q._stub);
+    const n = k => qs.filter(q => q.nivel === k).length; return { total: qs.length, f: n('facil'), m: n('medio'), d: n('dificil'), licoes: new Set(qs.map(q => q.licao)).size, guias: guias().filter(g => g.categoria === 'Gestão de Projetos').map(g => g.id) }; });
+  checar(gp.total >= 20 && gp.f >= 7 && gp.m >= 7 && gp.d >= 6 && gp.licoes >= 5 && gp.guias.length === 3, `banco Gestão de Projetos: ${gp.total} questões (${gp.f}/${gp.m}/${gp.d}) em ${gp.licoes} lições · guias ${gp.guias.join(', ')}`);
+  await p.evaluate(() => { app().innerHTML = '<div id="qarea" class="lesson-pad"></div>'; renderQuestao(Q['gp-f05'], document.getElementById('qarea'), () => {}); });
+  checar((await p.$$('.fig-rede .rede-n')).length === 4 && (await p.$$('.fig-rede .rede-l')).length === 4, 'figura da rede de atividades (CPM) na questão');
+  await p.evaluate(() => ir('guia/valor-agregado')); await p.waitForSelector('.fig-curva .cv-l', { timeout: 8000 }).catch(() => {});
+  checar((await p.$$('.fig-curva .cv-l')).length === 3 && (await p.$$('.fig-curva .cv-leg span')).length === 3, 'curva S do valor agregado com 3 séries e legenda');
   await p.evaluate(() => { S.config.nivel = 'facil'; salvar(); ir('estudar/materiais'); }); await p.waitForTimeout(150);
   checar(await p.evaluate(() => ['#mapas', '#conteudo', '#glossario'].every(h => document.querySelector(`a[href="${h}"]`))), 'Materiais: mapas, conteúdo completo e glossário');
   await p.evaluate(() => ir('estudar/disciplina/3')); await p.waitForTimeout(150);

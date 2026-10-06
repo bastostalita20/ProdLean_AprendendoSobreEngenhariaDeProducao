@@ -9,17 +9,17 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), katex = require("katex");
 const RAIZ = path.resolve(__dirname, "..");
 const topico = process.argv[2] || "mrp";
-const src = path.join(RAIZ, "app/conteudo/questoes/pcp", topico + ".json");
+const src = ["pcp", "gp"].map(d => path.join(RAIZ, "app/conteudo/questoes", d, topico + ".json")).find(f => fs.existsSync(f));
 const dados = JSON.parse(fs.readFileSync(src, "utf8"));
 
 // htmlFigura do próprio app (mesmo desenho da estrutura do produto)
 const idx = fs.readFileSync(path.join(RAIZ, "app/index.html"), "utf8");
-const ini = idx.indexOf("function htmlFigura(f) {"), fim = idx.indexOf("\n}\n", ini) + 2;
-const ctx = { esc: t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") };
-vm.runInNewContext(idx.slice(ini, fim) + "\nthis.htmlFigura = htmlFigura;", ctx);
+const fn = nome => { const i = idx.indexOf(`function ${nome}(`); return idx.slice(i, idx.indexOf("\n}\n", i) + 2); };
+const ctx = { esc: t => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"), numeroBR: n => Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) };
+vm.runInNewContext(["htmlFigura", "figuraRede", "figuraCurva"].map(fn).join("\n") + "\nthis.htmlFigura = htmlFigura;", ctx);
 const esc = ctx.esc;
 
-const tex = t => katex.renderToString(t, { throwOnError: false, strict: "ignore" });
+const tex = t => katex.renderToString(t.replace(/(\d),(?=\d)/g, "$1{,}"), { throwOnError: false, strict: "ignore" });
 const numBR = n => typeof n === "number" ? n.toLocaleString("pt-BR") : n;
 // texto do conteúdo → HTML: \( LaTeX \), **negrito**, *itálico*, tabelas Markdown e quebras de linha
 function fmt(t) {
@@ -49,7 +49,7 @@ function questao(q, n) {
     corpo += `<p class="gab">Gabarito (células a preencher em destaque):</p><table><tr><th>${esc(T.canto || "")}</th>${T.colunas.map(c => `<th>${esc(c)}</th>`).join("")}</tr>${T.linhas.map(l => `<tr><td>${esc(l.rotulo)}</td>${l.valores.map((v, c) => `<td class="${(l.editar || []).includes(c) ? "ed" : ""}">${numBR(v)}</td>`).join("")}</tr>`).join("")}</table>`; }
   if (q.resolucao) corpo += `<div class="res"><b>Resolução</b><br>${fmt(q.resolucao)}</div>`;
   if (q.explicacao) corpo += `<p class="exp">${fmt(q.explicacao)}</p>`;
-  return `<article class="q"><header><span class="n">${n}</span><span class="tag ${q.nivel}">${NV[q.nivel]}</span><span class="tag">${TIPO[q.tipo] || q.tipo}</span>${q.estilo && q.estilo !== "autoral" ? `<span class="tag est">Estilo ${q.estilo}</span>` : ""}<code>${q.id}</code></header>
+  return `<article class="q"><header><span class="n">${n}</span><span class="tag ${q.nivel}">${NV[q.nivel]}</span><span class="tag">${TIPO[q.tipo] || q.tipo}</span>${q.estilo && q.estilo !== "autoral" ? `<span class="tag est">Estilo ${q.estilo}</span>` : ""}<code>${q.id}${q.licao && !dados.licao ? " · " + q.licao : ""}</code></header>
     ${corpo}<footer>Tags: ${q.tags.map(esc).join(" · ")}<br>Referência: ${esc(q.referencia)}${q.fonte ? `<br>Fonte: ${esc(q.fonte)}` : ""}</footer></article>`;
 }
 // CSS do KaTeX com as fontes embutidas (o arquivo abre sozinho, sem internet)
@@ -72,9 +72,9 @@ table{border-collapse:collapse;margin:8px 0;font-size:.88rem;display:block;overf
 td.ed{background:var(--oks);font-weight:700}.gab{margin:8px 0 0}.res{background:var(--bg);border-left:3px solid var(--p);padding:8px 12px;margin:10px 0;border-radius:4px}
 .exp{color:var(--m);font-size:.92rem}footer{border-top:1px solid var(--b);margin-top:10px;padding-top:8px;font-size:.8rem;color:var(--m)}
 .fig-bom svg{display:block;max-width:100%;height:auto;margin:0 auto}.bom-n{fill:var(--s);stroke:var(--p);stroke-width:1.5}.bom-l{fill:none;stroke:var(--m);stroke-width:1.5}
-.bom-t{font:600 15px system-ui;fill:var(--t)}.bom-s{font:400 11px system-ui;fill:var(--m)}.bom-q{fill:var(--a)}.bom-qt{font:600 11px monospace;fill:#fff}figcaption{text-align:center;color:var(--m);font-size:.82rem}
+.rede-n{fill:var(--s);stroke:var(--m);stroke-width:1.4}.rede-id{font:700 15px system-ui;fill:var(--t)}.rede-d,.rede-v{font:500 11px monospace;fill:var(--m)}.rede-l{fill:none;stroke:var(--m);stroke-width:1.5}.rede-ponta{fill:var(--m)}.fig-rede svg{display:block;max-width:100%;height:auto;margin:0 auto}.bom-t{font:600 15px system-ui;fill:var(--t)}.bom-s{font:400 11px system-ui;fill:var(--m)}.bom-q{fill:var(--a)}.bom-qt{font:600 11px monospace;fill:#fff}figcaption{text-align:center;color:var(--m);font-size:.82rem}
 </style></head><body><main><h1>Banco de questões — ${esc(dados.disciplina)}: ${esc(topico.toUpperCase())}</h1>
-<p class="sub">${dados.questoes.length} questões originais · Fácil ${cont.facil} · Médio ${cont.medio} · Difícil ${cont.dificil} · gabaritos calculados e conferidos por <code>${esc(dados.gerado_por)}</code> · lição ${esc(dados.licao)}</p>
+<p class="sub">${dados.questoes.length} questões originais · Fácil ${cont.facil} · Médio ${cont.medio} · Difícil ${cont.dificil} · gabaritos calculados e conferidos por <code>${esc(dados.gerado_por)}</code> · lição ${esc(dados.licao || (dados.licoes || []).join(", "))}</p>
 ${dados.questoes.map((q, i) => questao(q, i + 1)).join("\n")}</main></body></html>`;
 const out = path.join(RAIZ, "dist-relatorio", `questoes-${topico}.html`);
 fs.mkdirSync(path.dirname(out), { recursive: true });
