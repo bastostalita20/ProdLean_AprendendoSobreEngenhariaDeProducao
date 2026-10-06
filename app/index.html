@@ -584,6 +584,35 @@ h1 .ic, h2 .ic { color: var(--primary-texto); margin-right: 6px; }
 .prog { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin: 6px 0 10px; }
 .prog > div { height: 100%; background: var(--primary); border-radius: 3px; transition: width .3s; }
 .selo.ok { background: var(--ok-soft); color: var(--ok); }
+.selo .ic { width: 13px; height: 13px; }
+/* tela Exercícios */
+.stats-ex { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0 4px; }
+.stats-ex > div { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 2px; }
+.stats-ex .v { font-size: 1.3rem; font-weight: 600; }
+@media (max-width: 480px) { .stats-ex { grid-template-columns: repeat(2, 1fr); } }
+.modos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.modo { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font: inherit; color: var(--text); cursor: pointer; }
+.modo .ic { width: 20px; height: 20px; color: var(--primary); }
+.modo.on { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); }
+.filtros-ex { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.filtros-ex label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
+.filtros-ex select, .comecar-ex select { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; min-height: 42px; width: 100%; }
+.comecar-ex select { width: auto; min-height: 36px; padding: 6px 8px; }
+@media (max-width: 560px) { .filtros-ex { grid-template-columns: 1fr; } }
+.comecar-ex { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 16px 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.comecar-ex .btn { margin-left: auto; }
+.sess-top { align-items: center; gap: 10px; }
+.sess-top .small:first-child { flex: 1; }
+button.link { background: none; border: 0; color: var(--primary); font: inherit; cursor: pointer; padding: 4px; }
+.relogio { font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); }
+.relogio.pouco { background: var(--err-soft, #fde8e8); color: var(--err, #b42318); }
+.destaque { font-size: 1.8rem; font-weight: 700; margin: 8px 0 0; color: var(--primary); }
+.correcao { display: grid; gap: 6px; }
+.corr { border: 1px solid var(--border); border-left: 4px solid var(--ok); border-radius: 8px; padding: 8px 12px; background: var(--surface); }
+.corr.bad { border-left-color: var(--err, #b42318); }
+.corr summary { cursor: pointer; font-size: .9rem; }
+.corr summary .num { color: var(--muted); margin-right: 4px; }
+.lvl-card.travado { opacity: .65; }
 .prog-lista { display: grid; gap: 8px; margin-bottom: 8px; }
 .prog-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); text-decoration: none; color: var(--text); }
 .prog-item .grow { display: flex; flex-direction: column; min-width: 0; }
@@ -617,7 +646,7 @@ h1 .ic, h2 .ic { color: var(--primary-texto); margin-right: 6px; }
     <a href="#inicio" data-tab="inicio"><svg class="ic" aria-hidden="true"><use href="#i-inicio"></use></svg>Início</a>
     <a href="#consultar" data-tab="consultar"><svg class="ic" aria-hidden="true"><use href="#i-buscar"></use></svg>Buscar</a>
     <a href="#trilha" data-tab="trilha"><svg class="ic" aria-hidden="true"><use href="#i-trilha"></use></svg>Trilha</a>
-    <a href="#estudar/praticar" data-tab="exercicios"><svg class="ic" aria-hidden="true"><use href="#i-exercicios"></use></svg>Exercícios</a>
+    <a href="#praticar" data-tab="exercicios"><svg class="ic" aria-hidden="true"><use href="#i-exercicios"></use></svg>Exercícios</a>
     <a href="#perfil" data-tab="perfil"><svg class="ic" aria-hidden="true"><use href="#i-perfil"></use></svg>Perfil</a>
   </div>
 </nav>
@@ -800,6 +829,7 @@ function estadoInicial() {
     favoritos: [],             // itens salvos (fichas, ferramentas, problemas) { k, href, icone, tipo, titulo, sub }
     historico: [],             // últimas consultas abertas (mesmo formato + data)
     desafios: {},              // desafios respondidos { idDesafio: { data, acertou } }
+    exercicios: { ranking: [], simulados: [] }, // modo Exercícios: melhores pontuações do Desafio e histórico de simulados
     desafioDia: null,          // { data, id } do desafio sorteado para hoje
     ultimo: null,              // o que você estava estudando (para "Continue de onde parou")
     config: { meta: 50, som: true, tema: "auto", velocidadeVoz: 1, nome: "Eu", nivel: "facil", porSessao: 6, estagio: null }
@@ -1029,6 +1059,7 @@ function marcarRetencao(st, acertou) {
 function registrarResposta(q, acertou) {
   const st = S.questoes[q.id] || (S.questoes[q.id] = { acertos: 0, erros: 0 });
   if (acertou) st.acertos++; else st.erros++;
+  st.ult = acertou ? 1 : 0; // último resultado: errou → entra no caderno de erros; acertou depois → sai
   marcarRetencao(st, acertou);
   if (!acertou) S.revisao[q.id] = { etapa: 0, proxima: hoje(1) }; // errou → volta amanhã
   salvar();
@@ -1260,7 +1291,7 @@ function rotear() {
   EMOJI_OK = ["trilha", "exercicios", "quiz", "quizjogo"].includes(nome) || (nome === "licao" && param2 === "facil");
   const telas = {
     inicio: telaHub, exercicios: telaInicio,
-    consultar: telaConsultar, consulta: telaConsulta, assunto: telaAssunto, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
+    consultar: telaConsultar, consulta: telaConsulta, assunto: telaAssunto, praticar: telaPraticar, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
     problemas: telaProblemas, problema: telaProblema, desafio: telaDesafio, estudar: telaEstudar,
     estagio: telaEstagio, salvos: telaSalvos, trilha: telaTrilha, licao: telaLicao, quiz: telaQuiz, revisar: telaRevisar,
     revisao: telaSessaoRevisao, flashcards: telaFlashcards, perfil: telaPerfil, conquistas: telaConquistas,
@@ -1286,7 +1317,7 @@ function rotear() {
   // Aba destacada: Buscar (consulta, problemas, conteúdo), Trilha (modo jogo), Exercícios (modo estudo)
   const aba = { exercicios: "trilha", trilha: "trilha", quiz: "trilha", revisar: "exercicios", flashcards: "exercicios", glossario: "consultar",
     ouvir: "consultar", conteudo: "consultar", mapas: "consultar", mapa: "consultar", consulta: "consultar", ferramentas: "consultar",
-    ferramenta: "consultar", assunto: "consultar", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
+    ferramenta: "consultar", assunto: "consultar", praticar: "exercicios", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
     estudar: param === "praticar" ? "exercicios" : "consultar", conquistas: "perfil", config: "perfil", estagio: "perfil" }[nome] || nome;
   $$("#nav a").forEach(a => { const on = a.dataset.tab === aba; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   (telas[nome] || telaHub)(param, param2);
@@ -1956,7 +1987,7 @@ function telaAssunto(kParam, abaParam) {
       (Ff.problemas || []).length ? `<h2 class="sec-t">Ajuda nestes problemas</h2><div class="lista">${Ff.problemas.map(e => htmlItem(e)).join("")}</div>` : "",
       `<p class="small mt"><a class="link" href="#ferramenta/${a.ferr}">Abrir a ficha completa da ferramenta ›</a></p>`].join("")] : null,
     ls.length ? ["licoes", `Lições <span class="num">${ls.length}</span>`, `<div class="lista">${ls.map(l => { const m = modulo(l.modulo);
-      return htmlItem({ href: linkConteudo(l), ic: m.grade ? "topico" : "licao", tipo: m.grade ? `Disciplina · ${m.periodo}º período` : `Módulo ${m.numero}`, titulo: l.titulo, sub: `${limpar(m.titulo)} · ${(l.questoes || []).length} exercícios` }, licaoConcluida(l.id) ? `<span class="selo ok">${ic("check")}</span>` : ""); }).join("")}</div>`] : null,
+      return htmlItem({ href: linkConteudo(l), ic: m.grade ? "topico" : "licao", tipo: m.grade ? `Disciplina · ${m.periodo}º período` : `Módulo ${m.numero}`, titulo: l.titulo, sub: `${limpar(m.titulo)} · ${(l.questoes || []).length} exercícios` }, especialista(l.id) ? `<span class="selo especialista">${ic("especialista")}Especialista</span>` : licaoConcluida(l.id) ? `<span class="selo ok">${ic("check")}</span>` : ""); }).join("")}</div>`] : null,
     qs.length ? ["exercicios", `Exercícios <span class="num">${qs.length}</span>`, `<div id="pratica"></div>`] : null,
     mods.length ? ["mapa", "Mapa", `<p class="small muted">Tópicos, fórmulas e significados numa folha A4 para imprimir ou salvar em PDF.</p><div class="lista">${mods.map(id => { const m = modulo(id);
       return htmlItem({ href: "#mapa/" + id, ic: "mapa", tipo: "Mapa mental A4", titulo: m.titulo, sub: m.grade ? `${m.periodo}º período` : `Módulo ${m.numero}` }); }).join("")}</div>`] : null
@@ -1985,49 +2016,165 @@ function telaAssunto(kParam, abaParam) {
   $("#ouvir-ficha").onclick = () => falar(textoFalaFicha(F0), a.titulo);
   mostrar(aba);
 }
-// Exercícios do assunto: escolhe o nível, responde em sequência e vê o resultado (entra nas estatísticas e na revisão)
+// Exercícios do assunto: escolhe o nível e pratica (as respostas entram no desempenho e na revisão)
 function praticaAssunto(todas, box) {
   box.dataset.ok = 1;
-  const NV = [["", "Todos"], ["facil", "Fácil"], ["medio", "Médio"], ["dificil", "Difícil"]];
   let nivel = "";
   function inicio() {
     const pool = todas.filter(q => !nivel || q.nivel === nivel);
-    const erradas = todas.filter(q => S.questoes[q.id] && S.questoes[q.id].erros > S.questoes[q.id].acertos).length;
-    box.innerHTML = `<p class="small muted">Prática livre: as respostas entram no seu desempenho e as erradas voltam na revisão.</p>
-      <div class="filtro-nivel" role="group" aria-label="Nível">${NV.map(([v, t]) => { const n = todas.filter(q => !v || q.nivel === v).length;
-        return n ? `<button class="chip-f${v === nivel ? " on" : ""}" data-nv="${v}" aria-pressed="${v === nivel}">${t} <span class="num">${n}</span></button>` : ""; }).join("")}</div>
+    box.innerHTML = `<p class="small muted">Prática livre: as respostas entram no seu desempenho e as erradas vão para o caderno de erros.</p>
+      ${chipsNivel(todas, nivel)}
       <div class="row wrap mt"><button class="btn" id="comecar"${pool.length ? "" : " disabled"}>${ic("play")} Começar (${Math.min(10, pool.length)} questões)</button>
-      ${erradas ? `<span class="small muted">${erradas} que você mais erra entram primeiro</span>` : ""}</div>`;
+        <a class="link small" href="#praticar">Mais filtros e modos em Exercícios ›</a></div>`;
     $$("[data-nv]", box).forEach(b => b.onclick = () => { nivel = b.dataset.nv; inicio(); });
-    $("#comecar", box).onclick = () => {
-      const peso = q => { const s = S.questoes[q.id]; return s ? (s.erros > s.acertos ? 0 : 2) : 1; };
-      rodar(embaralhar(pool.slice()).sort((x, y) => peso(x) - peso(y)).slice(0, 10));
-    };
-  }
-  function rodar(lista) {
-    let i = 0, acertos = 0;
-    const prox = () => {
-      if (i >= lista.length) {
-        box.innerHTML = `<div class="resumo-box"><p><b>${acertos} de ${lista.length}</b> corretas (${Math.round(acertos / lista.length * 100)}%).</p>
-          <p class="small muted">${acertos === lista.length ? "Excelente: assunto dominado neste nível." : "As que você errou já estão na sua revisão espaçada."}</p></div>
-          <div class="row wrap mt"><button class="btn" id="denovo">${ic("revisar")} Praticar de novo</button></div>`;
-        $("#denovo", box).onclick = inicio;
-        return;
-      }
-      let q = lista[i];
-      if (Q[q.id]) q = Q[q.id];
-      box.innerHTML = `<div class="row"><span class="small muted">Questão ${i + 1} de ${lista.length}</span><span class="small muted num">${acertos} certas</span></div>
-        <div class="prog"><div style="width:${i / lista.length * 100}%"></div></div><div id="qarea" class="lesson-pad"></div><div id="qnext"></div>`;
-      renderQuestao(q, $("#qarea", box), acertou => {
-        registrarResposta(q, acertou);
-        if (acertou) { acertos++; ganharXP(1); }
-        $("#qnext", box).innerHTML = `<button class="btn mt" id="seguir">${i + 1 < lista.length ? "Próxima" : "Ver resultado"} ${ic("seta")}</button>`;
-        $("#seguir", box).onclick = () => { i++; prox(); };
-      });
-    };
-    prox();
+    $("#comecar", box).onclick = () => sessaoQuestoes(box, priorizar(pool).slice(0, 10), "livre", inicio);
   }
   inicio();
+}
+const NIVEIS_F = [["", "Todos"], ["facil", "Fácil"], ["medio", "Médio"], ["dificil", "Difícil"]];
+function chipsNivel(todas, atual) {
+  return `<div class="filtro-nivel" role="group" aria-label="Nível">${NIVEIS_F.map(([v, t]) => { const n = todas.filter(q => !v || q.nivel === v).length;
+    return n || v === atual ? `<button class="chip-f${v === atual ? " on" : ""}" data-nv="${v}" aria-pressed="${v === atual}">${t} <span class="num">${n}</span></button>` : ""; }).join("")}</div>`;
+}
+// As que você mais erra primeiro, depois as inéditas, depois as que já acertou (embaralhadas dentro de cada grupo)
+function priorizar(lista) {
+  const peso = q => { const s = S.questoes[q.id]; return !s ? 1 : s.ult === 0 || s.erros > s.acertos ? 0 : 2; };
+  return embaralhar(lista.slice()).sort((x, y) => peso(x) - peso(y));
+}
+const statusQ = id => { const s = S.questoes[id]; return !s ? "nova" : (s.ult === 0 || (s.ult === undefined && s.erros > s.acertos)) ? "errada" : "certa"; };
+const noCaderno = id => statusQ(id) === "errada";
+/* Motor das sessões de questões do modo Exercícios.
+   modo: "livre" (correção a cada questão), "simulado" (cronômetro, correção só no fim),
+         "desafio" (pontos por acerto e rapidez; ranking pessoal) ou "caderno" (refazer os erros) */
+async function sessaoQuestoes(box, lista, modo, aoSair, rotulo = "") {
+  const mods = [...new Set(lista.map(q => q.modulo).filter(Boolean))];
+  if (mods.some(id => modulo(id) && !modulo(id)._completo)) {
+    box.innerHTML = `<div class="carregando" role="status"><div class="spin" aria-hidden="true"></div><p class="muted">Carregando as questões…</p></div>`;
+    try { await carregarModulos(mods); } catch (e) { box.innerHTML = `<div class="card"><b>Sem conexão.</b><p class="small muted">Essas questões ainda não foram baixadas para usar offline.</p></div>`; return; }
+  }
+  lista = lista.map(q => Q[q.id] || q).filter(q => !q._stub);
+  const simulado = modo === "simulado", desafio = modo === "desafio";
+  const res = [], t0 = Date.now(), limite = simulado ? lista.length * 90 : 0; // simulado: 1 min 30 s por questão
+  let i = 0, pts = 0, tQ = Date.now(), relogio = null;
+  const fim = () => {
+    clearInterval(relogio); limparTela = null;
+    const acertos = res.filter(r => r.ok).length, n = lista.length, pct = Math.round(acertos / Math.max(1, n) * 100), seg = Math.round((Date.now() - t0) / 1000);
+    let extra = "";
+    if (simulado) {
+      S.exercicios.simulados.unshift({ data: hoje(), acertos, total: n, seg, rotulo }); S.exercicios.simulados = S.exercicios.simulados.slice(0, 20); salvar();
+      extra = `<h2 class="sec-t">Correção</h2><div class="correcao">${lista.map((q, k) => { const r = res[k];
+        const certa = q.tipo === "calculo" ? `${numeroBR(q.resposta)} ${q.unidade || ""}` : q.tipo === "vf" ? (q.correta ? "Verdadeiro" : "Falso") : q.opcoes ? q.opcoes[q.correta] : q.itens ? q.itens.join(" → ") : "";
+        return `<details class="corr ${r ? (r.ok ? "ok" : "bad") : "bad"}"><summary><span class="num">${k + 1}</span> ${r ? (r.ok ? "Certa" : "Errada") : "Sem resposta"} · ${esc(limpar(q.pergunta || "").slice(0, 90))}</summary>
+          ${certa ? `<p><b>Resposta:</b> ${fmt(certa)}</p>` : ""}${q.resolucao ? `<div>${fmt(q.resolucao)}</div>` : ""}${q.explicacao ? `<p class="small muted">${fmt(q.explicacao)}</p>` : ""}</details>`; }).join("")}</div>`;
+    }
+    if (desafio) {
+      const R = S.exercicios.ranking; R.push({ pts, data: hoje(), acertos, total: n, rotulo }); R.sort((a, b) => b.pts - a.pts); S.exercicios.ranking = R.slice(0, 10); salvar();
+      const pos = S.exercicios.ranking.findIndex(r => r.pts === pts && r.data === hoje()) + 1;
+      extra = `<p class="destaque num">${pts.toLocaleString("pt-BR")} pontos</p>${pos ? `<p class="small">${pos === 1 ? "Novo recorde pessoal!" : `${pos}º lugar no seu ranking`}</p>` : `<p class="small muted">Fora do seu top 10.</p>`}${htmlRanking()}`;
+    }
+    box.innerHTML = `<div class="resumo-box"><p><b>${acertos} de ${n}</b> corretas (${pct}%) · ${Math.floor(seg / 60)} min ${seg % 60} s</p>
+        <p class="small muted">${pct === 100 ? "Excelente: tudo certo." : "As que você errou foram para o caderno de erros e para a revisão espaçada."}</p></div>${extra}
+      <div class="row wrap mt"><button class="btn" id="sair-s">${ic("revisar")} Nova sessão</button></div>`;
+    $("#sair-s", box).onclick = aoSair;
+    window.scrollTo(0, 0);
+  };
+  const tempo = () => { const s = limite - Math.round((Date.now() - t0) / 1000), e = $("#relogio", box);
+    if (e) { e.textContent = `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, "0")}`; e.classList.toggle("pouco", s < 60); }
+    if (s <= 0) { $$(".sheet").forEach(x => x.remove()); fim(); } };
+  if (simulado) { relogio = setInterval(tempo, 1000); limparTela = () => clearInterval(relogio); }
+  const prox = () => {
+    if (i >= lista.length) return fim();
+    const q = lista[i]; tQ = Date.now();
+    box.innerHTML = `<div class="row sess-top"><span class="small muted">Questão ${i + 1} de ${lista.length}</span>
+        ${simulado ? `<span class="relogio num" id="relogio" aria-live="off"></span>` : desafio ? `<span class="small num">${pts.toLocaleString("pt-BR")} pts</span>` : `<span class="small muted num">${res.filter(r => r.ok).length} certas</span>`}
+        <button class="link small" id="encerrar">Encerrar</button></div>
+      <div class="prog"><div style="width:${i / lista.length * 100}%"></div></div><div id="qarea" class="lesson-pad"></div>`;
+    if (simulado) tempo();
+    $("#encerrar", box).onclick = () => { $$(".sheet").forEach(x => x.remove()); lista = lista.slice(0, i); fim(); };
+    renderQuestao(q, $("#qarea", box), (acertou, qi) => {
+      if (!document.body.contains(box)) return;
+      registrarResposta(q, acertou);
+      if (acertou) { ganharXP(1); if (desafio) pts += 100 + Math.max(0, Math.round(50 - (Date.now() - tQ) / 1000)); }
+      res[i] = { ok: acertou }; lista[i] = qi || q;
+      i++; prox(); window.scrollTo(0, 0);
+    }, { semFeedback: simulado });
+  };
+  prox();
+}
+function htmlRanking() {
+  const R = S.exercicios.ranking;
+  return R.length ? `<h2 class="sec-t">Seu ranking</h2><div class="tabela"><table><tr><th>#</th><th class="n">Pontos</th><th class="n">Acertos</th><th>Filtro</th><th>Data</th></tr>${R.map((r, k) =>
+    `<tr><td class="n">${k + 1}</td><td class="n">${r.pts.toLocaleString("pt-BR")}</td><td class="n">${r.acertos}/${r.total}</td><td>${esc(r.rotulo || "Tudo")}</td><td>${r.data.split("-").reverse().join("/")}</td></tr>`).join("")}</table></div>` : "";
+}
+const especialista = id => { const r = registroNivel(id, "dificil"); return !!r && (r.melhor ?? Math.round(r.acertos / Math.max(1, r.total) * 100)) >= 80; };
+
+/* =====================================================================
+   TELA: EXERCÍCIOS (modo estudo) — filtros + 4 modos, tudo liberado
+   ===================================================================== */
+function telaPraticar() {
+  const F = Object.assign({ mod: "", lic: "", nivel: "", status: "", modo: "livre", qtd: 10 }, S.config.filtroEx || {});
+  const todas = Object.values(Q).filter(q => q.licao && q.modulo && modulo(q.modulo));
+  const MODOS = [["livre", "Prática livre", "play", "Correção a cada questão"], ["simulado", "Simulado", "relogio", "Cronômetro; correção só no fim"],
+    ["desafio", "Desafio", "trofeu", "Pontos por acerto e rapidez"], ["caderno", "Caderno de erros", "caderno", "Refaça o que errou"]];
+  const resp = Object.keys(S.questoes).length, acTot = Object.values(S.questoes).reduce((t, s) => t + s.acertos, 0), erTot = Object.values(S.questoes).reduce((t, s) => t + s.erros, 0);
+  const nEsp = LICOES.filter(l => especialista(l.id)).length;
+  function filtrar() {
+    return todas.filter(q => (!F.mod || q.modulo === F.mod) && (!F.lic || q.licao === F.lic) && (!F.nivel || q.nivel === F.nivel)
+      && (F.modo === "caderno" ? noCaderno(q.id) : !F.status || statusQ(q.id) === F.status)
+      && (!["simulado", "desafio"].includes(F.modo) || q.tipo !== "discursiva")
+      && (F.modo !== "desafio" || ["multipla", "vf", "caso", "lacuna", "calculo"].includes(q.tipo))); // desafio conta a rapidez: só questões diretas
+  }
+  function desenhar() {
+    S.config.filtroEx = F; salvar();
+    const m = F.mod && modulo(F.mod), base = todas.filter(q => (!F.mod || q.modulo === F.mod) && (!F.lic || q.licao === F.lic));
+    const pool = filtrar(), nCad = todas.filter(q => noCaderno(q.id)).length;
+    const opMods = (lst) => lst.map(x => `<option value="${x.id}"${x.id === F.mod ? " selected" : ""}>${esc(limpar(x.titulo))}</option>`).join("");
+    const st = [["", "Todas"], ["nova", "Não respondidas"], ["errada", "Erradas"], ["certa", "Acertadas"]];
+    app().innerHTML = barraTopo() + `<h1>Exercícios</h1>
+      <p class="lead">Modo estudo: tudo liberado. Escolha o assunto, o nível e como quer praticar.</p>
+      <div class="stats-ex">
+        <div><span class="v num">${resp}</span><span class="small muted">questões respondidas</span></div>
+        <div><span class="v num">${acTot + erTot ? Math.round(acTot / (acTot + erTot) * 100) : 0}%</span><span class="small muted">de acerto</span></div>
+        <div><span class="v num">${nCad}</span><span class="small muted">no caderno de erros</span></div>
+        <div><span class="v num">${nEsp}</span><span class="small muted">tópicos Especialista</span></div></div>
+      <h2 class="sec-t">Modo</h2>
+      <div class="modos" role="radiogroup" aria-label="Modo">${MODOS.map(([k, t, i, d]) => `<button role="radio" aria-checked="${k === F.modo}" class="modo${k === F.modo ? " on" : ""}" data-modo="${k}">
+        ${ic(i)}<b>${t}${k === "caderno" && nCad ? ` <span class="num">${nCad}</span>` : ""}</b><span class="small muted">${d}</span></button>`).join("")}</div>
+      <h2 class="sec-t">Filtros</h2>
+      <div class="filtros-ex">
+        <label>Disciplina ou módulo<select id="f-mod"><option value="">Todas</option>
+          <optgroup label="Módulos do curso">${opMods(MODS.filter(x => !x.grade))}</optgroup>
+          ${Array.from({ length: 10 }, (_, k) => k + 1).map(pp => { const ds = MODS.filter(x => x.grade && x.periodo === pp); return ds.length ? `<optgroup label="${pp}º período">${opMods(ds)}</optgroup>` : ""; }).join("")}</select></label>
+        <label>Tópico<select id="f-lic"${m ? "" : " disabled"}><option value="">${m ? "Todos os tópicos" : "Escolha a disciplina antes"}</option>
+          ${m ? m.licoes.map(l => `<option value="${l.id}"${l.id === F.lic ? " selected" : ""}>${esc(limpar(l.titulo))}${especialista(l.id) ? " ★" : ""}</option>`).join("") : ""}</select></label>
+      </div>
+      <div class="small muted mt">Nível</div>${chipsNivel(base, F.nivel)}
+      ${F.modo === "caderno" ? "" : `<div class="small muted mt">Situação</div><div class="filtro-nivel" role="group" aria-label="Situação">${st.map(([v, t]) =>
+        `<button class="chip-f${v === F.status ? " on" : ""}" data-st="${v}" aria-pressed="${v === F.status}">${t}</button>`).join("")}</div>`}
+      <div class="comecar-ex">
+        <label class="small">Questões <select id="f-qtd">${[5, 10, 20, 30].map(n => `<option${n === F.qtd ? " selected" : ""}>${n}</option>`).join("")}</select></label>
+        <span class="small muted"><b class="num">${pool.length}</b> disponíveis</span>
+        <button class="btn" id="comecar"${pool.length ? "" : " disabled"}>${ic("play")} Começar</button></div>
+      ${!pool.length && F.modo === "caderno" ? `<p class="small muted">Seu caderno está vazio${F.mod || F.nivel ? " com esses filtros" : ""}. As questões que você errar aparecem aqui até você acertá-las.</p>` : ""}
+      ${F.modo === "desafio" ? htmlRanking() : ""}
+      ${F.modo === "simulado" && S.exercicios.simulados.length ? `<h2 class="sec-t">Últimos simulados</h2><div class="lista">${S.exercicios.simulados.slice(0, 5).map(s =>
+        `<div class="mini"><span class="grow mtx"><b>${s.acertos}/${s.total} (${Math.round(s.acertos / s.total * 100)}%)</b><span class="ms">${esc(s.rotulo || "Tudo")} · ${s.data.split("-").reverse().join("/")} · ${Math.floor(s.seg / 60)} min</span></span></div>`).join("")}</div>` : ""}
+      <div id="sessao"></div>
+      <p class="small center mt"><a class="link" href="#trilha">Prefere o modo jogo? Abra a Trilha ›</a> · <a class="link" href="#revisar">Revisão espaçada</a> · <a class="link" href="#flashcards">Flashcards</a></p>`;
+    $$("[data-modo]").forEach(b => b.onclick = () => { F.modo = b.dataset.modo; desenhar(); });
+    $$("[data-nv]").forEach(b => b.onclick = () => { F.nivel = b.dataset.nv; desenhar(); });
+    $$("[data-st]").forEach(b => b.onclick = () => { F.status = b.dataset.st; desenhar(); });
+    $("#f-mod").onchange = e => { F.mod = e.target.value; F.lic = ""; desenhar(); };
+    $("#f-lic").onchange = e => { F.lic = e.target.value; desenhar(); };
+    $("#f-qtd").onchange = e => { F.qtd = +e.target.value; salvar(); };
+    $("#comecar").onclick = () => {
+      const rot = [m ? limpar(m.titulo) : "", F.lic ? limpar(LICOES.find(l => l.id === F.lic).titulo) : "", F.nivel ? NIVEIS_ESTUDO[F.nivel].nome : ""].filter(Boolean).join(" · ");
+      app().innerHTML = barraTopo() + `<p class="small"><a href="#praticar" id="voltar-ex">‹ Exercícios</a></p><h1>${MODOS.find(x => x[0] === F.modo)[1]}</h1>
+        ${rot ? `<p class="small muted">${esc(rot)}</p>` : ""}<div id="sessao"></div>`;
+      sessaoQuestoes($("#sessao"), priorizar(pool).slice(0, F.qtd), F.modo === "caderno" ? "livre" : F.modo, desenhar, rot);
+    };
+  }
+  desenhar();
 }
 function telaFerramenta(id) {
   const f = FERR(id);
@@ -2166,12 +2313,13 @@ function telaHistoricoDesafios() {
 const areaDe = m => m.grade ? m.fonte.area : (m.area || (m.id === "m13" ? "exatas" : "producao"));
 // Estudar em 3 blocos: Estudar (assunto / disciplina / área), Praticar e Materiais. O nível é um filtro.
 function telaEstudar(sub, param) {
+  if (sub === "praticar") { location.replace("#praticar"); return; } // a prática agora é a tela Exercícios
   const antigos = { assuntos: "assunto", areas: "area", aprofundar: "materiais" };
   if (sub === "nivel") { if (ORDEM_NIVEIS.includes(param) && S.config.nivel !== param) { S.config.nivel = param; salvar(); } sub = "assunto"; param = null; }
   sub = antigos[sub] || sub || "assunto";
   const bloco = sub === "praticar" ? "praticar" : sub === "materiais" ? "materiais" : "estudar";
   const nivel = ORDEM_NIVEIS.includes(S.config.nivel) ? S.config.nivel : "facil";
-  const abas = [["estudar", "📖 Estudar", "#estudar"], ["praticar", "🎮 Praticar", "#estudar/praticar"], ["materiais", "📚 Materiais", "#estudar/materiais"]];
+  const abas = [["estudar", "📖 Estudar", "#estudar"], ["praticar", "🎮 Praticar", "#praticar"], ["materiais", "📚 Materiais", "#estudar/materiais"]];
   const filtroNivel = `<div class="nivel-filtro" role="group" aria-label="Nível">${ORDEM_NIVEIS.map(k => `<button class="${k === nivel ? "on" : ""}" data-nivel="${k}" aria-pressed="${k === nivel}">${NIVEIS_ESTUDO[k].icone} ${NIVEIS_ESTUDO[k].nome}</button>`).join("")}</div>`;
   let corpo = "";
   if (bloco === "estudar") {
@@ -2644,7 +2792,7 @@ function telaTrilha(visao, per) {
    COMPONENTE: RENDERIZAR UMA QUESTÃO
    Usado na lição e na revisão. Chama aoResponder(acertou) após verificar.
    ===================================================================== */
-function renderQuestao(q, cont, aoResponder) {
+function renderQuestao(q, cont, aoResponder, opcoes = {}) {
   q = Parametros.instanciar(q); // questões-modelo ganham números novos a cada vez
   siglasBloqueadas = bloqueioDaQuestao(q);
   cont.dataset.qid = q.id;      // identifica a questão exibida (útil para testes automáticos)
@@ -2793,6 +2941,7 @@ function renderQuestao(q, cont, aoResponder) {
     if (!pronto()) return;
     const acertou = corrigir();
     acao.remove();
+    if (opcoes.semFeedback) { aoResponder(acertou, q); return; } // simulado: a correção vem no fim
     som(acertou ? "acerto" : "erro");
     let expl = q.explicacao || "";
     if (q.tipo === "calculo") expl = `Resposta: ${numeroBR(q.resposta)} ${q.unidade || ""}\n\n${q.resolucao || ""}\n\n${expl}`;
@@ -2809,7 +2958,7 @@ function renderQuestao(q, cont, aoResponder) {
       <button class="btn grow" id="continuar-q">Continuar</button></div></div>`;
     document.body.appendChild(sh);
     $("#ouvir-expl", sh).onclick = () => falar(expl, "Explicação");
-    $("#continuar-q", sh).onclick = () => { pararFala(); sh.remove(); aoResponder(acertou); };
+    $("#continuar-q", sh).onclick = () => { pararFala(); sh.remove(); aoResponder(acertou, q); };
     $("#continuar-q", sh).focus();
   };
 }
@@ -2858,6 +3007,8 @@ function telaCapa(l) {
     const minutos = Math.max(3, Math.round(nb * 0.8 + nq * 0.9));
     const pre = l.prerequisitos || [];
     const sugerirFacil = !unico && sel !== "facil" && niveis.includes("facil") && !nivelConcluido(l.id, "facil");
+    // Na Trilha (modo jogo) o Difícil pede o Médio concluído; em Exercícios tudo fica liberado
+    const travaDificil = n => n === "dificil" && niveis.includes("medio") && !nivelConcluido(l.id, "medio") && !nivelConcluido(l.id, "dificil");
     app().innerHTML = `<div class="lesson-top"><button class="iconbtn" id="voltar" aria-label="Voltar">✕</button>
         <div class="grow small muted">${m.icone} ${esc(m.titulo)}</div></div>
       <h1>${l.icone || "⭐"} ${esc(l.titulo)}</h1>
@@ -2866,8 +3017,8 @@ function telaCapa(l) {
         : `<p class="small muted">Escolha o nível. Você pode refazer a lição em outro nível quando quiser.</p>
            <div class="lvl-cards">${niveis.map(n => {
              const r = registroNivel(l.id, n), N = NIVEIS_ESTUDO[n];
-             return `<button class="lvl-card ${n === sel ? "on" : ""}" data-n="${n}">
-               ${r ? `<span class="st">✓ ${r.melhor ?? Math.round(r.acertos / Math.max(1, r.total) * 100)}%</span>` : ""}
+             return `<button class="lvl-card ${n === sel ? "on" : ""}${travaDificil(n) ? " travado" : ""}" data-n="${n}">
+               ${r ? `<span class="st">✓ ${r.melhor ?? Math.round(r.acertos / Math.max(1, r.total) * 100)}%${n === "dificil" && especialista(l.id) ? " · Especialista" : ""}</span>` : travaDificil(n) ? `<span class="st">🔒 conclua o Médio</span>` : ""}
                <div class="t">${N.icone} ${N.nome} — ${N.sub}</div><div class="small muted">${N.desc}</div></button>`;
            }).join("")}</div>`}
       ${sugerirFacil ? `<div class="bloco atencao"><div class="tag">💡 Sugestão</div>Se o tema é novo para você, comece pelo <b>Fácil</b>. O ${NIVEIS_ESTUDO[sel].nome} pressupõe os fundamentos.</div>` : ""}
@@ -2878,7 +3029,8 @@ function telaCapa(l) {
           return `<li>${fmt(p.texto)}${pode ? ` — <a href="#licao/${alvo.id}">revisar “${esc(alvo.titulo)}”</a>` : alvo ? " <span class='muted'>(lição ainda bloqueada)</span>" : ""}</li>`;
         }).join("")}</ul></div>` : ""}
       <p class="small muted">⏱️ ~${minutos} min · ${nb} blocos · ${nq} exercícios${nBanco > nq ? ` sorteados de um banco de ${nBanco}` : ""}${nModelos ? ` · 🎲 ${nModelos} com números que mudam a cada vez` : ""}${(m.glossario || []).length ? ` · <a href="#glossario/${m.id}">📖 glossário do módulo</a>` : ""}</p>
-      <div class="footer-action"><button class="btn" id="comecar">Começar${unico ? "" : ` no ${NIVEIS_ESTUDO[sel].nome}`} ▶</button></div>`;
+      ${travaDificil(sel) ? `<div class="bloco atencao"><div class="tag">🔒 Difícil</div>Na trilha, o Difícil libera depois do <b>Médio</b> desta lição (é ele que dá a base). Quer treinar já? Use <a href="#praticar">Exercícios</a>, onde tudo fica liberado.</div>` : ""}
+      <div class="footer-action"><button class="btn" id="comecar"${travaDificil(sel) ? " disabled" : ""}>Começar${unico ? "" : ` no ${NIVEIS_ESTUDO[sel].nome}`} ▶</button></div>`;
     $("#voltar").onclick = () => ir(rotaTrilha(m));
     $$(".lvl-card").forEach(b => b.onclick = () => { sel = b.dataset.n; som("clique"); desenhar(); });
     $("#comecar").onclick = () => {
@@ -2972,6 +3124,7 @@ function telaLicao(id, nivel) {
     const resumo = porNivel(l.resumo, nivel);
     // Recomendação honesta a partir do desempenho (não do simples fato de concluir)
     let recomendacao = "";
+    if (nivel === "dificil" && pct >= 80) recomendacao += `<div class="bloco dica" style="text-align:left"><div class="tag">🛡️ Selo Especialista</div>Você fez ${pct}% no Difícil de “${esc(l.titulo)}”. O tópico agora aparece com o selo <b>Especialista</b>.</div>`;
     if (pct >= 80 && acima) recomendacao = `<div class="bloco dica" style="text-align:left"><div class="tag">📈 Próximo passo</div>Bom domínio neste nível (${pct}%). Quando quiser, aprofunde no <b>${NIVEIS_ESTUDO[acima].icone} ${NIVEIS_ESTUDO[acima].nome}</b>.</div>`;
     else if (pct < 60) recomendacao = `<div class="bloco atencao" style="text-align:left"><div class="tag">💡 Recomendação</div>Acerto de primeira abaixo de 60%. Releia o resumo abaixo${(l.prerequisitos || []).length ? ", confira os pré-requisitos na capa" : ""}${abaixo ? ` e considere refazer no <b>${NIVEIS_ESTUDO[abaixo].nome}</b>` : " e refaça a lição amanhã"}. As questões erradas voltam na revisão.</div>`;
     app().innerHTML = `<div class="center" style="padding-top:30px">

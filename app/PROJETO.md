@@ -424,3 +424,16 @@ window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergun
 - **Busca** (`buscarAgrupado`): um cartão por assunto, com atalhos Conceito · Lição(ões) · Ferramenta · Exercícios (n) · Mapa. Problemas e disciplinas aparecem em "Relacionados".
 - **Página do assunto** (`#assunto/<chave>/<aba>`): abas Visão geral · Conceito · Ferramenta · Lições · Exercícios · Mapa. A aba fica no endereço. Em Exercícios há prática livre por nível, com até 10 questões (as mais erradas primeiro). As respostas entram nas estatísticas e na revisão espaçada.
 - **Início:** pesquisa, continuar, desafio do dia, revisão de hoje e **Seu progresso** (disciplinas e módulos começados, com barra).
+
+## 14. Trilha × Exercícios (Reformulação, Etapa 3)
+
+- **Trilha** (`#trilha`, modo jogo): emojis, XP, desbloqueio em sequência. Na capa da lição, o **Difícil** só libera depois do **Médio** daquela lição.
+- **Exercícios** (`#praticar`, modo estudo): tudo liberado. Filtros por disciplina/módulo, tópico, nível e situação (não respondidas, erradas, acertadas). A escolha fica salva em `S.config.filtroEx`.
+- **Modos** (`sessaoQuestoes`):
+  - **Prática livre:** correção a cada questão.
+  - **Simulado:** 1 min 30 s por questão, correção só no fim (`renderQuestao(..., { semFeedback: true })`). Histórico em `S.exercicios.simulados`.
+  - **Desafio:** só questões diretas; 100 pontos por acerto + até 50 de rapidez. Top 10 pessoal em `S.exercicios.ranking`.
+  - **Caderno de erros:** questões cujo último resultado foi erro (`S.questoes[id].ult === 0`). Saem ao acertar.
+- As sessões priorizam as questões que você mais erra, depois as inéditas.
+- **Selo Especialista** (`especialista(id)`): 80% ou mais no Difícil do tópico. Aparece no resultado da lição, na capa, na página do assunto e na tela Exercícios.
+- **Armazenamento:** `S.exercicios` e `S.questoes[id].ult` são campos novos. O `mesclar()` preenche o padrão para quem já tinha progresso salvo (migração automática, sem perda).

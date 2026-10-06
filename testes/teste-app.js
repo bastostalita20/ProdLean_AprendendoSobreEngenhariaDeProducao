@@ -248,10 +248,30 @@ async function recuperarVidas(p) {
   checar(g.n >= 50 && g.periodos === 10 && !g.semQuestao && g.feitas === g.n, 'grade: todas as disciplinas carregadas e com exercícios');
   await p.evaluate(() => ir('estudar')); await p.waitForTimeout(150);
   checar(JSON.stringify(await p.$$eval('.abas a', a => a.map(x => x.textContent.trim()))) === JSON.stringify(['Estudar', 'Praticar', 'Materiais']) && (await p.$$('.nivel-filtro button')).length === 3, 'Estudar em 3 blocos com filtro de nível');
-  await p.click('.abas a:has-text("Praticar")'); await p.waitForTimeout(150);
-  checar(await p.evaluate(() => ['#exercicios', '#quiz', '#revisar', '#flashcards'].every(h => document.querySelector(`a[href="${h}"]`))), 'Praticar: exercícios, quiz, revisão espaçada e flashcards');
-  await p.click('.nivel-filtro [data-nivel="dificil"]'); await p.waitForTimeout(100);
-  checar(await p.evaluate(() => S.config.nivel) === 'dificil' && await p.$('.nivel-filtro .on[data-nivel="dificil"]'), 'filtro de nível no Praticar');
+  await p.click('.abas a:has-text("Praticar")'); await p.waitForTimeout(300);
+  // Exercícios (modo estudo): filtros, 4 modos, tudo liberado
+  checar(await p.evaluate(() => location.hash) === '#praticar' && await p.$('#nav a.active[data-tab="exercicios"]') && (await p.$$('.modo')).length === 4
+    && await p.evaluate(() => ['#trilha', '#revisar', '#flashcards'].every(h => document.querySelector(`a[href="${h}"]`))), 'Exercícios: 4 modos, separado da Trilha');
+  await p.selectOption('#f-mod', 'm03'); await p.waitForTimeout(100);
+  const nTodos = await p.evaluate(() => +document.querySelector('.comecar-ex b').textContent);
+  await p.click('[data-nv="dificil"]'); await p.waitForTimeout(100);
+  const nDif = await p.evaluate(() => +document.querySelector('.comecar-ex b').textContent);
+  checar(nTodos > 20 && nDif > 0 && nDif < nTodos && !(await p.$eval('#f-lic', s => s.disabled)), `filtros por disciplina e nível (${nTodos} → ${nDif} no Difícil)`);
+  // Simulado: cronômetro e correção só no fim
+  await p.click('[data-modo="simulado"]'); await p.selectOption('#f-qtd', '5'); await p.click('#comecar'); await p.waitForSelector('#qarea .opt, #qarea input, #qarea .order-item, #qarea [data-v]', { timeout: 10000 }).catch(() => {});
+  checar(await p.$('#relogio') && /\d+:\d\d/.test(await p.textContent('#relogio')), 'simulado com cronômetro');
+  await p.click('#encerrar'); await p.waitForTimeout(200);
+  checar((await p.textContent('#sessao')).includes('corretas') && await p.evaluate(() => S.exercicios.simulados.length) >= 1, 'simulado encerrado mostra o resultado e fica no histórico');
+  // Caderno de erros: o que errou entra; acertar depois tira
+  const cad = await p.evaluate(() => { const q = Object.values(Q).find(x => x.modulo === 'm03' && x.tipo === 'vf'); registrarResposta(q, false); const a = noCaderno(q.id); registrarResposta(q, true); return [a, noCaderno(q.id)]; });
+  checar(cad[0] === true && cad[1] === false, 'caderno de erros: entra ao errar e sai ao acertar');
+  // Na Trilha o Difícil pede o Médio; o selo Especialista vem com 80% no Difícil
+  const trava = await p.evaluate(() => { const l = LICOES.find(x => x.modulo === 'm03' && niveisDaLicao(x).includes('medio') && !nivelConcluido(x.id, 'medio')); if (!l) return 'sem-licao'; ir('licao/' + l.id); return l.id; });
+  await p.waitForTimeout(200);
+  if (trava !== 'sem-licao') { await p.click('.lvl-card[data-n="dificil"]'); checar(await p.$eval('#comecar', b => b.disabled) && await p.$('.lvl-card.travado'), 'Trilha: Difícil libera depois do Médio'); }
+  checar(await p.evaluate(() => { const ant = S.licoes['zz-teste']; S.licoes['zz-teste'] = { niveis: { dificil: { acertos: 9, total: 10, melhor: 90 } } }; S.licoes['zz-teste2'] = { niveis: { dificil: { acertos: 7, total: 10, melhor: 70 } } };
+    const r = especialista('zz-teste') && !especialista('zz-teste2'); delete S.licoes['zz-teste']; delete S.licoes['zz-teste2']; return r; }), 'selo Especialista com 80%+ no Difícil');
+  await p.evaluate(() => { S.config.nivel = 'dificil'; salvar(); });
   await p.evaluate(() => { S.config.nivel = 'facil'; salvar(); ir('estudar/materiais'); }); await p.waitForTimeout(150);
   checar(await p.evaluate(() => ['#mapas', '#conteudo', '#glossario'].every(h => document.querySelector(`a[href="${h}"]`))), 'Materiais: mapas, conteúdo completo e glossário');
   await p.evaluate(() => ir('estudar/disciplina/3')); await p.waitForTimeout(150);
