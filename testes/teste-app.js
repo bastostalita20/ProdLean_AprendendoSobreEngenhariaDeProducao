@@ -278,6 +278,14 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => { const ant = S.licoes['zz-teste']; S.licoes['zz-teste'] = { niveis: { dificil: { acertos: 9, total: 10, melhor: 90 } } }; S.licoes['zz-teste2'] = { niveis: { dificil: { acertos: 7, total: 10, melhor: 70 } } };
     const r = especialista('zz-teste') && !especialista('zz-teste2'); delete S.licoes['zz-teste']; delete S.licoes['zz-teste2']; return r; }), 'selo Especialista com 80%+ no Difícil');
   await p.evaluate(() => { S.config.nivel = 'dificil'; salvar(); });
+  // Guias visuais: índice, página do guia (blocos numerados, fórmulas, tabela) e aba no assunto
+  await p.evaluate(() => ir('guias')); await p.waitForSelector('.g-card', { timeout: 10000 });
+  checar(await p.$('a.g-card[href="#guia/mrp"]'), 'índice de guias visuais');
+  await p.click('a.g-card[href="#guia/mrp"]'); await p.waitForSelector('.guia .g-b'); await p.waitForTimeout(800);
+  const gv = await p.evaluate(() => ({ blocos: document.querySelectorAll('.guia .g-b').length, katex: document.querySelectorAll('.guia .katex').length, svg: !!document.querySelector('.guia .fig-bom svg'), tab: document.querySelectorAll('.guia .g-tab tr').length, largo: document.getElementById('app').classList.contains('largo') }));
+  checar(gv.blocos >= 10 && gv.katex >= 3 && gv.svg && gv.tab >= 5 && gv.largo, `guia visual do MRP (${gv.blocos} blocos, ${gv.katex} fórmulas)`);
+  await p.evaluate(() => ir('assunto/f%3Amrp')); await p.waitForTimeout(800);
+  checar(await p.$('.abas-t [data-aba="guia"]') && !(await p.evaluate(() => document.getElementById('app').classList.contains('largo'))), 'aba "Guia visual" na página do assunto');
   // Banco de questões piloto (MRP): 7/7/6, tabela para completar, figura da estrutura, resolução em LaTeX
   const mrp = await p.evaluate(async () => { await carregarModulos(['m03']); const qs = LICOES.find(l => l.id === 'm03-l5').questoes.filter(q => q.id.startsWith('mrp-'));
     const n = k => qs.filter(q => q.nivel === k).length; return { total: qs.length, f: n('facil'), m: n('medio'), d: n('dificil'), tipos: [...new Set(qs.map(q => q.tipo))], ref: qs.every(q => q.referencia), just: qs.filter(q => q.opcoes).every(q => q.justificativas && q.justificativas.length === q.opcoes.length) }; });
@@ -345,7 +353,7 @@ async function recuperarVidas(p) {
   // Página do assunto em abas, com prática dos exercícios do tema
   await p.click('#res .assunto-card:first-child .ac-head'); await p.waitForTimeout(500);
   const abasAs = await p.$$eval('.abas-t [role=tab]', a => a.map(x => x.dataset.aba));
-  checar(JSON.stringify(abasAs) === JSON.stringify(['geral', 'conceito', 'ferramenta', 'licoes', 'exercicios', 'mapa']) && (await p.$$('.aba-p:not([hidden])')).length === 1, 'página do assunto com 6 abas, uma visível por vez');
+  checar(JSON.stringify(abasAs) === JSON.stringify(['geral', 'guia', 'conceito', 'ferramenta', 'licoes', 'exercicios', 'mapa']) && (await p.$$('.aba-p:not([hidden])')).length === 1, 'página do assunto com 7 abas (com o guia visual), uma visível por vez');
   await p.click('[data-aba="exercicios"]'); await p.waitForTimeout(150);
   checar((await p.evaluate(() => location.hash)) === '#assunto/f%3Amrp/exercicios', 'aba guardada no endereço');
   await p.click('[data-nv="facil"]'); await p.click('#comecar'); await p.waitForTimeout(200);

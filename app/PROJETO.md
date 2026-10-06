@@ -452,3 +452,12 @@ window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergun
   - `estilo: "concurso"` (cinco alternativas, formato de banca) mostra o selo "Estilo concurso".
   - Questão **real** de concurso, ENADE ou livro deve trazer `fonte` com a origem exata (banca, órgão, ano, nº; ou livro, capítulo, exercício). Sem fonte verificada, a questão é autoral.
 - **Revisão:** `node scripts/relatorio-questoes.js mrp` gera `dist-relatorio/questoes-mrp.html`, com todas as questões, gabaritos, tabelas preenchidas, figuras e resoluções.
+
+## 16. Guias visuais (um tema numa página)
+
+- **O que é:** página-resumo por tema, com faixa de título numerada e uma grade de blocos numerados e coloridos: definição, fluxo entradas → saídas, comparação, figura, fórmulas com legenda (símbolo, significado, unidade), tabela-exemplo, passo a passo, erros comuns, dicas de prova, conexões e evolução.
+- **Exibição:** na tela, os blocos se reorganizam (1 coluna no celular, até 4 no computador). Na impressão, cabe em **uma folha A4 paisagem** (`@page guia`). O botão "Imprimir ou salvar PDF" liga `body.print-guia`, que deixa só o guia na folha.
+- **Dados:** `scripts/guias/<tema>.js` gera `app/conteudo/guias/<tema>.js` (em `window.GUIAS`). Os números dos exemplos são calculados com o mesmo motor das questões (`scripts/questoes/mrp-motor.js`), então guia e exercícios batem. Liste o arquivo em `ARQUIVOS_GUIAS` (conteudo/indice.js).
+- **Tipos de bloco:** `texto` (com `destaque`), `fluxo`, `comparacao`, `figura`, `formulas`, `tabela` (`texto: true` para células de texto), `passos`, `lista` (`estilo`: `erro`, `dica` ou `ok`), `linha`. O campo `largo: true` faz o bloco ocupar 2 colunas.
+- **Onde aparece:** Buscar → Guias visuais (`#guias`), `#guia/<id>` e a aba **Guia visual** na página do assunto (campo `assunto`).
+- **Ao criar um guia:** confira se cabe numa página (o teste mede a altura em modo impressão) e use texto e desenho próprios.

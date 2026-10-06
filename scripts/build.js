@@ -133,7 +133,7 @@ async function substituirAsync(txt, re, fn) {
 
 (async () => {
   // Bancos de questões por tópico: gera (ou, com --checar, confere) antes do catálogo
-  fs.readdirSync(path.join(__dirname, "questoes")).filter(f => f.endsWith(".js")).forEach(f => require("./questoes/" + f));
+  for (const dir of ["questoes", "guias"]) fs.readdirSync(path.join(__dirname, dir)).filter(f => f.endsWith(".js") && !f.includes("motor")).forEach(f => require(`./${dir}/` + f)); // e os guias visuais
   const novo = gerarCatalogo();
   const ler = f => fs.existsSync(f) ? fs.readFileSync(f, "utf8") : "";
   if (process.argv.includes("--checar")) {

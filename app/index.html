@@ -215,6 +215,10 @@ ul.pontos { padding-left: 20px; margin: 6px 0 10px; } ul.pontos li { margin-bott
   .a4, .a4 * { visibility: visible; }
   .a4 { position: fixed; left: 0; top: 0; transform: none !important; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .nav, .topbar, .no-print { display: none !important; }
+  /* guia visual: só o guia, em A4 paisagem */
+  body.print-guia * { visibility: visible; }
+  body.print-guia #app > :not(.guia), body.print-guia .sheet, body.print-guia #ouvir-bar { display: none !important; }
+  body.print-guia #app { padding: 0 !important; margin: 0 !important; max-width: none !important; }
 }
 
 /* =====================================================================
@@ -613,6 +617,56 @@ button.link { background: none; border: 0; color: var(--primary); font: inherit;
 .corr summary { cursor: pointer; font-size: .9rem; }
 .corr summary .num { color: var(--muted); margin-right: 4px; }
 .lvl-card.travado { opacity: .65; }
+/* guias visuais */
+.app.largo { max-width: 1240px; }
+.app.largo .topbar, .app.largo > .no-print { max-width: 1240px; }
+.app.largo .no-print .btn { width: auto; }
+.guia { --c0: #0f4c5c; --c1: #b86e00; --c2: #1e7f4f; --c3: #1d5fbf; --c4: #6941c6; --c5: #b42318; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin: 8px 0 16px; }
+.guia.embutido { margin-top: 0; }
+.g-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--c0); color: #fff; }
+.g-num { font-size: 1.5rem; font-weight: 700; background: var(--accent); color: #fff; border-radius: 10px; padding: 2px 10px; }
+.g-tit { flex: 1; min-width: 0; } .g-cat { font-size: 0.82em; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+.g-head h2 { margin: 2px 0 0; font-size: 1.25rem; line-height: 1.2; color: #fff; } .g-head h2 span { font-weight: 500; opacity: .9; }
+.g-marca { font-size: .72rem; opacity: .8; white-space: nowrap; } @media (max-width: 520px) { .g-marca { display: none; } }
+.g-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; padding: 12px; }
+.g-b { border: 1px solid color-mix(in srgb, var(--cc) 35%, var(--border)); border-radius: 10px; overflow: hidden; background: color-mix(in srgb, var(--cc) 5%, var(--surface)); }
+.g-b.largo { grid-column: span 2; } @media (max-width: 600px) { .g-b.largo { grid-column: auto; } }
+.g-b.c0 { --cc: var(--c0); } .g-b.c1 { --cc: var(--c1); } .g-b.c2 { --cc: var(--c2); } .g-b.c3 { --cc: var(--c3); } .g-b.c4 { --cc: var(--c4); } .g-b.c5 { --cc: var(--c5); }
+.g-b h3 { display: flex; align-items: center; gap: 6px; margin: 0; padding: 6px 10px; background: var(--cc); color: #fff; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.g-b h3 .ic { width: 16px; height: 16px; } .g-n { background: #fff; color: var(--cc); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex: none; }
+.g-c { padding: 8px 10px; font-size: .88em; line-height: 1.45; } .g-c p { margin: 0 0 6px; } .g-small { font-size: 0.93em; color: var(--muted); }
+.g-dest { background: color-mix(in srgb, var(--cc) 12%, var(--surface)); border-left: 3px solid var(--cc); padding: 6px 8px; border-radius: 4px; font-weight: 500; }
+.g-fluxo { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, .8fr) auto minmax(0, 1fr); align-items: center; gap: 3px; } .g-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.g-col span { overflow-wrap: anywhere; }
+.g-col span { background: var(--surface); border: 1px solid var(--cc); border-radius: 6px; padding: 4px 6px; font-size: 0.89em; text-align: center; }
+.g-col.meio span { background: var(--cc); color: #fff; font-weight: 600; padding: 12px 6px; } .g-seta .ic { width: 16px; height: 16px; color: var(--cc); }
+.g-comp { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; } .g-comp > div { background: var(--surface); border-radius: 6px; padding: 6px 8px; border-top: 3px solid var(--cc); }
+.g-comp > div + div { border-top-color: var(--muted); } .g-sub { display: block; font-size: 0.82em; color: var(--muted); text-transform: uppercase; }
+.g-comp ul, .g-lista { margin: 4px 0 0; padding-left: 16px; } .g-lista { list-style: none; padding: 0; }
+.g-lista li { display: flex; gap: 6px; align-items: flex-start; margin: 4px 0; } .g-lista .ic { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--cc); }
+.g-fx { background: var(--surface); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; } .g-fx .fx { display: block; overflow-x: auto; }
+.g-leg { font-size: 0.84em; border-collapse: collapse; margin-top: 4px; width: 100%; } .g-leg td { padding: 1px 4px; border-top: 1px solid var(--border); } .g-leg td:first-child { font-family: var(--mono); font-weight: 600; color: var(--cc); } .g-leg td:last-child { color: var(--muted); text-align: right; }
+.g-tab { overflow-x: auto; } .g-tab table { border-collapse: collapse; width: 100%; font-size: 0.89em; background: var(--surface); }
+.g-tab th { background: color-mix(in srgb, var(--cc) 15%, var(--surface)); text-align: left; } .g-tab th, .g-tab td { padding: 3px 6px; border: 1px solid var(--border); } .g-tab td.n, .g-tab th.n { text-align: right; font-family: var(--mono); }
+.g-tab tr.forte td { font-weight: 700; color: var(--cc); }
+.g-passos { counter-reset: p; list-style: none; padding: 0; margin: 0; } .g-passos li { counter-increment: p; display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+.g-passos li::before { content: counter(p); background: var(--cc); color: #fff; border-radius: 50%; min-width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; }
+.g-linha { display: flex; gap: 4px; } .g-linha > div { flex: 1; background: var(--surface); border-radius: 6px; padding: 6px; border-bottom: 3px solid var(--cc); display: flex; flex-direction: column; text-align: center; }
+.g-linha span { font-size: 0.82em; color: var(--muted); } .g-linha small { font-size: 0.84em; }
+.g-b .fig-bom { margin: 0; } .g-b .fig-bom svg { min-width: 0 !important; max-height: 190px; }
+.g-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 16px; font-size: .7rem; color: var(--muted); border-top: 1px solid var(--border); }
+.g-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.g-card { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); text-decoration: none; color: var(--text); }
+.g-card > span:last-child { display: flex; flex-direction: column; }
+@page guia { size: A4 landscape; margin: 6mm; }
+@media print {
+  .guia { page: guia; border: 0; border-radius: 0; margin: 0; font-size: 9.5px; -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fff; color: #16232a; }
+  .guia .g-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 6px 0; }
+  .guia .g-b.largo { grid-column: span 2; } .guia .g-c { font-size: 8.4px; padding: 4px 6px; line-height: 1.3; } .guia .g-c p { margin-bottom: 3px; } .guia .g-fx { padding: 3px 6px; margin-bottom: 3px; } .guia .g-passos li, .guia .g-lista li { margin: 2px 0; } .guia .g-lista .ic { width: 10px; height: 10px; margin-top: 1px; } .guia .g-passos li::before { min-width: 14px; height: 14px; font-size: 7.5px; } .guia .g-n { width: 15px; height: 15px; font-size: 8px; } .guia .g-b h3 .ic { width: 12px; height: 12px; } .guia .g-b h3 { font-size: 8.5px; padding: 4px 7px; }
+  .guia .g-head { padding: 6px 10px; } .guia .g-head h2 { font-size: 15px; } .guia .g-foot { font-size: 7px; padding: 4px 0; }
+  .guia .katex { font-size: 1.05em; } .guia .g-b .fig-bom svg { max-height: 120px; } .guia .g-col span { padding: 2px 4px; } .guia .g-col.meio span { padding: 6px 4px; } .guia .g-linha > div { padding: 3px; }
+  .guia { --surface: #fff; --border: #d5dde0; --muted: #5b6b70; --text: #16232a; }
+}
 .q-tabela input { width: 58px; padding: 6px; font: inherit; font-family: var(--mono); text-align: right; border: 1px solid var(--primary); border-radius: 6px; background: var(--surface); color: var(--text); }
 .q-tabela td.ok input { border-color: var(--ok); background: var(--ok-soft); } .q-tabela td.bad input { border-color: var(--err); background: var(--err-soft); }
 .q-tabela td:first-child { white-space: normal; min-width: 9em; }
@@ -1305,7 +1359,7 @@ function rotear() {
   EMOJI_OK = ["trilha", "exercicios", "quiz", "quizjogo"].includes(nome) || (nome === "licao" && param2 === "facil");
   const telas = {
     inicio: telaHub, exercicios: telaInicio,
-    consultar: telaConsultar, consulta: telaConsulta, assunto: telaAssunto, praticar: telaPraticar, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
+    consultar: telaConsultar, consulta: telaConsulta, assunto: telaAssunto, praticar: telaPraticar, guias: telaGuias, guia: telaGuia, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
     problemas: telaProblemas, problema: telaProblema, desafio: telaDesafio, estudar: telaEstudar,
     estagio: telaEstagio, salvos: telaSalvos, trilha: telaTrilha, licao: telaLicao, quiz: telaQuiz, revisar: telaRevisar,
     revisao: telaSessaoRevisao, flashcards: telaFlashcards, perfil: telaPerfil, conquistas: telaConquistas,
@@ -1315,10 +1369,10 @@ function rotear() {
   // Carregamento sob demanda: baixa antes o que a tela precisa (ver telaPrecisa)
   const pr = SOB_DEMANDA ? telaPrecisa(nome, param, param2) : null;
   const faltaMod = pr && (pr.mods === "todos" ? !tudoCarregado() : pr.mods.some(id => modulo(id) && !modulo(id)._completo));
-  if (pr && (faltaMod || (pr.busca && !BUSCA_PRONTA))) {
+  if (pr && (faltaMod || (pr.busca && !BUSCA_PRONTA) || (pr.guias && !window.GUIAS))) {
     const alvo = location.hash, total = pr.mods === "todos";
     app().innerHTML = `<div class="carregando" role="status"><div class="spin" aria-hidden="true"></div><p class="muted">Carregando o conteúdo…<span id="prog-carga"></span></p></div>`;
-    Promise.all([carregarModulos(pr.mods, total ? (f, n) => { const e = $("#prog-carga"); if (e) e.textContent = ` ${Math.round(f / n * 100)}%`; } : null), pr.busca ? garantirBusca() : null])
+    Promise.all([carregarModulos(pr.mods, total ? (f, n) => { const e = $("#prog-carga"); if (e) e.textContent = ` ${Math.round(f / n * 100)}%`; } : null), pr.busca ? garantirBusca() : null, pr.guias ? garantirGuias() : null])
       .then(() => { if (location.hash === alvo) rotear(); })
       .catch(e => { console.warn("Falha ao carregar o conteúdo:", e && e.message); if (location.hash === alvo) app().innerHTML = barraTopo() + `<div class="card mt"><h2>📶 Sem conexão</h2>
         <p>Este conteúdo ainda não foi baixado para usar offline. Conecte-se à internet e tente de novo.</p>
@@ -1326,12 +1380,13 @@ function rotear() {
         <button class="btn" onclick="rotear()">Tentar de novo</button></div>`; });
     return;
   }
+  app().classList.toggle("largo", false);
   const semNav = ["licao", "revisao", "quizjogo"].includes(nome);
   document.getElementById("nav").classList.toggle("hidden", semNav);
   // Aba destacada: Buscar (consulta, problemas, conteúdo), Trilha (modo jogo), Exercícios (modo estudo)
   const aba = { exercicios: "trilha", trilha: "trilha", quiz: "trilha", revisar: "exercicios", flashcards: "exercicios", glossario: "consultar",
     ouvir: "consultar", conteudo: "consultar", mapas: "consultar", mapa: "consultar", consulta: "consultar", ferramentas: "consultar",
-    ferramenta: "consultar", assunto: "consultar", praticar: "exercicios", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
+    ferramenta: "consultar", assunto: "consultar", guias: "consultar", guia: "consultar", praticar: "exercicios", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
     estudar: param === "praticar" ? "exercicios" : "consultar", conquistas: "perfil", config: "perfil", estagio: "perfil" }[nome] || nome;
   $$("#nav a").forEach(a => { const on = a.dataset.tab === aba; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   (telas[nome] || telaHub)(param, param2);
@@ -1355,8 +1410,9 @@ function telaPrecisa(nome, param) {
     case "assunto": {
       const k = dec(param || ""), a = BUSCA_PRONTA ? assunto(k) : null;
       const base = k.startsWith("f:") ? ((FERR(k.slice(2)) || {}).ver || []).map(modDe) : k.startsWith("g:") ? [k.split(":")[1]] : k.startsWith("l:") ? [modDe(k.slice(2))] : [];
-      return { mods: [...new Set(base.concat(a ? modsDe(a) : []))].filter(Boolean), busca: true };
+      return { mods: [...new Set(base.concat(a ? modsDe(a) : []))].filter(Boolean), busca: true, guias: true };
     }
+    case "guias": case "guia": return { mods: [], guias: true };
     case "consultar": case "glossario": case "flashcards": return { mods: [], busca: true };
     case "perfil": return { mods: daQuestao(pontosFracos(5).map(q => q.id)) };
     case "revisao": return { mods: [...new Set(daQuestao(revisoesPendentes().concat(pontosFracos(10).map(q => q.id)))
@@ -1809,6 +1865,7 @@ function telaConsultar(qParam) {
       <div class="lista">
         ${htmlItem({ href: "#problemas", ic: "problema", titulo: "Problemas reais", sub: PROB().problemas.length + " situações de empresa e as ferramentas que resolvem" })}
         ${htmlItem({ href: "#estudar/disciplina", ic: "disciplina", titulo: "Disciplinas e módulos", sub: "Por assunto, por disciplina (1º ao 10º período) ou por área" })}
+        ${htmlItem({ href: "#guias", ic: "grafico", titulo: "Guias visuais", sub: "Cada tema numa página: fluxo, figura, fórmulas, exemplo e erros comuns" })}
         ${htmlItem({ href: "#mapas", ic: "mapa", titulo: "Mapas mentais A4", sub: "Escolha os tópicos e imprima ou salve em PDF" })}
         ${htmlItem({ href: "#ferramentas", icone: "🧰", titulo: "Todas as ferramentas", sub: Object.keys(PROB().ferramentas).length + " fichas rápidas: o que é, quando usar, dados e exemplo" })}
         ${htmlItem({ href: "#glossario", icone: "📖", titulo: "Glossário", sub: MODS.reduce((t, m) => t + (m.glossario || []).length, 0) + " termos técnicos com definição" })}
@@ -1993,6 +2050,7 @@ function telaAssunto(kParam, abaParam) {
   const formulas = Ff && (Ff.formulasTxt || []).length ? bl("formula", "Fórmula", htmlLegenda(Ff.formulasTxt, true)) : (F0.formulas || []).map(htmlBloco).join("");
   const exemplo = Ff && Ff.exemploTxt ? bl("exemplo", "Exemplo", fmt(Ff.exemploTxt)) : (F0.pratica || []).slice(0, 1).map(htmlBloco).join("");
   const abas = [
+    guiaDo(a) ? ["guia", "Guia visual", htmlGuia(guiaDo(a), true)] : null,
     ["geral", "Visão geral", `<div class="resumo-box"><p><b>O que é:</b> ${fmt(a.def || F0.resumo)}</p>${(Ff || F0).paraque ? `<p><b>Para que serve:</b> ${fmt((Ff || F0).paraque)}</p>` : ""}${Ff && Ff.quando ? `<p><b>Quando usar:</b> ${fmt(Ff.quando)}</p>` : ""}</div>${formulas}${exemplo}`],
     Fc ? ["conceito", "Conceito", `<p class="small muted">${esc(Fc.origem)}</p><div class="resumo-box"><p>${fmt(Fc.resumo)}</p></div>${(Fc.entenda || []).map(htmlBloco).join("")}${(Fc.formulas || []).map(htmlBloco).join("")}${(Fc.erros || []).map(htmlBloco).join("")}`] : null,
     Ff ? ["ferramenta", "Ferramenta", [
@@ -2007,6 +2065,7 @@ function telaAssunto(kParam, abaParam) {
       return htmlItem({ href: "#mapa/" + id, ic: "mapa", tipo: "Mapa mental A4", titulo: m.titulo, sub: m.grade ? `${m.periodo}º período` : `Módulo ${m.numero}` }); }).join("")}</div>`] : null
   ].filter(Boolean);
   let aba = abas.some(x => x[0] === abaParam) ? abaParam : "geral";
+  if (abas[0][0] === "guia") abas.splice(1, 0, abas.shift()); // a aba do guia fica logo depois da visão geral
   app().innerHTML = barraTopo() + `<p class="small"><a href="javascript:void(0)" id="voltar">‹ Voltar</a></p>
     <div class="ficha-head"><span class="eyebrow">${esc(tipo)}${ls[0] ? " · " + esc(limpar(modulo(ls[0].modulo).titulo)) : ""}</span><h1>${esc(limpar(a.titulo))}</h1>
       <div class="row wrap"><button class="favbtn" id="fav">${ic("salvar")} Salvar</button><button class="favbtn" id="ouvir-ficha">${ic("ouvir")} Ouvir</button></div></div>
@@ -2189,6 +2248,64 @@ function telaPraticar() {
     };
   }
   desenhar();
+}
+/* =====================================================================
+   GUIAS VISUAIS — um tema numa página (tela e A4 paisagem)
+   Dados em conteudo/guias/*.js (gerados por scripts/guias/*.js)
+   ===================================================================== */
+const guiaDo = a => guias().find(g => g.assunto === a.k);
+function htmlGuia(G, embutido) {
+  semSiglas = true; // guia é para bater o olho: siglas sem o significado entre parênteses (a legenda das fórmulas explica)
+  try { return htmlGuia_(G, embutido); } finally { semSiglas = false; }
+}
+function htmlGuia_(G, embutido) {
+  const N = (k, b) => `<span class="g-n">${k + 1}</span>`;
+  const corpo = b => {
+    switch (b.tipo) {
+      case "texto": return `<p>${fmt(b.texto)}</p>${b.destaque ? `<p class="g-dest">${fmt(b.destaque)}</p>` : ""}`;
+      case "fluxo": return `<div class="g-fluxo">${b.colunas.map((c, i) => `${i ? `<span class="g-seta" aria-hidden="true">${ic("seta")}</span>` : ""}<div class="g-col${c.length === 1 ? " meio" : ""}">${c.map(x => `<span>${esc(x)}</span>`).join("")}</div>`).join("")}</div>`;
+      case "comparacao": return `<div class="g-comp">${b.lados.map(l => `<div><b>${esc(l.titulo)}</b><span class="g-sub">${esc(l.sub || "")}</span><ul>${l.itens.map(x => `<li>${fmt(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+      case "figura": return htmlFigura(b.figura) + (b.texto ? `<p class="g-small">${fmt(b.texto)}</p>` : "");
+      case "formulas": return b.itens.map(f => `<div class="g-fx"><span class="fx" data-tex="${esc(f.tex)}">${esc(f.tex)}</span>
+          ${(f.legenda || []).length ? `<table class="g-leg">${f.legenda.map(([s, d, u]) => `<tr><td>${esc(s)}</td><td>${esc(d)}</td><td>${esc(u || "")}</td></tr>`).join("")}</table>` : ""}</div>`).join("");
+      case "tabela": { const T = b.tabela;
+        return `${b.nota ? `<p class="g-small">${fmt(b.nota)}</p>` : ""}<div class="g-tab"><table><tr><th>${esc(T.canto || "")}</th>${T.colunas.map(c => `<th${T.texto ? "" : ` class="n"`}>${esc(c)}</th>`).join("")}</tr>
+          ${T.linhas.map(l => `<tr${l.forte ? ` class="forte"` : ""}><td>${esc(l.rotulo)}</td>${l.valores.map(v => T.texto ? `<td>${fmt(String(v))}</td>` : `<td class="n">${numeroBR(v)}</td>`).join("")}</tr>`).join("")}</table></div>`; }
+      case "passos": return `<ol class="g-passos">${b.itens.map(x => `<li>${fmt(x)}</li>`).join("")}</ol>`;
+      case "lista": return `<ul class="g-lista ${b.estilo || ""}">${b.itens.map(x => `<li>${ic(b.estilo === "erro" ? "erro" : b.estilo === "dica" ? "lampada" : "ok")}<span>${fmt(x)}</span></li>`).join("")}</ul>`;
+      case "linha": return `<div class="g-linha">${b.etapas.map(([t, d, s]) => `<div><b>${esc(t)}</b><span>${esc(d)}</span><small>${esc(s)}</small></div>`).join("")}</div>`;
+      default: return "";
+    }
+  };
+  return `<article class="guia${embutido ? " embutido" : ""}" aria-label="Guia visual: ${esc(G.titulo)}">
+    <header class="g-head"><span class="g-num num">${String(G.numero).padStart(2, "0")}</span>
+      <div class="g-tit"><span class="g-cat">${esc(G.categoria)} · ${esc(G.disciplina || "")}</span><h2>${esc(G.titulo)}: <span>${esc(G.subtitulo)}</span></h2></div>
+      <span class="g-marca">ProdLean · guia visual</span></header>
+    <div class="g-grid">${G.blocos.map((b, k) => `<section class="g-b c${b.cor % 6}${b.largo ? " largo" : ""}"><h3>${N(k)}${ic(b.ic || "info")}<span>${esc(b.titulo)}</span></h3><div class="g-c">${corpo(b)}</div></section>`).join("")}</div>
+    <footer class="g-foot"><span>Referências: ${(G.referencias || []).map(esc).join(" · ")}</span><span>prodlean · conteúdo original</span></footer></article>`;
+}
+function telaGuias() {
+  const cats = [...new Set(guias().map(g => g.categoria))];
+  app().innerHTML = barraTopo() + `<p class="small"><a href="#consultar">‹ Buscar</a></p><h1>Guias visuais</h1>
+    <p class="lead">Cada tema numa página: fluxo, figura, fórmulas com legenda, exemplo resolvido, erros comuns e dicas de prova. Para consultar na tela ou imprimir em A4.</p>
+    ${guias().length ? cats.map(c => `<h2 class="sec-t">${esc(c)}</h2><div class="g-cards">${guias().filter(g => g.categoria === c).sort((x, y) => x.numero - y.numero).map(g =>
+      `<a class="g-card" href="#guia/${g.id}"><span class="g-num num">${String(g.numero).padStart(2, "0")}</span><span><b>${esc(g.titulo)}</b><span class="small muted">${esc(g.subtitulo)}</span><span class="small muted">${g.blocos.length} blocos</span></span></a>`).join("")}</div>`).join("")
+      : `<p class="muted">Nenhum guia disponível ainda.</p>`}
+    <p class="small muted mt">Novos guias entram aos poucos, tema a tema, junto com os bancos de questões.</p>`;
+}
+function telaGuia(id) {
+  const G = guias().find(g => g.id === id);
+  if (!G) { toast("Guia não encontrado"); ir("guias"); return; }
+  const item = { k: "guia:" + id, href: "#guia/" + id, ic: "grafico", tipo: "Guia visual", titulo: G.titulo, sub: G.subtitulo };
+  registrarVisita(item);
+  app().classList.add("largo"); // o guia usa a largura da tela no computador
+  app().innerHTML = barraTopo() + `<div class="no-print"><p class="small"><a href="#guias">‹ Guias visuais</a></p>
+    <div class="row wrap mb"><button class="btn" id="imprimir">${ic("imprimir")} Imprimir ou salvar PDF</button>
+      ${G.assunto ? `<a class="btn sec" href="#assunto/${enc(G.assunto)}/exercicios">${ic("exercicios")} Exercícios do tema</a><a class="btn sec" href="#assunto/${enc(G.assunto)}">${ic("conceito")} Página do assunto</a>` : ""}
+      <button class="favbtn" id="fav">${ic("salvar")} Salvar</button></div></div>${htmlGuia(G)}`;
+  $("#imprimir").onclick = () => { document.body.classList.add("print-guia"); window.print(); };
+  window.addEventListener("afterprint", () => document.body.classList.remove("print-guia"), { once: true });
+  ligarFavorito(item);
 }
 function telaFerramenta(id) {
   const f = FERR(id);
@@ -3721,7 +3838,7 @@ function telaConfig() {
   const bt = $("#baixar-tudo");
   if (bt) bt.onclick = () => {
     bt.disabled = true; const st = $("#baixar-status");
-    Promise.all([carregarModulos("todos", (f, n) => { st.textContent = `Baixando… ${Math.round(f / n * 100)}%`; }), garantirBusca()])
+    Promise.all([carregarModulos("todos", (f, n) => { st.textContent = `Baixando… ${Math.round(f / n * 100)}%`; }), garantirBusca(), garantirGuias()])
       .then(() => { st.textContent = "✓ Pronto! Todo o conteúdo funciona offline neste aparelho."; st.style.color = "var(--ok)"; bt.remove(); })
       .catch(() => { st.textContent = "Não consegui baixar agora. Confira a conexão e tente de novo."; bt.disabled = false; });
   };
@@ -3876,6 +3993,13 @@ function executarConteudo(arq, codigo) {
   D.forEach(d => { try { hidratar(disciplinaParaModulo(d, 0)); } catch (e) { errosConteudo.push(`Disciplina "${d.nome || d.id}": ${e.message}`); } });
   CARREGADOS.add(arq);
 }
+// Guias visuais: arquivos pequenos, baixados juntos na primeira vez que alguém abre um guia
+let _guias = null;
+function garantirGuias() {
+  if (!_guias) _guias = carregarEmOrdem(self.ARQUIVOS_GUIAS || []).catch(e => { _guias = null; throw e; });
+  return _guias;
+}
+const guias = () => window.GUIAS || [];
 // Garante o conteúdo completo dos módulos pedidos ("todos" = tudo, para offline)
 async function carregarModulos(ids, aoProgresso) {
   if (!SOB_DEMANDA) return;
