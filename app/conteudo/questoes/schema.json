@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Banco de questões do ProdLean (um arquivo por tópico)",
+  "type": "object",
+  "required": ["topico", "licao", "questoes"],
+  "properties": {
+    "topico": { "type": "string", "description": "identificador do tópico (ex.: mrp)" },
+    "disciplina": { "type": "string" },
+    "licao": { "type": "string", "description": "lição do app em que as questões entram (ex.: m03-l5)" },
+    "gerado_por": { "type": "string", "description": "script que gera e confere os gabaritos" },
+    "questoes": {
+      "type": "array", "minItems": 20,
+      "items": {
+        "type": "object",
+        "required": ["id", "nivel", "tipo", "pergunta", "referencia", "tags"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+-[fmd]\\d{2}$" },
+          "licao": { "type": "string" },
+          "topico": { "type": "string" },
+          "nivel": { "enum": ["facil", "medio", "dificil"] },
+          "tipo": { "enum": ["multipla", "caso", "vf", "calculo", "ordenar", "ligar", "lacuna", "discursiva", "tabela"] },
+          "estilo": { "enum": ["autoral", "concurso", "enade", "livro-adaptado"], "description": "concurso/enade/livro-adaptado exigem 'fonte' quando reproduzem ou adaptam uma questão real" },
+          "fonte": { "type": "string", "description": "origem exata (banca, órgão, ano, número da questão ou livro, capítulo e exercício)" },
+          "referencia": { "type": "string", "description": "bibliografia para estudar o tema" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "contexto": { "type": "string" },
+          "pergunta": { "type": "string", "description": "texto com **negrito**, tabelas Markdown e LaTeX entre \\( e \\)" },
+          "figura": { "type": "object", "properties": { "tipo": { "enum": ["bom"] }, "raiz": { "type": "object" }, "legenda": { "type": "string" } } },
+          "opcoes": { "type": "array", "items": { "type": "string" } },
+          "correta": { "type": ["integer", "boolean"] },
+          "justificativas": { "type": "array", "items": { "type": "string" }, "description": "por que cada alternativa está certa ou errada (mesma ordem de 'opcoes')" },
+          "itens": { "type": "array", "items": { "type": "string" } },
+          "resposta": { "type": "number" },
+          "unidade": { "type": "string" },
+          "tolerancia": { "type": "number" },
+          "tabela": {
+            "type": "object", "required": ["colunas", "linhas"],
+            "properties": {
+              "canto": { "type": "string" },
+              "colunas": { "type": "array", "items": { "type": "string" } },
+              "linhas": { "type": "array", "items": { "type": "object", "required": ["rotulo", "valores"],
+                "properties": { "rotulo": { "type": "string" }, "valores": { "type": "array" }, "editar": { "type": "array", "items": { "type": "integer" } } } } }
+            }
+          },
+          "resolucao": { "type": "string", "description": "passo a passo, com LaTeX entre \\( e \\)" },
+          "explicacao": { "type": "string" }
+        }
+      }
+    }
+  }
+}

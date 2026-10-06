@@ -8,7 +8,8 @@
     "checar": "node scripts/build.js --checar && node testes/validar-grade.js",
     "testar-seo": "node scripts/build.js && node testes/teste-seo.js",
     "vendor": "node scripts/vendor.js",
-    "formulas": "node scripts/formulas-tex.js"
+    "formulas": "node scripts/formulas-tex.js",
+    "questoes": "node scripts/questoes/mrp.js"
   },
   "devDependencies": {
     "@fontsource/inter": "^5.3.0",

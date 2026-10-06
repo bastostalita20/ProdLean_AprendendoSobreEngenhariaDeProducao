@@ -25,5 +25,6 @@ self.ARQUIVOS_MODULOS = [ // "self" funciona no app e no modo offline (service w
   "problemas.js",       // 🚨 problemas → ferramentas → conteúdo (e Modo Estágio)
   "desafios.js",        // ⚡ desafio do dia
   "siglas.js",          // 🔤 significado das siglas, mostrado entre parênteses
+  "questoes/pcp/mrp.js", // banco de questões por tópico (gerado por scripts/questoes/)
   "banco-questoes.js"   // questões extras e com números sorteados (sempre por último)
 ];

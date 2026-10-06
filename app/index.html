@@ -613,6 +613,13 @@ button.link { background: none; border: 0; color: var(--primary); font: inherit;
 .corr summary { cursor: pointer; font-size: .9rem; }
 .corr summary .num { color: var(--muted); margin-right: 4px; }
 .lvl-card.travado { opacity: .65; }
+.q-tabela input { width: 58px; padding: 6px; font: inherit; font-family: var(--mono); text-align: right; border: 1px solid var(--primary); border-radius: 6px; background: var(--surface); color: var(--text); }
+.q-tabela td.ok input { border-color: var(--ok); background: var(--ok-soft); } .q-tabela td.bad input { border-color: var(--err); background: var(--err-soft); }
+.q-tabela td:first-child { white-space: normal; min-width: 9em; }
+.fig-bom { margin: 10px 0; overflow-x: auto; } .fig-bom svg { display: block; max-width: 100%; min-width: 260px; height: auto; margin: 0 auto; }
+.bom-n { fill: var(--surface); stroke: var(--primary); stroke-width: 1.5; } .bom-l { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.bom-t { font: 600 15px var(--fonte); fill: var(--text); } .bom-s { font: 400 11px var(--fonte); fill: var(--muted); }
+.bom-q { fill: var(--accent); } .bom-qt { font: 600 11px var(--mono); fill: #fff; }
 .prog-lista { display: grid; gap: 8px; margin-bottom: 8px; }
 .prog-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); text-decoration: none; color: var(--text); }
 .prog-item .grow { display: flex; flex-direction: column; min-width: 0; }
@@ -787,9 +794,10 @@ function bloqueioDaQuestao(q) {
 function fmt(t) {
   // equações em negrito ("**Q* = √(2DS ÷ H)**") viram fórmulas KaTeX; ficam protegidas da expansão de siglas
   const eqs = [];
-  t = String(t ?? "").replace(/\*\*([^*\n]+)\*\*/g, (m, f) => /[=≈≤≥]/.test(f) ? (eqs.push(f.trim()), `\u0001${eqs.length - 1}\u0001`) : m);
+  t = String(t ?? "").replace(/\\\((.+?)\\\)/g, (m, tex) => (eqs.push({ tex }), `\u0001${eqs.length - 1}\u0001`)) // LaTeX direto: \( ... \)
+    .replace(/\*\*([^*\n]+)\*\*/g, (m, f) => /[=≈≤≥]/.test(f) ? (eqs.push(f.trim()), `\u0001${eqs.length - 1}\u0001`) : m);
   t = expandirSiglas(t);
-  const inl = x => esc(x).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>").replace(/\u0001(\d+)\u0001/g, (m, i) => htmlFx(eqs[i], "b"));
+  const inl = x => esc(x).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>").replace(/\u0001(\d+)\u0001/g, (m, i) => eqs[i].tex ? `<span class="fx" data-tex="${esc(eqs[i].tex)}">${esc(eqs[i].tex)}</span>` : htmlFx(eqs[i], "b"));
   // Tabelas simples em Markdown (linhas começando com "|"); o resto vira texto com quebras de linha
   const linhas = String(t ?? "").split("\n"), out = [];
   for (let i = 0; i < linhas.length; i++) {
@@ -910,6 +918,12 @@ function validarQuestao(q) {
   else if (q.tipo === "ordenar") { if (!Array.isArray(q.itens) || q.itens.length < 2) erro("precisa de 'itens'"); }
   else if (q.tipo === "calculo") { if (typeof q.resposta !== "number" && !q.variaveis) erro("'resposta' deve ser número"); }
   else if (q.tipo === "discursiva") { if (!q.respostaModelo) erro("discursiva precisa de 'respostaModelo'"); }
+  else if (q.tipo === "tabela") {
+    const T = q.tabela;
+    if (!T || !Array.isArray(T.colunas) || !Array.isArray(T.linhas) || !T.linhas.length) erro("tabela precisa de 'colunas' e 'linhas'");
+    else if (!T.linhas.some(l => (l.editar || []).length)) erro("tabela sem células para preencher ('editar')");
+    else T.linhas.forEach(l => { if (!Array.isArray(l.valores) || l.valores.length !== T.colunas.length) erro(`linha "${l.rotulo}": 'valores' deve ter ${T.colunas.length} itens`); });
+  }
   else erro(`tipo desconhecido "${q.tipo}"`);
   if (q.nivel && !ORDEM_NIVEIS.includes(q.nivel)) erro(`nível inválido "${q.nivel}" (use facil, medio ou dificil)`);
   if (q.variaveis) Parametros.validar(q).forEach(msg => erro("modelo com números sorteados: " + msg));
@@ -1512,18 +1526,18 @@ function carregarKatex() {
 const texDe = f => window.FORMULAS_TEX && window.FORMULAS_TEX[String(f).trim()];
 function renderizarFormulas() {
   _fxPend = false;
-  const els = [...document.querySelectorAll(".fx[data-f]:not([data-k])")];
+  const els = [...document.querySelectorAll(".fx[data-f]:not([data-k]), .fx[data-tex]:not([data-k])")];
   if (!els.length) return;
   carregarKatex().then(() => els.forEach(el => {
     if (el.dataset.k) return;
-    const tex = texDe(el.dataset.f);
+    const tex = el.dataset.tex || texDe(el.dataset.f);
     el.dataset.k = tex && window.katex ? "1" : "0";
     if (el.dataset.k !== "1") return;
     try { katex.render(tex, el, { throwOnError: true, strict: "ignore", output: "htmlAndMathml" }); el.title = el.dataset.f; }
     catch (e) { el.textContent = el.dataset.f; el.dataset.k = "0"; }
   }));
 }
-new MutationObserver(() => { if (!_fxPend && document.querySelector(".fx[data-f]:not([data-k])")) { _fxPend = true; requestAnimationFrame(renderizarFormulas); } })
+new MutationObserver(() => { if (!_fxPend && document.querySelector(".fx[data-f]:not([data-k]), .fx[data-tex]:not([data-k])")) { _fxPend = true; requestAnimationFrame(renderizarFormulas); } })
   .observe(document.documentElement, { childList: true, subtree: true });
 function htmlFx(f, tag = "span") { return `<${tag} class="fx" data-f="${esc(f)}">${esc(f)}</${tag}>`; }
 // Ícones de linha (Lucide), embutidos como sprite pelo scripts/vendor.js. Emojis só no nível Fácil e no modo jogo.
@@ -2063,7 +2077,7 @@ async function sessaoQuestoes(box, lista, modo, aoSair, rotulo = "") {
     if (simulado) {
       S.exercicios.simulados.unshift({ data: hoje(), acertos, total: n, seg, rotulo }); S.exercicios.simulados = S.exercicios.simulados.slice(0, 20); salvar();
       extra = `<h2 class="sec-t">Correção</h2><div class="correcao">${lista.map((q, k) => { const r = res[k];
-        const certa = q.tipo === "calculo" ? `${numeroBR(q.resposta)} ${q.unidade || ""}` : q.tipo === "vf" ? (q.correta ? "Verdadeiro" : "Falso") : q.opcoes ? q.opcoes[q.correta] : q.itens ? q.itens.join(" → ") : "";
+        const certa = q.tipo === "tabela" ? "\n" + tabelaMd(q.tabela) : q.tipo === "calculo" ? `${numeroBR(q.resposta)} ${q.unidade || ""}` : q.tipo === "vf" ? (q.correta ? "Verdadeiro" : "Falso") : q.opcoes ? q.opcoes[q.correta] : q.itens ? q.itens.join(" → ") : "";
         return `<details class="corr ${r ? (r.ok ? "ok" : "bad") : "bad"}"><summary><span class="num">${k + 1}</span> ${r ? (r.ok ? "Certa" : "Errada") : "Sem resposta"} · ${esc(limpar(q.pergunta || "").slice(0, 90))}</summary>
           ${certa ? `<p><b>Resposta:</b> ${fmt(certa)}</p>` : ""}${q.resolucao ? `<div>${fmt(q.resolucao)}</div>` : ""}${q.explicacao ? `<p class="small muted">${fmt(q.explicacao)}</p>` : ""}</details>`; }).join("")}</div>`;
     }
@@ -2788,6 +2802,32 @@ function telaTrilha(visao, per) {
   $$("[data-ouvir]").forEach(b => b.onclick = () => { const m = modulo(b.dataset.ouvir); falar(m.resumoAudio, "Resumo: " + m.titulo); });
 }
 
+// Tabela de uma questão em Markdown (vira .tabela no fmt), com as células a preencher em negrito
+function tabelaMd(T) {
+  return `| ${T.canto || ""} | ${T.colunas.join(" | ")} |\n|${"---|".repeat(T.colunas.length + 1)}\n` +
+    T.linhas.map(l => `| ${l.rotulo} | ${l.valores.map((v, c) => v === null || v === "" ? "" : (l.editar || []).includes(c) ? `**${numeroBR(v)}**` : numeroBR(v)).join(" | ")} |`).join("\n");
+}
+/* Figuras das questões (SVG, sem bibliotecas). tipo "bom": estrutura do produto em árvore.
+   { tipo: "bom", raiz: { item: "A", lt: 1, filhos: [{ item: "B", qtd: 2, lt: 2, filhos: [...] }] } } */
+function htmlFigura(f) {
+  if (f.tipo !== "bom") return "";
+  const W = 118, H = 46, GX = 18, GY = 40, nos = [];
+  const folhas = n => (n.filhos || []).length ? n.filhos.reduce((t, c) => t + folhas(c), 0) : 1;
+  const pos = (n, x0, nivel, pai) => {
+    const larg = folhas(n) * (W + GX), x = x0 + larg / 2, y = 8 + nivel * (H + GY);
+    nos.push({ n, x, y, pai });
+    let xc = x0; (n.filhos || []).forEach(c => { pos(c, xc, nivel + 1, { x, y }); xc += folhas(c) * (W + GX); });
+  };
+  pos(f.raiz, 0, 0, null);
+  const LW = folhas(f.raiz) * (W + GX), LH = Math.max(...nos.map(o => o.y)) + H + 10;
+  const txt = (x, y, t, cls) => `<text x="${x}" y="${y}" text-anchor="middle" class="${cls}">${esc(t)}</text>`;
+  const svg = nos.map(({ n, x, y, pai }) => (pai ? `<path d="M${pai.x},${pai.y + H} V${(pai.y + H + y) / 2} H${x} V${y}" class="bom-l"/>` +
+      (n.qtd != null ? `<rect x="${x + 4}" y="${y - 22}" width="${String(n.qtd).length * 8 + 14}" height="16" rx="8" class="bom-q"/>${txt(x + 11 + String(n.qtd).length * 4, y - 10, "×" + n.qtd, "bom-qt")}` : "") : "") +
+    `<rect x="${x - W / 2}" y="${y}" width="${W}" height="${H}" rx="8" class="bom-n"/>${txt(x, y + 20, n.item, "bom-t")}${n.lt != null || n.nome ? txt(x, y + 36, [n.nome, n.lt != null ? `LT ${n.lt}` : ""].filter(Boolean).join(" · "), "bom-s") : ""}`).join("");
+  return `<figure class="fig-bom"><svg viewBox="-4 0 ${LW + 8} ${LH}" style="min-width:${Math.round((LW + 8) * 0.68)}px" role="img" aria-label="${esc(f.legenda || "Estrutura do produto")}">${svg}</svg>
+    ${f.legenda ? `<figcaption class="small muted">${esc(f.legenda)}</figcaption>` : ""}</figure>`;
+}
+
 /* =====================================================================
    COMPONENTE: RENDERIZAR UMA QUESTÃO
    Usado na lição e na revisão. Chama aoResponder(acertou) após verificar.
@@ -2802,9 +2842,10 @@ function renderQuestao(q, cont, aoResponder, opcoes = {}) {
   let corrigir;            // função que devolve true/false
   let html = "";
   if (q.tipo === "caso" && q.contexto) html += `<div class="q-contexto">🏭 ${fmt(q.contexto)}</div>`;
-  const rotulos = { multipla: "Escolha a alternativa", vf: "Verdadeiro ou falso?", lacuna: "Complete a lacuna", ligar: "Ligue as colunas", ordenar: "Coloque em ordem", caso: "Mini estudo de caso", calculo: "Calcule", discursiva: "Questão discursiva (autoavaliação)" };
-  html += `<div class="small muted">${q.nivel ? `<span class="chip-nivel">${NIVEIS_ESTUDO[q.nivel].icone} ${NIVEIS_ESTUDO[q.nivel].nome}</span> ` : ""}${q.parametrica ? `<span class="chip-nivel" title="Os números mudam a cada tentativa">🎲 números sorteados</span> ` : ""}<b>${rotulos[q.tipo] || ""}</b></div>`;
+  const rotulos = { tabela: "Complete a tabela", multipla: "Escolha a alternativa", vf: "Verdadeiro ou falso?", lacuna: "Complete a lacuna", ligar: "Ligue as colunas", ordenar: "Coloque em ordem", caso: "Mini estudo de caso", calculo: "Calcule", discursiva: "Questão discursiva (autoavaliação)" };
+  html += `<div class="small muted">${q.nivel ? `<span class="chip-nivel">${NIVEIS_ESTUDO[q.nivel].icone} ${NIVEIS_ESTUDO[q.nivel].nome}</span> ` : ""}${q.parametrica ? `<span class="chip-nivel" title="Os números mudam a cada tentativa">🎲 números sorteados</span> ` : ""}${q.estilo === "concurso" || q.estilo === "enade" ? `<span class="chip-nivel">${q.estilo === "enade" ? "Estilo ENADE" : "Estilo concurso"}</span> ` : ""}<b>${rotulos[q.tipo] || ""}</b>${q.fonte ? `<div class="small muted">Fonte: ${esc(q.fonte)}</div>` : ""}</div>`;
 
+  if (q.figura) html += htmlFigura(q.figura);
   // Discursiva: escreve (ou pensa) → vê resposta-modelo e critérios → autoavalia
   if (q.tipo === "discursiva") {
     html += `<div class="q-enunciado">${fmt(q.pergunta)}</div>
@@ -2924,6 +2965,26 @@ function renderQuestao(q, cont, aoResponder, opcoes = {}) {
       return Math.abs(resposta - q.resposta) <= tol;
     };
   }
+  else if (q.tipo === "tabela") {
+    // Completar a tabela (ex.: registro do MRP): células com "editar" viram campos numéricos
+    const T = q.tabela, ed = (l, c) => (l.editar || []).includes(c);
+    html += `<div class="q-enunciado">${fmt(q.pergunta)}</div>
+      <div class="tabela q-tabela"><table><tr><th>${esc(T.canto || "")}</th>${T.colunas.map(c => `<th class="n">${esc(c)}</th>`).join("")}</tr>
+      ${T.linhas.map((l, r) => `<tr><td>${esc(l.rotulo)}</td>${l.valores.map((v, c) => ed(l, c)
+        ? `<td class="n cel-ed"><input inputmode="numeric" autocomplete="off" data-r="${r}" data-c="${c}" aria-label="${esc(l.rotulo)}, ${esc(T.canto || "")} ${esc(T.colunas[c])}"></td>`
+        : `<td class="n">${v === null || v === "" ? "" : numeroBR(v)}</td>`).join("")}</tr>`).join("")}</table></div>
+      <p class="small muted mt">Preencha as células em branco. Use 0 quando não houver quantidade.</p>`;
+    cont.innerHTML = html;
+    const ins = $$(".cel-ed input", cont);
+    pronto = () => ins.every(i => i.value.trim() !== "");
+    ins.forEach(i => i.oninput = () => { i.value = i.value.replace(/[^\d-]/g, ""); atualizarBotao(); });
+    corrigir = () => {
+      let ok = true;
+      ins.forEach(i => { const certo = T.linhas[+i.dataset.r].valores[+i.dataset.c], v = parseInt(i.value, 10);
+        i.disabled = true; const bom = v === certo; ok = ok && bom; i.parentElement.classList.add(bom ? "ok" : "bad"); if (!bom) i.title = "Correto: " + certo; });
+      return ok;
+    };
+  }
   else {
     cont.innerHTML = `<div class="errbox">Tipo de questão desconhecido: ${esc(q.tipo)}</div>`;
     corrigir = () => true; pronto = () => true;
@@ -2945,11 +3006,14 @@ function renderQuestao(q, cont, aoResponder, opcoes = {}) {
     som(acertou ? "acerto" : "erro");
     let expl = q.explicacao || "";
     if (q.tipo === "calculo") expl = `Resposta: ${numeroBR(q.resposta)} ${q.unidade || ""}\n\n${q.resolucao || ""}\n\n${expl}`;
+    if (q.tipo === "tabela") expl = `${acertou ? "" : "Tabela correta:\n" + tabelaMd(q.tabela) + "\n"}${q.resolucao || ""}\n\n${expl}`;
+    else if (q.resolucao && q.tipo !== "calculo") expl = `${expl}\n\n**Resolução:**\n${q.resolucao}`;
     if (!acertou && ["multipla", "caso", "lacuna"].includes(q.tipo)) expl = `Correta: ${q.opcoes[q.correta]}\n\n${expl}`;
     // Por que cada alternativa está certa ou errada (quando o conteúdo traz "justificativas")
-    if (q.justificativas) expl += "\n\n" + q.opcoes.map((o, i) => `${i === q.correta ? "✅" : "❌"} **${o}** — ${q.justificativas[i]}`).join("\n");
+    if (q.justificativas) expl += "\n\n" + q.opcoes.map((o, i) => `${i === q.correta ? "✔ Correta" : "✖ Incorreta"}: **${o}** — ${q.justificativas[i]}`).join("\n");
     if (!acertou && q.tipo === "ordenar") expl = `Ordem certa:\n${q.itens.map((t, i) => `${i + 1}. ${t}`).join("\n")}\n\n${expl}`;
     if (!acertou && q.tipo === "ligar") expl = `Você errou algum par no caminho.\n\n${expl}`;
+    if (q.referencia) expl += `\n\n*Para estudar:* ${q.referencia}`;
     const sh = document.createElement("div");
     sh.className = "sheet " + (acertou ? "ok" : "bad");
     sh.innerHTML = `<div class="inner"><h3>${acertou ? "✅ Mandou bem!" : "❌ Quase!"}</h3>
@@ -3819,7 +3883,7 @@ async function carregarModulos(ids, aoProgresso) {
   const faltam = [...new Set(ids)].map(modulo).filter(m => m && !m._completo);
   if (!faltam.length) return;
   const C = window.CATALOGO, arqs = [];
-  if (faltam.some(m => C.bancoMods.includes(m.id))) arqs.push("banco-questoes.js");
+  Object.entries(C.bancoArqs || {}).forEach(([a, ms]) => { if (faltam.some(m => ms.includes(m.id))) arqs.push(a); }); // questões extras desses módulos
   faltam.forEach(m => { const a = C.arquivos[m.id]; if (a && !arqs.includes(a)) arqs.push(a); });
   const novos = arqs.filter(a => !CARREGADOS.has(a));
   let feitos = 0;

@@ -57,6 +57,12 @@ async function responder(p, certo = true) {
     const ordem = q.itens.map((_, i) => i); if (!certo) [ordem[0], ordem[1]] = [ordem[1], ordem[0]];
     for (const i of ordem) await p.click(`[data-add="${i}"]`);
   } else if (q.tipo === 'calculo') await p.fill('#num', certo ? String(q.resposta).replace('.', ',') : '99999');
+  else if (q.tipo === 'tabela') {
+    for (const i of await p.$$('#qarea .cel-ed input')) {
+      const v = await i.evaluate(el => document.getElementById('qarea')._q.tabela.linhas[+el.dataset.r].valores[+el.dataset.c]);
+      await i.fill(String(certo ? v : v + 1));
+    }
+  }
   await p.click('#verificar');
   const ok = !!(await p.$('.sheet.ok'));
   if (ok !== certo) throw new Error(`esperava ${certo ? 'acerto' : 'erro'} em ${q.id} (${q.tipo})`);
@@ -272,6 +278,20 @@ async function recuperarVidas(p) {
   checar(await p.evaluate(() => { const ant = S.licoes['zz-teste']; S.licoes['zz-teste'] = { niveis: { dificil: { acertos: 9, total: 10, melhor: 90 } } }; S.licoes['zz-teste2'] = { niveis: { dificil: { acertos: 7, total: 10, melhor: 70 } } };
     const r = especialista('zz-teste') && !especialista('zz-teste2'); delete S.licoes['zz-teste']; delete S.licoes['zz-teste2']; return r; }), 'selo Especialista com 80%+ no Difícil');
   await p.evaluate(() => { S.config.nivel = 'dificil'; salvar(); });
+  // Banco de questões piloto (MRP): 7/7/6, tabela para completar, figura da estrutura, resolução em LaTeX
+  const mrp = await p.evaluate(async () => { await carregarModulos(['m03']); const qs = LICOES.find(l => l.id === 'm03-l5').questoes.filter(q => q.id.startsWith('mrp-'));
+    const n = k => qs.filter(q => q.nivel === k).length; return { total: qs.length, f: n('facil'), m: n('medio'), d: n('dificil'), tipos: [...new Set(qs.map(q => q.tipo))], ref: qs.every(q => q.referencia), just: qs.filter(q => q.opcoes).every(q => q.justificativas && q.justificativas.length === q.opcoes.length) }; });
+  checar(mrp.total >= 20 && mrp.f >= 7 && mrp.m >= 7 && mrp.d >= 6 && mrp.tipos.includes('tabela') && mrp.ref && mrp.just, `banco MRP: ${mrp.total} questões (${mrp.f}/${mrp.m}/${mrp.d}), tipos ${mrp.tipos.join(', ')}`);
+  let acTab = null;
+  await p.evaluate(() => { app().innerHTML = '<div id="qarea" class="lesson-pad"></div>'; window._acTab = null; renderQuestao(Q['mrp-m01'], document.getElementById('qarea'), a => { window._acTab = a; }); });
+  for (const i of await p.$$('.cel-ed input')) { const v = await i.evaluate(el => Q['mrp-m01'].tabela.linhas[+el.dataset.r].valores[+el.dataset.c]); await i.fill(String(v)); }
+  await p.click('#verificar'); await p.waitForTimeout(500);
+  const fb = await p.textContent('.sheet'); await p.click('#continuar-q'); acTab = await p.evaluate(() => window._acTab);
+  checar(acTab === true && /Para estudar/.test(fb), 'questão de completar o registro MRP corrige célula a célula');
+  await p.evaluate(() => { app().innerHTML = '<div id="qarea" class="lesson-pad"></div>'; renderQuestao(Q['mrp-m04'], document.getElementById('qarea'), () => {}); });
+  await p.fill('#num', '150'); await p.click('#verificar'); await p.waitForSelector('.sheet .katex', { timeout: 8000 }).catch(() => {});
+  checar(await p.$('.fig-bom svg .bom-n') && await p.$('.sheet .katex'), 'figura da estrutura (BOM) e resolução com fórmulas em KaTeX');
+  await p.click('#continuar-q');
   await p.evaluate(() => { S.config.nivel = 'facil'; salvar(); ir('estudar/materiais'); }); await p.waitForTimeout(150);
   checar(await p.evaluate(() => ['#mapas', '#conteudo', '#glossario'].every(h => document.querySelector(`a[href="${h}"]`))), 'Materiais: mapas, conteúdo completo e glossário');
   await p.evaluate(() => ir('estudar/disciplina/3')); await p.waitForTimeout(150);

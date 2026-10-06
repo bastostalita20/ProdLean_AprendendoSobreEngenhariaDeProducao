@@ -36,11 +36,11 @@ const niveisDe = lista => [...new Set((lista || []).map(x => x.nivel).filter(Boo
 // flashcards e fórmulas, carregado logo depois da primeira tela para a busca e o glossário)
 function gerarCatalogo() {
   const { todos } = lerIndice();
-  const cat = { modulos: [], disciplinas: [], banco: "", arquivos: {}, bancoMods: [], hashes: {} };
+  const cat = { modulos: [], disciplinas: [], banco: "", arquivos: {}, bancoArqs: {}, hashes: {} };
   const busca = {};
   const banco = [];
   for (const arq of todos) {
-    if (!/^(modulo-|grade\/|banco-questoes)/.test(arq)) continue;
+    if (!/^(modulo-|grade\/|banco-questoes|questoes\/)/.test(arq)) continue;
     const c = carregar(arq);
     cat.hashes[arq] = crypto.createHash("sha1").update(fs.readFileSync(path.join(CONT, arq))).digest("hex").slice(0, 8);
     c.MODULOS.forEach(m => {
@@ -61,9 +61,9 @@ function gerarCatalogo() {
       busca[d.id] = { glossario: d.glossario || [], intro: d.intro, formulas: d.topicos.map(tp => tp.formulas || []) };
     });
     c.BANCO.forEach(q => banco.push(q));
+    if (c.BANCO.length) cat.bancoArqs[arq] = [...new Set(c.BANCO.map(q => modDaLicao(q.licao)))]; // arquivos de questões → módulos que eles completam
   }
   cat.banco = banco.map(codQ).join(";");
-  cat.bancoMods = [...new Set(banco.map(q => modDaLicao(q.licao)))];
   const v = crypto.createHash("sha1").update(JSON.stringify([cat, busca])).digest("hex").slice(0, 10);
   cat.versao = v;
   const cab = "/* Gerado por scripts/build.js — NÃO edite à mão (rode: node scripts/build.js --catalogo). */\n";
@@ -132,6 +132,8 @@ async function substituirAsync(txt, re, fn) {
 }
 
 (async () => {
+  // Bancos de questões por tópico: gera (ou, com --checar, confere) antes do catálogo
+  fs.readdirSync(path.join(__dirname, "questoes")).filter(f => f.endsWith(".js")).forEach(f => require("./questoes/" + f));
   const novo = gerarCatalogo();
   const ler = f => fs.existsSync(f) ? fs.readFileSync(f, "utf8") : "";
   if (process.argv.includes("--checar")) {

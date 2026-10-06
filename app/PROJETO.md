@@ -437,3 +437,18 @@ window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergun
 - As sessões priorizam as questões que você mais erra, depois as inéditas.
 - **Selo Especialista** (`especialista(id)`): 80% ou mais no Difícil do tópico. Aparece no resultado da lição, na capa, na página do assunto e na tela Exercícios.
 - **Armazenamento:** `S.exercicios` e `S.questoes[id].ult` são campos novos. O `mesclar()` preenche o padrão para quem já tinha progresso salvo (migração automática, sem perda).
+
+## 15. Banco de questões por tópico (Reformulação, Etapa 4 — piloto MRP)
+
+- **Fonte:** `scripts/questoes/<tópico>.js` (um por tópico). O script tem os dados dos cenários, **calcula todos os gabaritos** (registro MRP, explosão da estrutura, custo de lotes, lead time acumulado), confere a distribuição (no mínimo 7 Fácil, 7 Médio e 6 Difícil), exige justificativa para cada alternativa e referência bibliográfica, e grava:
+  - `app/conteudo/questoes/pcp/mrp.json`: formato legível, segue `app/conteudo/questoes/schema.json`.
+  - `app/conteudo/questoes/pcp/mrp.js`: o que o app carrega (entra em `window.BANCO`, na lição do campo `licao`).
+- O build roda todos os scripts de `scripts/questoes/` antes do catálogo. Com `--checar`, falha se o arquivo gerado estiver desatualizado.
+- **Tipos novos:**
+  - `tabela`: completar células, com `editar` = índices das colunas a preencher; corrige célula a célula.
+  - `figura: { tipo: "bom", raiz }`: estrutura do produto desenhada em SVG (`htmlFigura`).
+- **Fórmulas no texto:** LaTeX entre `\(` e `\)` em qualquer texto (`fmt`). A resolução aparece no feedback junto com a referência ("Para estudar").
+- **Estilos:**
+  - `estilo: "concurso"` (cinco alternativas, formato de banca) mostra o selo "Estilo concurso".
+  - Questão **real** de concurso, ENADE ou livro deve trazer `fonte` com a origem exata (banca, órgão, ano, nº; ou livro, capítulo, exercício). Sem fonte verificada, a questão é autoral.
+- **Revisão:** `node scripts/relatorio-questoes.js mrp` gera `dist-relatorio/questoes-mrp.html`, com todas as questões, gabaritos, tabelas preenchidas, figuras e resoluções.
