@@ -24,7 +24,7 @@ As **56 disciplinas** da grade curricular do Bacharelado em Engenharia de Produ�
 
 ## 📱 App (`app/`)
 
-🌐 **Publicado em: https://prodlean.netlify.app** (publicação automática a cada envio para o repositório ProdLean no GitHub).
+🌐 **Publicado em: https://prodleanaprendendosobreengenhariade-three.vercel.app** (Vercel; publicação automática a cada envio para o repositório ProdLean no GitHub).
 
 | Arquivo | Conteúdo |
 |---|---|

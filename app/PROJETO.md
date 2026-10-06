@@ -59,7 +59,7 @@ package.json            ← "npm run build" (usa o esbuild só no build; o app n
 O build (`instalarAnalytics` em `scripts/build.js`) coloca o script do Cloudflare em **todas** as páginas (app + páginas públicas) só se existir a variável de ambiente `CF_ANALYTICS_TOKEN` na Netlify. Sem ela, nada é instalado. Token mal copiado faz o build falhar com a mensagem explicando (o site continua na versão anterior).
 
 **Como ligar (uma vez):**
-1. Crie uma conta grátis em **dash.cloudflare.com** → menu **Analytics & Logs → Web Analytics** → **Add a site** → digite `prodlean.netlify.app` → escolha a opção **sem mudar o DNS** (“JS snippet”).
+1. Crie uma conta grátis em **dash.cloudflare.com** → menu **Analytics & Logs → Web Analytics** → **Add a site** → digite o domínio do site (hoje `prodleanaprendendosobreengenhariade-three.vercel.app`) → escolha a opção **sem mudar o DNS** (“JS snippet”).
 2. O Cloudflare mostra um código com `"token": "…"`. Copie **só o token** (32 letras e números).
 3. Na Netlify: **Project configuration → Environment variables → Add a variable** → nome `CF_ANALYTICS_TOKEN`, valor = o token → salve.
 4. Em **Deploys → Trigger deploy → Deploy site**. Pronto: em algumas horas os acessos aparecem no painel do Cloudflare.
@@ -86,7 +86,7 @@ O build gera, a partir dos mesmos arquivos de conteúdo, páginas HTML estática
 
 - Cada página: `title` e `description` próprios, um H1, `canonical`, Open Graph com **imagem gerada** (`/og/*.png`, 1200×630, fonte DejaVu em `scripts/fontes/`, desenhada com `@resvg/resvg-js`), links internos e o botão **“Praticar isso no app”**, que abre o ponto certo (`/#ferramenta/<id>`, `/#problema/<id>`, `/#conteudo/<id>`, `/#licao/<id>`).
 - Também: `sitemap.xml`, `robots.txt` e `404.html`. A página do app (`index.html`) ganhou `canonical`, Open Graph e `WebApplication` em JSON-LD.
-- Endereço do site: variável `URL` da Netlify (padrão `https://prodlean.netlify.app`). Ao trocar de domínio, tudo se ajusta no próximo build.
+- Endereço do site: `SITE_URL` (se definida) → domínio de produção da Vercel (`VERCEL_PROJECT_PRODUCTION_URL`) → `URL` da Netlify → padrão `https://prodlean.vercel.app`. Ao trocar de domínio, tudo se ajusta no próximo build.
 - **Anúncios** (opcional, só nas páginas públicas, nunca nas lições): desligados. Para ligar, defina `ANUNCIOS_HTML` nas variáveis de ambiente da Netlify.
 - **Teste:** `npm run testar-seo` confere title, description, canonical, H1, JSON-LD, imagem de prévia, links internos quebrados, sitemap e ausência de códigos/menção à instituição.
 - **Lighthouse:** páginas de ferramenta, problema e glossário com 100 em Performance, Acessibilidade, Boas práticas e SEO.
