@@ -417,3 +417,10 @@ window.DESAFIOS = [{ id: "d01", areas: ["pcp"], ferramenta: "capacidade", pergun
 - **Fórmulas (KaTeX):** `npm run formulas` (ou o build) lê todas as fórmulas em texto do conteúdo, converte para LaTeX e grava `conteudo/formulas-tex.js`, conferindo cada uma com o KaTeX. O relatório visual sai em `dist-relatorio/formulas.html`. Conversões erradas são corrigidas em `conteudo/formulas-tex-manual.js` (valor "" = mostrar como texto). No app, `htmlFx(f)` gera `<span class="fx" data-f="…">texto</span>`; o KaTeX (`vendor/katex/`) é carregado sob demanda e troca o texto pela fórmula. Sem KaTeX (offline sem cache), o texto original continua visível.
 - **Tabelas:** tabelas Markdown viram `.tabela` com cabeçalho fixo, primeira coluna fixa e números alinhados à direita (`td.n`, detectados por `ehNum`).
 - **Navegação:** Início · Buscar · Trilha · Exercícios · Perfil. Problemas, ferramentas, disciplinas e mapas ficam dentro de Buscar.
+
+## 13. Busca agrupada e página do assunto (Reformulação, Etapa 2)
+
+- **Assuntos** (`assuntos()` no `index.html`): juntam o que é do mesmo tema. Cada ferramenta vira um assunto (`f:<id>`) com o conceito do glossário de mesmo nome ou sigla, as lições de `ver` e as lições cujo título cita a ferramenta. Os termos do glossário sem ferramenta viram assuntos de conceito (`g:<módulo>:<termo>`) com os tópicos do módulo que os citam. Tópicos sem tema próprio continuam como `l:<lição>`. A comparação tolera plural e flexão (`temPalavra`).
+- **Busca** (`buscarAgrupado`): um cartão por assunto, com atalhos Conceito · Lição(ões) · Ferramenta · Exercícios (n) · Mapa. Problemas e disciplinas aparecem em "Relacionados".
+- **Página do assunto** (`#assunto/<chave>/<aba>`): abas Visão geral · Conceito · Ferramenta · Lições · Exercícios · Mapa. A aba fica no endereço. Em Exercícios há prática livre por nível, com até 10 questões (as mais erradas primeiro). As respostas entram nas estatísticas e na revisão espaçada.
+- **Início:** pesquisa, continuar, desafio do dia, revisão de hoje e **Seu progresso** (disciplinas e módulos começados, com barra).

@@ -559,12 +559,43 @@ h1 .ic, h2 .ic { color: var(--primary-texto); margin-right: 6px; }
 .formula-box .fx-txt { font-family: var(--mono); font-size: .92rem; }
 .formula-box .sig { font-size: .85rem; color: var(--muted); margin-top: 4px; }
 .fx-l.formula-box { border-top: 0; }
+/* busca agrupada por assunto */
+.assuntos { display: grid; gap: 10px; margin: 8px 0 14px; }
+.assunto-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.assunto-card .ac-head { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px 8px; text-decoration: none; color: var(--text); }
+.assunto-card .ac-head b { display: block; font-size: 1.02rem; }
+.assunto-card .ms { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--muted); font-size: .88rem; }
+.ac-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px 62px; }
+.chip-a { display: inline-flex; align-items: center; gap: 5px; min-height: 32px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); text-decoration: none; font-size: .82rem; font-weight: 500; }
+.chip-a .ic { width: 15px; height: 15px; color: var(--primary); }
+.chip-a .num, .abas-t .num, .chip-f .num { font-family: var(--mono); font-size: .78em; color: var(--muted); }
+.chip-a:hover { border-color: var(--primary); }
+.rel-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rel-chips a { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: .85rem; background: var(--surface); }
+@media (max-width: 420px) { .ac-chips { padding-left: 14px; } }
+/* página do assunto em abas */
+.abas-t { display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid var(--border); margin: 10px 0 14px; scrollbar-width: none; position: sticky; top: 0; background: var(--bg); z-index: 3; }
+.abas-t::-webkit-scrollbar { display: none; }
+.abas-t button { flex: none; background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px; font: inherit; font-weight: 600; font-size: .9rem; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.abas-t button.on { color: var(--primary); border-bottom-color: var(--primary); }
+.filtro-nivel { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-f { min-height: 36px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); font: inherit; font-size: .88rem; cursor: pointer; color: var(--text); }
+.chip-f.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--surface)); color: var(--primary); font-weight: 600; }
+.prog { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin: 6px 0 10px; }
+.prog > div { height: 100%; background: var(--primary); border-radius: 3px; transition: width .3s; }
+.selo.ok { background: var(--ok-soft); color: var(--ok); }
+.prog-lista { display: grid; gap: 8px; margin-bottom: 8px; }
+.prog-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); text-decoration: none; color: var(--text); }
+.prog-item .grow { display: flex; flex-direction: column; min-width: 0; }
+.prog-item b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.prog-item .prog { grid-column: 1 / -1; margin: 4px 0 0; display: block; }
+.prog-item .prog > span { display: block; height: 100%; background: var(--primary); border-radius: 3px; }
 #app p.small > a, #app a.link { color: var(--primary); text-decoration: none; font-weight: 500; }
 #app p.small > a:hover, #app a.link:hover { text-decoration: underline; }
 .fx[data-k="1"] { font-family: inherit; font-weight: 400; overflow-x: auto; overflow-y: hidden; max-width: 100%; }
 .fx-l .fx[data-k="1"], .a4 .fx[data-k="1"] { font-size: 1.08rem; padding: 2px 0; }
 .bloco.formula b.fx[data-k="1"] { display: block; padding: 6px 0; font-size: 1.08rem; }
-.fx .katex { white-space: nowrap; }
+.fx .katex { white-space: normal; }
 .a4 .fx[data-k="1"] { font-size: 1em; font-weight: 400; }
 .a4 .fx .katex { white-space: normal; font-size: 1em; }
 .legenda-var { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 10px; font-size: .82rem; margin-top: 6px; color: var(--text); }
@@ -1229,7 +1260,7 @@ function rotear() {
   EMOJI_OK = ["trilha", "exercicios", "quiz", "quizjogo"].includes(nome) || (nome === "licao" && param2 === "facil");
   const telas = {
     inicio: telaHub, exercicios: telaInicio,
-    consultar: telaConsultar, consulta: telaConsulta, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
+    consultar: telaConsultar, consulta: telaConsulta, assunto: telaAssunto, ferramentas: telaFerramentas, ferramenta: telaFerramenta,
     problemas: telaProblemas, problema: telaProblema, desafio: telaDesafio, estudar: telaEstudar,
     estagio: telaEstagio, salvos: telaSalvos, trilha: telaTrilha, licao: telaLicao, quiz: telaQuiz, revisar: telaRevisar,
     revisao: telaSessaoRevisao, flashcards: telaFlashcards, perfil: telaPerfil, conquistas: telaConquistas,
@@ -1255,7 +1286,7 @@ function rotear() {
   // Aba destacada: Buscar (consulta, problemas, conteúdo), Trilha (modo jogo), Exercícios (modo estudo)
   const aba = { exercicios: "trilha", trilha: "trilha", quiz: "trilha", revisar: "exercicios", flashcards: "exercicios", glossario: "consultar",
     ouvir: "consultar", conteudo: "consultar", mapas: "consultar", mapa: "consultar", consulta: "consultar", ferramentas: "consultar",
-    ferramenta: "consultar", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
+    ferramenta: "consultar", assunto: "consultar", salvos: "consultar", problemas: "consultar", problema: "consultar", desafio: "inicio",
     estudar: param === "praticar" ? "exercicios" : "consultar", conquistas: "perfil", config: "perfil", estagio: "perfil" }[nome] || nome;
   $$("#nav a").forEach(a => { const on = a.dataset.tab === aba; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   (telas[nome] || telaHub)(param, param2);
@@ -1275,6 +1306,11 @@ function telaPrecisa(nome, param) {
     case "ferramenta": {
       const f = FERR(param), temDesafio = (window.DESAFIOS || []).some(d => d.ferramenta === param);
       return { mods: f && !temDesafio ? (f.ver || []).slice(0, 2).map(modDe) : [] };
+    }
+    case "assunto": {
+      const k = dec(param || ""), a = BUSCA_PRONTA ? assunto(k) : null;
+      const base = k.startsWith("f:") ? ((FERR(k.slice(2)) || {}).ver || []).map(modDe) : k.startsWith("g:") ? [k.split(":")[1]] : k.startsWith("l:") ? [modDe(k.slice(2))] : [];
+      return { mods: [...new Set(base.concat(a ? modsDe(a) : []))].filter(Boolean), busca: true };
     }
     case "consultar": case "glossario": case "flashcards": return { mods: [], busca: true };
     case "perfil": return { mods: daQuestao(pontosFracos(5).map(q => q.id)) };
@@ -1533,6 +1569,98 @@ function buscar(q, lim = 40) {
     .slice(0, lim).map(x => x.e);
 }
 
+/* ---- Assuntos: junta ferramenta, conceito (glossário) e lições do mesmo tema ----
+   Chaves: "f:<ferramenta>", "g:<módulo>:<termo>" (conceito sem ferramenta) ou "l:<lição>" (tópico avulso). */
+let ASSUNTOS = null;
+const baseNome = t => norm(String(t).replace(/\s*\([^)]*\)/g, "")).trim();
+const siglaDe = t => { const m = String(t).match(/\(([A-Z][A-Za-z0-9&/ -]{1,12})\)/) || String(t).match(/^([A-Z][A-Z0-9&]{1,7})\b/); return m ? norm(m[1]) : ""; };
+// O título contém o termo? Palavra a palavra, tolerando plural e flexão ("derivada" ↔ "Derivadas: taxas…")
+const PAL_FRACAS = new Set(["de", "da", "do", "das", "dos", "e", "a", "o", "em", "na", "no", "para", "com"]);
+function temPalavra(txt, termo) {
+  if (termo.length < 3) return false;
+  const ws = txt.split(/[^a-z0-9]+/).filter(Boolean), ts = termo.split(/[^a-z0-9]+/).filter(t => t && !PAL_FRACAS.has(t));
+  if (!ts.length) return false;
+  const casa = (w, t) => w === t || (t.length >= 4 && w.length - t.length <= 2 && w.length >= t.length && w.startsWith(t.replace(/s$/, ""))) || (t.length >= 5 && w === t.replace(/s$/, ""));
+  for (let i = 0; i + ts.length <= ws.length; i++) {
+    let j = 0, k = i;
+    while (j < ts.length && k < ws.length) { if (casa(ws[k], ts[j])) { j++; k++; } else if (PAL_FRACAS.has(ws[k]) && j > 0) k++; else break; }
+    if (j === ts.length) return true;
+  }
+  return false;
+}
+function assuntos() {
+  const I = indiceBusca();
+  if (ASSUNTOS && ASSUNTOS._de === I) return ASSUNTOS;
+  const A = new Map(), dono = new Map(); // dono: chave de busca (g:/l:) → chave do assunto
+  // nomes compostos ("Caminho crítico (CPM) e PERT") valem também pelas partes
+  const fs = Object.entries(PROB().ferramentas).map(([id, f]) => { const b = baseNome(f.nome);
+    return { id, f, b, s: siglaDe(f.nome), bs: [b].concat(b.split(/ e | x |: | - | ou /).map(x => x.trim()).filter(x => x.length >= 6 && x !== b)) }; });
+  fs.forEach(({ id, f }) => A.set("f:" + id, { k: "f:" + id, titulo: f.nome, def: f.oque, ferr: id, conceito: null, licoes: (f.ver || []).slice() }));
+  // lições cujo título fala da ferramenta (a de nome mais longo vence: "Estoque de segurança" > "Estoque")
+  LICOES.forEach(l => {
+    if (/chef/i.test(l.titulo)) return;
+    const t = norm(l.titulo), f = fs.filter(x => x.bs.some(b => temPalavra(t, b)) || (x.s && temPalavra(t, x.s))).sort((a, b) => b.b.length - a.b.length)[0];
+    if (!f) return;
+    const a = A.get("f:" + f.id);
+    if (!a.licoes.includes(l.id)) a.licoes.push(l.id);
+    dono.set("l:" + l.id, a.k);
+  });
+  MODS.forEach(m => (m.glossario || []).forEach(g => {
+    const k = `g:${m.id}:${g.termo}`, b = baseNome(g.termo), s = siglaDe(g.termo);
+    const f = fs.find(x => x.bs.includes(b) || (x.s && (x.s === b || x.s === s)) || (s && x.bs.includes(s))) || (b.length >= 6 && fs.find(x => x.b.startsWith(b + " ")));
+    if (f) { const a = A.get("f:" + f.id); if (!a.conceito) a.conceito = k; dono.set(k, a.k); return; }
+    if (A.has(k)) return;
+    const licoes = m.licoes.filter(l => temPalavra(norm(l.titulo), b)).map(l => l.id);
+    A.set(k, { k, titulo: g.termo, def: g.definicao, ferr: null, conceito: k, licoes });
+    licoes.forEach(id => { if (!dono.has("l:" + id)) dono.set("l:" + id, k); }); // o tópico vira parte do conceito
+  }));
+  A._de = I; A._dono = dono;
+  return (ASSUNTOS = A);
+}
+function assunto(k) {
+  const A = assuntos();
+  if (A.has(k)) return A.get(k);
+  if (A._dono.has(k)) return A.get(A._dono.get(k));
+  if (k.startsWith("l:")) { const l = LICOES.find(x => x.id === k.slice(2)); if (l) return { k, titulo: l.titulo, def: porNivel(l.resumo, "facil") || modulo(l.modulo).titulo, ferr: null, conceito: null, licoes: [l.id] }; }
+  return null;
+}
+const licoesDe = a => a.licoes.map(id => LICOES.find(l => l.id === id)).filter(Boolean);
+const nQuestoes = a => licoesDe(a).reduce((t, l) => t + (l.questoes || []).length, 0);
+const modsDe = a => [...new Set(licoesDe(a).map(l => l.modulo).concat(a.conceito ? [a.conceito.split(":")[1]] : []))].filter(id => modulo(id));
+const hrefAssunto = (a, aba) => "#assunto/" + enc(a.k) + (aba ? "/" + aba : "");
+// Busca agrupada: um cartão por assunto + lista curta de relacionados (problemas, disciplinas…)
+function buscarAgrupado(q, lim = 10) {
+  const r = buscar(q, 80), cards = [], vistos = new Set(), rel = [];
+  r.forEach(e => {
+    const k = e.k || "";
+    if (/^[fgl]:/.test(k)) {
+      const a = assunto(k);
+      if (a && !vistos.has(a.k)) { vistos.add(a.k); cards.push(a); }
+    } else rel.push(e);
+  });
+  return { cards: cards.slice(0, lim), rel: cards.slice(lim).map(a => ({ href: hrefAssunto(a), titulo: a.titulo, tipo: a.ferr ? "Ferramenta" : a.conceito ? "Conceito" : "Tópico" })).concat(rel).slice(0, 12), total: cards.length };
+}
+function htmlAssunto(a) {
+  const ls = licoesDe(a), n = nQuestoes(a), mods = modsDe(a);
+  const origem = ls[0] ? modulo(ls[0].modulo).titulo : a.conceito ? (modulo(a.conceito.split(":")[1]) || {}).titulo : "";
+  const chip = (href, icone, txt) => `<a class="chip-a" href="${href}">${ic(icone)}${txt}</a>`;
+  return `<div class="assunto-card"><a class="ac-head" href="${hrefAssunto(a)}"><span class="ic-box" aria-hidden="true">${ic(a.ferr ? "ferramenta" : a.conceito ? "conceito" : "topico")}</span>
+      <span class="grow mtx"><span class="eyebrow">${a.ferr ? "Ferramenta" : a.conceito ? "Conceito" : "Tópico"}${origem ? " · " + esc(limpar(origem)) : ""}</span><b>${esc(limpar(a.titulo))}</b>${a.def ? `<span class="ms">${esc(limpar(a.def))}</span>` : ""}</span></a>
+    <div class="ac-chips">${[
+      a.conceito ? chip(hrefAssunto(a, "conceito"), "conceito", "Conceito") : "",
+      ls.length ? chip(hrefAssunto(a, "licoes"), "licao", ls.length > 1 ? `Lições <span class="num">${ls.length}</span>` : "Lição") : "",
+      a.ferr ? chip(hrefAssunto(a, "ferramenta"), "ferramenta", "Ferramenta") : "",
+      n ? chip(hrefAssunto(a, "exercicios"), "exercicios", `Exercícios <span class="num">${n}</span>`) : "",
+      mods.length ? chip("#mapa/" + mods[0], "mapa", "Mapa") : ""].join("")}</div></div>`;
+}
+function htmlResultados(q, lim, comTodos) {
+  const R = buscarAgrupado(q, lim);
+  if (!R.cards.length && !R.rel.length) return "";
+  return `<div class="assuntos">${R.cards.map(htmlAssunto).join("")}</div>
+    ${R.rel.length && !comTodos ? `<h2 class="sec-t">Relacionados</h2><div class="rel-chips">${R.rel.map(e => `<a href="${e.href}"><span class="muted">${esc(e.tipo || "")}</span> ${esc(limpar(e.titulo))}</a>`).join("")}</div>` : ""}
+    ${comTodos && (R.total > lim || R.rel.length) ? `<p class="small"><a class="link" href="#consultar/${enc(q)}">Ver todos os resultados ›</a></p>` : ""}`;
+}
+
 /* =====================================================================
    TELA: INÍCIO — pesquisa + 4 caminhos + o que é seu
    ===================================================================== */
@@ -1554,6 +1682,7 @@ function telaHub() {
         ${pend ? `<a class="btn small" href="#revisao/pendentes">❓ ${pend} questã${pend > 1 ? "ões" : "o"} para revisar</a>` : ""}
         ${cartas ? `<a class="btn small sec" href="#flashcards">🃏 ${cartas} flashcard${cartas > 1 ? "s" : ""}</a>` : ""}</div>`
       : `<p class="small muted">Nada vencido hoje ✓ As questões que você errar voltam aqui no dia certo.</p>`}
+    ${htmlProgressoDisciplinas()}
     <h2 class="sec-t">🔥 Mais consultados</h2>
     <div class="chips-sug">${ferramentasPopulares(8).map(id => `<a href="#ferramenta/${id}">${FERR(id).icone} ${esc(FERR(id).nome)}</a>`).join("")}</div>
     ${linhaEstagio()}`;
@@ -1561,12 +1690,21 @@ function telaHub() {
   const inp = $("#busca-home");
   inp.oninput = () => {
     if (!BUSCA_PRONTA) garantirBusca().then(() => { if (document.body.contains(inp)) inp.oninput(); }).catch(() => {}); // completa com glossário e fórmulas
-    const q = inp.value.trim(), r = buscar(q, 41);
-    $("#res-home").innerHTML = q.length < 2 ? "" : r.length
-      ? `<div class="lista">${r.slice(0, 5).map(e => htmlItem(e)).join("")}</div>${r.length > 5 ? `<p class="small"><a href="#consultar/${enc(q)}">Ver todos os resultados (${r.length > 40 ? "40+" : r.length}) ›</a></p>` : ""}`
-      : `<p class="small muted">Nada encontrado para “${esc(q)}”. Tente outra palavra ou <a href="#problemas">descreva o problema</a>.</p>`;
+    const q = inp.value.trim(), html = q.length < 2 ? "" : htmlResultados(q, 3, true);
+    $("#res-home").innerHTML = q.length < 2 ? "" : html
+      || `<p class="small muted">Nada encontrado para “${esc(q)}”. Tente outra palavra ou <a class="link" href="#problemas">descreva o problema</a>.</p>`;
   };
   $("#form-busca-home").onsubmit = ev => { ev.preventDefault(); const q = inp.value.trim(); if (q) ir("consultar/" + enc(q)); };
+}
+// Progresso por disciplina/módulo: os que você já começou (mais avançados primeiro)
+function htmlProgressoDisciplinas(n = 6) {
+  const lst = MODS.map(m => ({ m, f: m.licoes.filter(l => licaoConcluida(l.id)).length, t: m.licoes.length }))
+    .filter(x => x.f > 0 && x.t).sort((a, b) => b.f / b.t - a.f / a.t || b.f - a.f);
+  if (!lst.length) return "";
+  return `<h2 class="sec-t">Seu progresso</h2><div class="prog-lista">${lst.slice(0, n).map(({ m, f, t }) => `<a class="prog-item" href="#conteudo/${m.id}">
+      <span class="grow"><b>${esc(limpar(m.titulo))}</b><span class="small muted">${m.grade ? `${m.periodo}º período` : `Módulo ${m.numero}`}</span></span>
+      <span class="num small">${f}/${t}</span><span class="prog" aria-hidden="true"><span style="width:${Math.round(f / t * 100)}%"></span></span></a>`).join("")}</div>
+    ${lst.length > n ? `<p class="small"><a class="link" href="#estudar/disciplina">Ver todas as disciplinas ›</a></p>` : ""}`;
 }
 // Desafio do dia embutido no Início: responde ali mesmo; o resultado fica resumido com link para a explicação completa
 function desenharDesafioHome(d, reg) {
@@ -1605,7 +1743,7 @@ const POPULARES = ["estoque-seguranca", "oee", "takt", "curva-abc", "capabilidad
 function telaConsultar(qParam) {
   const q0 = dec(qParam), A = areaEstagio();
   const pops = ferramentasPopulares(10);
-  app().innerHTML = barraTopo() + `<h1>🔎 Consultar</h1>
+  app().innerHTML = barraTopo() + `<h1>Buscar</h1>
     <p class="lead">Esqueceu como funciona? Encontre um conceito, fórmula, ferramenta ou disciplina.</p>
     ${campoBusca("busca-consulta", q0)}
     <div id="res"></div>`;
@@ -1613,10 +1751,8 @@ function telaConsultar(qParam) {
   function desenhar(q) {
     history.replaceState(null, "", "#consultar" + (q.trim() ? "/" + enc(q.trim()) : ""));
     if (q.trim().length >= 2) {
-      const r = buscar(q);
-      $("#res").innerHTML = r.length
-        ? `<p class="small muted">${r.length >= 40 ? "Os 40 mais relevantes" : r.length + " resultado" + (r.length > 1 ? "s" : "")}</p><div class="lista">${r.map(e => htmlItem(e)).join("")}</div>`
-        : `<div class="card"><b>Nada encontrado para “${esc(q)}”.</b><p class="small muted">Tente outra palavra (ex.: “estoque”, “fila”, “custo”) ou descreva a situação em <a href="#problemas">🚨 Problemas</a>.</p></div>`;
+      const html = htmlResultados(q, 10, false);
+      $("#res").innerHTML = html || `<div class="card"><b>Nada encontrado para “${esc(q)}”.</b><p class="small muted">Tente outra palavra (ex.: “estoque”, “fila”, “custo”) ou descreva a situação em <a href="#problemas">🚨 Problemas</a>.</p></div>`;
       return;
     }
     const fav = (S.favoritos || []).slice(0, 5), hist = (S.historico || []).slice(0, 5);
@@ -1693,6 +1829,16 @@ function fichaDeLicao(l, termo, resumo, tipo) {
     ].filter(Boolean),
     relacionadas: rel.map(([id, f]) => ({ href: "#ferramenta/" + id, icone: f.icone, tipo: "Ferramenta", titulo: f.nome, sub: f.oque }))
   };
+}
+// Ficha de um termo do glossário, montada com a lição do módulo que mais fala dele
+function fichaDoConceito(k) {
+  const [, modId, ...resto] = k.split(":"), termo = resto.join(":");
+  const m = modulo(modId), g = m && (m.glossario || []).find(x => x.termo === termo);
+  if (!g) return null;
+  const nt = norm(termo);
+  const pont = l => (norm(l.titulo).includes(nt) ? 6 : 0) + (l.blocos || []).reduce((s, b) => s + (norm(b.titulo).includes(nt) ? 3 : 0) + (norm(b.texto).split(nt).length - 1), 0);
+  const l = m.licoes.filter(x => !/chef/i.test(x.titulo)).map(x => ({ x, p: pont(x) })).sort((a, b) => b.p - a.p)[0];
+  return fichaDeLicao(l ? l.x : m.licoes[0], termo, g.definicao, "Conceito");
 }
 function fichaDeFerramenta(id) {
   const f = FERR(id), ver = (f.ver || []).map(v => LICOES.find(l => l.id === v)).filter(Boolean);
@@ -1773,22 +1919,115 @@ function telaConsulta(kParam) {
   const k = dec(kParam);
   let F = null;
   if (k.startsWith("f:")) { ir("ferramenta/" + k.slice(2)); return; }
-  if (k.startsWith("g:")) {
-    const [, modId, ...resto] = k.split(":"), termo = resto.join(":");
-    const m = modulo(modId), g = m && (m.glossario || []).find(x => x.termo === termo);
-    if (g) {
-      // a lição do módulo que mais fala do termo
-      const nt = norm(termo);
-      const pont = l => (norm(l.titulo).includes(nt) ? 6 : 0) + (l.blocos || []).reduce((s, b) => s + (norm(b.titulo).includes(nt) ? 3 : 0) + (norm(b.texto).split(nt).length - 1), 0);
-      const l = m.licoes.filter(x => !/chef/i.test(x.titulo)).map(x => ({ x, p: pont(x) })).sort((a, b) => b.p - a.p)[0];
-      F = fichaDeLicao(l ? l.x : m.licoes[0], termo, g.definicao, "Conceito");
-    }
-  } else if (k.startsWith("l:")) {
+  if (k.startsWith("g:")) F = fichaDoConceito(k);
+  else if (k.startsWith("l:")) {
     const l = LICOES.find(x => x.id === k.slice(2));
     if (l) F = fichaDeLicao(l, null, null, modulo(l.modulo).grade ? "Tópico" : "Lição");
   }
   if (!F) { toast("Não encontrei esse item 😕"); ir("consultar"); return; }
   mostrarFicha(F, { k, href: "#consulta/" + enc(k), icone: F.icone, tipo: F.tipo, titulo: F.titulo, sub: F.origem }, "consultar");
+}
+/* =====================================================================
+   TELA: ASSUNTO — página única do tema, em abas:
+   Visão geral · Conceito · Ferramenta · Lições · Exercícios · Mapa
+   ===================================================================== */
+function telaAssunto(kParam, abaParam) {
+  const k = dec(kParam), a = assunto(k);
+  if (!a) { toast("Não encontrei esse assunto"); ir("consultar"); return; }
+  const Ff = a.ferr ? fichaDeFerramenta(a.ferr) : null;
+  const Fc = a.conceito ? fichaDoConceito(a.conceito) : null;
+  const ls = licoesDe(a), mods = modsDe(a);
+  const Fl = !Ff && !Fc && ls[0] ? fichaDeLicao(ls[0], null, null, modulo(ls[0].modulo).grade ? "Tópico" : "Lição") : null;
+  const F0 = Ff || Fc || Fl;
+  const qs = ls.flatMap(l => l.questoes || []);
+  const tipo = a.ferr ? "Ferramenta" : a.conceito ? "Conceito" : "Tópico";
+  const item = { k: a.k, href: hrefAssunto(a), ic: a.ferr ? "ferramenta" : a.conceito ? "conceito" : "topico", tipo, titulo: a.titulo, sub: a.def };
+  registrarVisita(item);
+  lembrarEstudo({ href: item.href, titulo: a.titulo, sub: tipo, icone: "" });
+  const bl = (cls, tag, corpo) => corpo ? `<div class="bloco ${cls}"><div class="tag">${tag}</div>${corpo}</div>` : "";
+  const formulas = Ff && (Ff.formulasTxt || []).length ? bl("formula", "Fórmula", htmlLegenda(Ff.formulasTxt, true)) : (F0.formulas || []).map(htmlBloco).join("");
+  const exemplo = Ff && Ff.exemploTxt ? bl("exemplo", "Exemplo", fmt(Ff.exemploTxt)) : (F0.pratica || []).slice(0, 1).map(htmlBloco).join("");
+  const abas = [
+    ["geral", "Visão geral", `<div class="resumo-box"><p><b>O que é:</b> ${fmt(a.def || F0.resumo)}</p>${(Ff || F0).paraque ? `<p><b>Para que serve:</b> ${fmt((Ff || F0).paraque)}</p>` : ""}${Ff && Ff.quando ? `<p><b>Quando usar:</b> ${fmt(Ff.quando)}</p>` : ""}</div>${formulas}${exemplo}`],
+    Fc ? ["conceito", "Conceito", `<p class="small muted">${esc(Fc.origem)}</p><div class="resumo-box"><p>${fmt(Fc.resumo)}</p></div>${(Fc.entenda || []).map(htmlBloco).join("")}${(Fc.formulas || []).map(htmlBloco).join("")}${(Fc.erros || []).map(htmlBloco).join("")}`] : null,
+    Ff ? ["ferramenta", "Ferramenta", [
+      (Ff.dados || []).length ? bl("texto", "Dados necessários", `<ul class="dados-list">${Ff.dados.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>`) : "",
+      formulas, exemplo, Ff.errosTxt ? bl("atencao", "Erros comuns", fmt(Ff.errosTxt)) : "",
+      (Ff.problemas || []).length ? `<h2 class="sec-t">Ajuda nestes problemas</h2><div class="lista">${Ff.problemas.map(e => htmlItem(e)).join("")}</div>` : "",
+      `<p class="small mt"><a class="link" href="#ferramenta/${a.ferr}">Abrir a ficha completa da ferramenta ›</a></p>`].join("")] : null,
+    ls.length ? ["licoes", `Lições <span class="num">${ls.length}</span>`, `<div class="lista">${ls.map(l => { const m = modulo(l.modulo);
+      return htmlItem({ href: linkConteudo(l), ic: m.grade ? "topico" : "licao", tipo: m.grade ? `Disciplina · ${m.periodo}º período` : `Módulo ${m.numero}`, titulo: l.titulo, sub: `${limpar(m.titulo)} · ${(l.questoes || []).length} exercícios` }, licaoConcluida(l.id) ? `<span class="selo ok">${ic("check")}</span>` : ""); }).join("")}</div>`] : null,
+    qs.length ? ["exercicios", `Exercícios <span class="num">${qs.length}</span>`, `<div id="pratica"></div>`] : null,
+    mods.length ? ["mapa", "Mapa", `<p class="small muted">Tópicos, fórmulas e significados numa folha A4 para imprimir ou salvar em PDF.</p><div class="lista">${mods.map(id => { const m = modulo(id);
+      return htmlItem({ href: "#mapa/" + id, ic: "mapa", tipo: "Mapa mental A4", titulo: m.titulo, sub: m.grade ? `${m.periodo}º período` : `Módulo ${m.numero}` }); }).join("")}</div>`] : null
+  ].filter(Boolean);
+  let aba = abas.some(x => x[0] === abaParam) ? abaParam : "geral";
+  app().innerHTML = barraTopo() + `<p class="small"><a href="javascript:void(0)" id="voltar">‹ Voltar</a></p>
+    <div class="ficha-head"><span class="eyebrow">${esc(tipo)}${ls[0] ? " · " + esc(limpar(modulo(ls[0].modulo).titulo)) : ""}</span><h1>${esc(limpar(a.titulo))}</h1>
+      <div class="row wrap"><button class="favbtn" id="fav">${ic("salvar")} Salvar</button><button class="favbtn" id="ouvir-ficha">${ic("ouvir")} Ouvir</button></div></div>
+    <div class="abas-t" role="tablist" aria-label="Seções do assunto">${abas.map(([id, t]) => `<button role="tab" id="t-${id}" aria-controls="p-${id}" data-aba="${id}">${t}</button>`).join("")}</div>
+    ${abas.map(([id, , corpo]) => `<section role="tabpanel" id="p-${id}" aria-labelledby="t-${id}" class="aba-p" hidden>${corpo}</section>`).join("")}`;
+  const mostrar = id => {
+    aba = id;
+    $$(".abas-t [data-aba]").forEach(b => { const on = b.dataset.aba === id; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
+    $$(".aba-p").forEach(s => s.hidden = s.id !== "p-" + id);
+    history.replaceState(null, "", hrefAssunto(a, id === "geral" ? "" : id));
+    if (id === "exercicios" && !$("#pratica").dataset.ok) praticaAssunto(qs, $("#pratica"));
+  };
+  $$(".abas-t [data-aba]").forEach(b => {
+    b.onclick = () => mostrar(b.dataset.aba);
+    b.onkeydown = e => { const bs = $$(".abas-t [data-aba]"), i = bs.indexOf(b), d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (d) { const nb = bs[(i + d + bs.length) % bs.length]; nb.focus(); mostrar(nb.dataset.aba); } };
+  });
+  $$("[data-revelar]").forEach(b => b.onclick = () => { b.nextElementSibling.classList.remove("hidden"); b.remove(); });
+  $("#voltar").onclick = () => voltar("consultar");
+  ligarFavorito(item);
+  $("#ouvir-ficha").onclick = () => falar(textoFalaFicha(F0), a.titulo);
+  mostrar(aba);
+}
+// Exercícios do assunto: escolhe o nível, responde em sequência e vê o resultado (entra nas estatísticas e na revisão)
+function praticaAssunto(todas, box) {
+  box.dataset.ok = 1;
+  const NV = [["", "Todos"], ["facil", "Fácil"], ["medio", "Médio"], ["dificil", "Difícil"]];
+  let nivel = "";
+  function inicio() {
+    const pool = todas.filter(q => !nivel || q.nivel === nivel);
+    const erradas = todas.filter(q => S.questoes[q.id] && S.questoes[q.id].erros > S.questoes[q.id].acertos).length;
+    box.innerHTML = `<p class="small muted">Prática livre: as respostas entram no seu desempenho e as erradas voltam na revisão.</p>
+      <div class="filtro-nivel" role="group" aria-label="Nível">${NV.map(([v, t]) => { const n = todas.filter(q => !v || q.nivel === v).length;
+        return n ? `<button class="chip-f${v === nivel ? " on" : ""}" data-nv="${v}" aria-pressed="${v === nivel}">${t} <span class="num">${n}</span></button>` : ""; }).join("")}</div>
+      <div class="row wrap mt"><button class="btn" id="comecar"${pool.length ? "" : " disabled"}>${ic("play")} Começar (${Math.min(10, pool.length)} questões)</button>
+      ${erradas ? `<span class="small muted">${erradas} que você mais erra entram primeiro</span>` : ""}</div>`;
+    $$("[data-nv]", box).forEach(b => b.onclick = () => { nivel = b.dataset.nv; inicio(); });
+    $("#comecar", box).onclick = () => {
+      const peso = q => { const s = S.questoes[q.id]; return s ? (s.erros > s.acertos ? 0 : 2) : 1; };
+      rodar(embaralhar(pool.slice()).sort((x, y) => peso(x) - peso(y)).slice(0, 10));
+    };
+  }
+  function rodar(lista) {
+    let i = 0, acertos = 0;
+    const prox = () => {
+      if (i >= lista.length) {
+        box.innerHTML = `<div class="resumo-box"><p><b>${acertos} de ${lista.length}</b> corretas (${Math.round(acertos / lista.length * 100)}%).</p>
+          <p class="small muted">${acertos === lista.length ? "Excelente: assunto dominado neste nível." : "As que você errou já estão na sua revisão espaçada."}</p></div>
+          <div class="row wrap mt"><button class="btn" id="denovo">${ic("revisar")} Praticar de novo</button></div>`;
+        $("#denovo", box).onclick = inicio;
+        return;
+      }
+      let q = lista[i];
+      if (Q[q.id]) q = Q[q.id];
+      box.innerHTML = `<div class="row"><span class="small muted">Questão ${i + 1} de ${lista.length}</span><span class="small muted num">${acertos} certas</span></div>
+        <div class="prog"><div style="width:${i / lista.length * 100}%"></div></div><div id="qarea" class="lesson-pad"></div><div id="qnext"></div>`;
+      renderQuestao(q, $("#qarea", box), acertou => {
+        registrarResposta(q, acertou);
+        if (acertou) { acertos++; ganharXP(1); }
+        $("#qnext", box).innerHTML = `<button class="btn mt" id="seguir">${i + 1 < lista.length ? "Próxima" : "Ver resultado"} ${ic("seta")}</button>`;
+        $("#seguir", box).onclick = () => { i++; prox(); };
+      });
+    };
+    prox();
+  }
+  inicio();
 }
 function telaFerramenta(id) {
   const f = FERR(id);

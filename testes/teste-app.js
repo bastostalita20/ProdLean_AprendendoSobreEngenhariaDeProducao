@@ -292,9 +292,24 @@ async function recuperarVidas(p) {
   checar(await p.$('a[href="#config"]') && await p.$('#nav a.active[data-tab="perfil"]'), 'Configurações dentro do Perfil');
   await p.evaluate(() => ir('inicio')); await p.waitForTimeout(100);
   await p.fill('#busca-home', 'estoque de segurança'); await p.waitForTimeout(100);
-  checar(await p.$eval('#res-home .mini', a => a.getAttribute('href')) === '#ferramenta/estoque-seguranca', 'pesquisa do início acha a ferramenta primeiro');
+  checar(await p.$eval('#res-home .assunto-card .ac-head', a => a.getAttribute('href')) === '#assunto/f%3Aestoque-seguranca', 'pesquisa do início acha o assunto da ferramenta primeiro');
   await p.press('#busca-home', 'Enter'); await p.waitForTimeout(150);
-  checar((await p.evaluate(() => location.hash)).startsWith('#consultar/') && (await p.$$('#res .mini')).length >= 5, 'Enter abre Consultar com os resultados');
+  checar((await p.evaluate(() => location.hash)).startsWith('#consultar/') && (await p.$$('#res .assunto-card')).length >= 3, 'Enter abre Buscar com os resultados');
+  // Busca agrupada: um cartão por assunto, com atalhos Conceito · Lição · Ferramenta · Exercícios · Mapa
+  await p.evaluate(() => ir('consultar/mrp')); await p.waitForTimeout(400);
+  const chipsMrp = await p.$$eval('#res .assunto-card:first-child .chip-a', a => a.map(x => x.textContent.replace(/\s+/g, ' ').trim()));
+  const titulos = await p.$$eval('#res .assunto-card b', a => a.map(x => x.textContent));
+  checar(titulos[0] === 'MRP' && titulos.filter(x => x === 'MRP').length === 1 && ['Conceito', 'Ferramenta', 'Mapa'].every(c => chipsMrp.includes(c)) && chipsMrp.some(c => /^Exercícios \d+$/.test(c)) && chipsMrp.some(c => /^Lições \d+$/.test(c)), `busca agrupada: um cartão “MRP” com ${chipsMrp.join(' · ')}`);
+  const grupo = await p.evaluate(() => buscarAgrupado('derivada').cards.map(a => a.titulo));
+  checar(grupo[0] === 'Derivada' && !grupo.some(t => /^Derivadas: taxas/.test(t)), 'tópico de mesmo tema entra no cartão do conceito (sem repetir)');
+  // Página do assunto em abas, com prática dos exercícios do tema
+  await p.click('#res .assunto-card:first-child .ac-head'); await p.waitForTimeout(500);
+  const abasAs = await p.$$eval('.abas-t [role=tab]', a => a.map(x => x.dataset.aba));
+  checar(JSON.stringify(abasAs) === JSON.stringify(['geral', 'conceito', 'ferramenta', 'licoes', 'exercicios', 'mapa']) && (await p.$$('.aba-p:not([hidden])')).length === 1, 'página do assunto com 6 abas, uma visível por vez');
+  await p.click('[data-aba="exercicios"]'); await p.waitForTimeout(150);
+  checar((await p.evaluate(() => location.hash)) === '#assunto/f%3Amrp/exercicios', 'aba guardada no endereço');
+  await p.click('[data-nv="facil"]'); await p.click('#comecar'); await p.waitForTimeout(200);
+  checar(await p.$('#pratica #qarea') && (await p.textContent('#pratica')).includes('Questão 1 de'), 'prática do assunto começa no nível escolhido');
   for (const [q, esperado] of [['takt', '#ferramenta/takt'], ['OEE', '#ferramenta/oee'], ['derivada', null], ['NR-17', null]]) {
     const r = await p.evaluate(x => buscar(x).map(e => e.href), q);
     checar(r.length > 0 && (!esperado || r[0] === esperado), `busca “${q}” (${r.length} resultados)`);
